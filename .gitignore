@@ -1,0 +1,13 @@
+.DS_Store
+ac-comphist.dat
+auto-save-list/*
+backups/**
+elpa/**
+history
+org-clock-save.el
+semanticdb/*
+bookmarks
+ede-projects.el
+tramp
+url/*
+themes/*
