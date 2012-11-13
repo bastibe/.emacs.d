@@ -29,6 +29,8 @@
   (setq explicit-shell-file-name "C:/MinGW/msys/1.0/bin/bash")
   ;; so emacs finds the vital binaries like diff.exe
   (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin"))
+(when (eq system-type 'gnu/linux)
+  (setq my-font-height 120))
 
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
