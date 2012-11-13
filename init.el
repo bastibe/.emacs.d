@@ -1,5 +1,4 @@
 (add-to-list 'load-path "~/.emacs.d/")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 
 ;; -----------------------------------------------------------------------------
 ;; set up OS dependent stuff
