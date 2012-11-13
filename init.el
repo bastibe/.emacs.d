@@ -5,8 +5,7 @@
 ;; -----------------------------------------------------------------------------
 
 (when (eq system-type 'darwin)
-  (setq my-font-height 150
-		my-frame-height 60)
+  (setq my-font-height 150)
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
   (add-to-list 'exec-path "/usr/local/share/python3/")
@@ -15,7 +14,6 @@
   (setenv "LC_ALL" "en_US.UTF-8"))
 (when (eq system-type 'windows-nt)
   (setq my-font-height 120
-		my-frame-height 50
 		magit-git-executable "C:/Program Files (x86)/Git/bin/git.exe")
   ;; so git opens emacs if invoked from emacs
   (setenv "EDITOR" "C:/PROGRA~2/emacs/bin/emacs.exe")
@@ -89,6 +87,13 @@
 		 (half-screen-width (- (/ (x-display-pixel-width) 2) excess-width))
 		 (screen-height (- (x-display-pixel-height) excess-height)))
 	(set-frame-pixel-size (selected-frame) half-screen-width screen-height)))
+
+(defun use-full-screen ()
+  (interactive)
+  (let* ((excess-height 48)
+         (screen-width (x-display-pixel-width))
+         (screen-height (- (x-display-pixel-height) excess-height)))
+    (set-frame-pixel-size (selected-frame) screen-width screen-height)))
 
 (if window-system
 	(use-left-half-screen))
@@ -294,6 +299,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ecb-options-version "2.40")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(org-agenda-files (quote ("~/Dropbox/Elements/Sennheiser.org")))
  '(sentence-end-double-space nil))
@@ -421,14 +427,9 @@
 (defun ecb-enable-own-temp-buffer-show-futition (arg)
   (ecb-enable-own-temp-buffer-show-function arg))
 
-(defun change-frame-size-for-ecb ()
-  (set-frame-size (selected-frame) 200 my-frame-height))
-(defun change-frame-size-for-normal ()
-  (set-frame-size (selected-frame) 100 my-frame-height))
-
 (setq
- ecb-activate-before-layout-draw-hook 'change-frame-size-for-ecb
- ecb-deactivate-hook 'change-frame-size-for-normal
+ ecb-activate-before-layout-draw-hook 'use-full-screen
+ ecb-deactivate-hook 'use-left-half-screen
  ecb-layout-name "leftright-basic"
  ecb-source-file-regexps '((".*"
 							("\\(^\\(\\.\\|#\\)\\|\\(~$\\|\\.\\(elc\\|obj\\|o\\|class\\|lib\\|dll\\|a\\|so\\|cache\\|pyc\\|exe\\|sublime-workspace\\|sublime-project\\|org_archive\\)$\\)\\)")
