@@ -3,9 +3,11 @@
 ;; -----------------------------------------------------------------------------
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
+(setq my-font-height (cond ((eq system-type 'darwin) 150)
+                           ((eq system-type 'windows-nt) 120)
+                           ((eq system-type 'gnu/linux) 110)))
 
 (when (eq system-type 'darwin)
-  (setq my-font-height 150)
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
   (add-to-list 'exec-path "/usr/local/share/python3/")
@@ -13,8 +15,7 @@
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8"))
 (when (eq system-type 'windows-nt)
-  (setq my-font-height 120
-		magit-git-executable "C:/Program Files (x86)/Git/bin/git.exe")
+  (setq magit-git-executable "C:/Program Files (x86)/Git/bin/git.exe")
   ;; so git opens emacs if invoked from emacs
   (setenv "EDITOR" "C:/PROGRA~2/emacs/bin/emacs.exe")
   ;; set the home directory to the user directory instead of %appdata%
@@ -27,8 +28,6 @@
   (setq explicit-shell-file-name "C:/MinGW/msys/1.0/bin/bash")
   ;; so emacs finds the vital binaries like diff.exe
   (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin"))
-(when (eq system-type 'gnu/linux)
-  (setq my-font-height 120))
 
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
