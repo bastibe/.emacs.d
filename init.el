@@ -82,20 +82,24 @@
 (defun use-left-half-screen ()
   (interactive)
   (let* ((excess-width 32)
-		 (excess-height 48)
+		 (excess-height (cond ((eq system-type 'darwin) 48)
+                              ((eq system-type 'windows-nt) 96)))
 		 (half-screen-width (- (/ (x-display-pixel-width) 2) excess-width))
 		 (screen-height (- (x-display-pixel-height) excess-height)))
-	(set-frame-pixel-size (selected-frame) half-screen-width screen-height)))
+	(set-frame-pixel-size (selected-frame) half-screen-width screen-height)
+    (set-frame-position (selected-frame) 0 0)))
 
 (defun use-full-screen ()
   (interactive)
-  (let* ((excess-height 48)
+  (let* ((excess-height (cond ((eq system-type 'darwin) 48)
+                              ((eq system-type 'windows-nt) 96))))
          (screen-width (x-display-pixel-width))
          (screen-height (- (x-display-pixel-height) excess-height)))
-    (set-frame-pixel-size (selected-frame) screen-width screen-height)))
+  (set-frame-pixel-size (selected-frame) screen-width screen-height)
+  (set-frame-position (selected-frame) 0 0)))
 
 (if window-system
-	(use-left-half-screen))
+    (use-left-half-screen))
 
 ;; highlight matching parenthesis
 (show-paren-mode t)
