@@ -15,11 +15,11 @@
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8"))
 (when (eq system-type 'windows-nt)
-  (setq magit-git-executable "C:/Program Files (x86)/Git/bin/git.exe")
+  (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
   ;; so git opens emacs if invoked from emacs
   (setenv "EDITOR" "C:/PROGRA~2/emacs/bin/emacs.exe")
   ;; set the home directory to the user directory instead of %appdata%
-  (setenv "HOME" "C:/Users/basti_000/")
+  (setenv "HOME" "C:/Users/449BBechtold/")
   ;; so eshell uses git.exe instead of git.cmd
   (setenv "PATH" (concat "C:\\Program Files (x86)\\Git\\bin;" (getenv "PATH")))
   ;; so shell finds all the msys binaries
