@@ -4,7 +4,7 @@
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
 (setq my-font-height (cond ((eq system-type 'darwin) 120)
-                           ((eq system-type 'windows-nt) 120)
+                           ((eq system-type 'windows-nt) 100)
                            ((eq system-type 'gnu/linux) 110)))
 
 (when (eq system-type 'darwin)
@@ -83,7 +83,7 @@
   (interactive)
   (let* ((excess-width 32)
 		 (excess-height (cond ((eq system-type 'darwin) 48)
-                              ((eq system-type 'windows-nt) 96)))
+                              ((eq system-type 'windows-nt) 20)))
 		 (half-screen-width (- (/ (x-display-pixel-width) 2) excess-width))
 		 (screen-height (- (x-display-pixel-height) excess-height)))
 	(set-frame-pixel-size (selected-frame) half-screen-width screen-height)
@@ -92,7 +92,7 @@
 (defun use-full-screen ()
   (interactive)
   (let* ((excess-height (cond ((eq system-type 'darwin) 48)
-                              ((eq system-type 'windows-nt) 96))))
+                              ((eq system-type 'windows-nt) 20))))
          (screen-width (x-display-pixel-width))
          (screen-height (- (x-display-pixel-height) excess-height)))
   (set-frame-pixel-size (selected-frame) screen-width screen-height)
