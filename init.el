@@ -3,15 +3,15 @@
 ;; -----------------------------------------------------------------------------
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
-(setq my-font-height (cond ((eq system-type 'darwin) 150)
+(setq my-font-height (cond ((eq system-type 'darwin) 120)
                            ((eq system-type 'windows-nt) 120)
                            ((eq system-type 'gnu/linux) 110)))
 
 (when (eq system-type 'darwin)
-  (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
+  (add-to-list 'exec-path "/opt/local/bin/") ; MacPorts bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
-  (add-to-list 'exec-path "/usr/local/share/python3/")
-  (setenv "PATH" (concat "/usr/local/bin:/usr/texbin:/usr/local/share/python3:" (getenv "PATH")))
+  (add-to-list 'exec-path "/Applications/MATLAB_R2012a_Student.app/bin/") ; Matlab
+  (setenv "PATH" (concat "/opt/local/bin:/usr/texbin:" (getenv "PATH")))
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8"))
 (when (eq system-type 'windows-nt)
@@ -58,10 +58,10 @@
 ;; Make Emacs look good
 ;; -----------------------------------------------------------------------------
 
-(load-theme 'sanityinc-tomorrow-night t)
+(load-theme 'sanityinc-tomorrow-day t)
 
 ;; set a nice looking font
-(set-face-attribute 'default nil :height my-font-height :family "Ubuntu Mono")
+(set-face-attribute 'default nil :height my-font-height :family "DejaVu Sans Mono")
 
 ;; don't show hat pesky toolbar
 (if window-system
@@ -110,8 +110,11 @@
 ;; Make Emacs behave nicely
 ;; -----------------------------------------------------------------------------
 
-;; enter German quotation marks using the default OSX key combination
+;; enter German special characters using the default OSX key combination
 (global-set-key (kbd "M-°") "“")
+(global-set-key (kbd "M-/") "\\")
+(global-set-key (kbd "M-8") "{")
+(global-set-key (kbd "M-9") "}")
 
 ;; Make command history persistent
 (savehist-mode t)
@@ -298,6 +301,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
  '(ecb-options-version "2.40")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(org-agenda-files (quote ("~/Dropbox/Elements/Sennheiser.org")))
