@@ -128,6 +128,9 @@
 ;; Make command history persistent
 (savehist-mode t)
 
+;; Make ispell and flyspell work with aspell instead of ispell
+(setq ispell-prefer-aspell t)
+
 ;; make clock persistent
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
