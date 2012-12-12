@@ -114,6 +114,9 @@
 ;; Make Emacs behave nicely
 ;; -----------------------------------------------------------------------------
 
+;; recursive minibuffers are essential for ucs-insert in the minibuffer
+(setq enable-recursive-minibuffers t)
+
 ;; enter German special characters using the default OSX key combination
 (global-set-key (kbd "M-°") "“")
 (global-set-key (kbd "M-/") "\\")
