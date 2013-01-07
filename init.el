@@ -91,9 +91,10 @@
 
 (defun use-full-screen ()
   (interactive)
-  (let* ((excess-height (cond ((eq system-type 'darwin) 48)
+  (let* ((excess-width 36)
+         (excess-height (cond ((eq system-type 'darwin) 48)
                               ((eq system-type 'windows-nt) 20)))
-         (screen-width (x-display-pixel-width))
+         (screen-width (- (x-display-pixel-width) excess-width))
          (screen-height (- (x-display-pixel-height) excess-height)))
   (set-frame-pixel-size (selected-frame) screen-width screen-height)
   (set-frame-position (selected-frame) 0 0)))
