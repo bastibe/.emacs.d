@@ -483,6 +483,7 @@
 
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
+(setq org-fontify-done-headline t)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -495,5 +496,7 @@
  '(markdown-header-face-3 ((t (:inherit markdown-header-face :underline t :height 1.2))) t)
  '(markdown-header-face-4 ((t (:inherit markdown-header-face :underline t :height 1.1))) t)
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))) t)
- '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t))
+ '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t)
+ '(org-done ((t (:strike-through t))))
+ '(org-headline-done ((t (:strike-through t)))))
 (put 'set-goal-column 'disabled nil)
