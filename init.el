@@ -315,6 +315,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes (quote ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
  '(org-agenda-files (quote ("~/Dropbox/Elements/Sennheiser.org")))
