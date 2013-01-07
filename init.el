@@ -284,6 +284,19 @@
   (enlarge-window (/ (window-height (next-window)) 2)))
 (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
+(setq view-diary-entries-initially t
+      mark-diary-entries-in-calendar t
+      number-of-diary-entries 7)
+(add-hook 'diary-display-hook 'fancy-diary-display)
+(add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+
+(setq calendar-week-start-day 1
+      calendar-day-name-array ["Sonntag" "Montag" "Dienstag" "Mittwoch"
+                               "Donnerstag" "Freitag" "Samstag"]
+      calendar-month-name-array ["Januar" "Februar" "März" "April" "Mai"
+                                 "Juni" "Juli" "August" "September"
+                                 "Oktober" "November" "Dezember"])
+
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
