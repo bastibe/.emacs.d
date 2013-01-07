@@ -108,8 +108,9 @@
 ;; enable column number in info area
 (column-number-mode t)
 
-;; in magit, use word wrap
+;; in magit and diary mode, use word wrap
 (add-hook 'magit-mode-hook (lambda () (visual-line-mode t)) t)
+(add-hook 'diary-mode-hook (lambda () (visual-line-mode t)) t)
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs behave nicely
