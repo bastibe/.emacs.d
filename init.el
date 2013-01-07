@@ -36,8 +36,8 @@
 (require 'package)
 (dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
 				  ("marmalade" . "http://marmalade-repo.org/packages/")
-				  ("ELPA" . "http://tromey.com/elpa/")
-				  ("GNU" . "http://elpa.gnu.org/packages/")))
+				  ("elpa" . "http://tromey.com/elpa/")
+				  ("gnu" . "http://elpa.gnu.org/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
