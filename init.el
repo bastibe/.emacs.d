@@ -318,7 +318,6 @@
  '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
- '(org-agenda-files (quote ("~/Dropbox/Elements/Sennheiser.org")))
  '(sentence-end-double-space nil))
 
 ;; enable code folding for python
