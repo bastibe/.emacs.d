@@ -329,7 +329,7 @@
 (setq python-remove-cwd-from-path nil)
 
 ;; set the default scheme implementation
-(setq scheme-program-name "racket")
+(setq scheme-program-name "csi")
 
 ;; open *.pyx files as python
 ;(require 'cython-mode)
@@ -465,6 +465,16 @@
   (browse-url (concat "http://www.duckduckgo.com/?q="
 					  (url-hexify-string url))))
 (global-set-key (kbd "C-c C-s") 'search)
+
+(defun chicken-doc (url)
+  "Opens a browser and searches the Scheme documentation for the given string"
+  (interactive "sDocumentation for: ")
+  (browse-url (concat "http://api.call-cc.org/cdoc?q="
+					  (url-hexify-string url))))
+(add-hook 'scheme-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c s") 'chicken-doc)))
+
 
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
