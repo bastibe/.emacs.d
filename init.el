@@ -36,8 +36,8 @@
 (require 'package)
 (dolist (source '(("melpa" . "http://melpa.milkbox.net/packages/")
 				  ("marmalade" . "http://marmalade-repo.org/packages/")
-				  ("ELPA" . "http://tromey.com/elpa/")
-				  ("GNU" . "http://elpa.gnu.org/packages/")))
+				  ("elpa" . "http://tromey.com/elpa/")
+				  ("gnu" . "http://elpa.gnu.org/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
@@ -91,9 +91,10 @@
 
 (defun use-full-screen ()
   (interactive)
-  (let* ((excess-height (cond ((eq system-type 'darwin) 48)
+  (let* ((excess-width 36)
+         (excess-height (cond ((eq system-type 'darwin) 48)
                               ((eq system-type 'windows-nt) 20)))
-         (screen-width (x-display-pixel-width))
+         (screen-width (- (x-display-pixel-width) excess-width))
          (screen-height (- (x-display-pixel-height) excess-height)))
   (set-frame-pixel-size (selected-frame) screen-width screen-height)
   (set-frame-position (selected-frame) 0 0)))
@@ -107,8 +108,9 @@
 ;; enable column number in info area
 (column-number-mode t)
 
-;; in magit, use word wrap
+;; in magit and diary mode, use word wrap
 (add-hook 'magit-mode-hook (lambda () (visual-line-mode t)) t)
+(add-hook 'diary-mode-hook (lambda () (visual-line-mode t)) t)
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs behave nicely
@@ -327,9 +329,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes (quote ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
- '(org-agenda-files (quote ("~/Dropbox/Elements/Sennheiser.org")))
  '(sentence-end-double-space nil))
 
 ;; enable code folding for python
@@ -341,7 +343,7 @@
 (setq python-remove-cwd-from-path nil)
 
 ;; set the default scheme implementation
-(setq scheme-program-name "racket")
+(setq scheme-program-name "csi")
 
 ;; open *.pyx files as python
 ;(require 'cython-mode)
@@ -355,6 +357,9 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+
+;; open *.m files as octave
+(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 
 ;; open *.pdf files as images
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
@@ -478,6 +483,16 @@
 					  (url-hexify-string url))))
 (global-set-key (kbd "C-c C-s") 'search)
 
+(defun chicken-doc (url)
+  "Opens a browser and searches the Scheme documentation for the given string"
+  (interactive "sDocumentation for: ")
+  (browse-url (concat "http://api.call-cc.org/cdoc?q="
+					  (url-hexify-string url))))
+(add-hook 'scheme-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c s") 'chicken-doc)))
+
+
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
 ;; -----------------------------------------------------------------------------
@@ -485,6 +500,7 @@
 
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
+(setq org-fontify-done-headline t)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -497,5 +513,7 @@
  '(markdown-header-face-3 ((t (:inherit markdown-header-face :underline t :height 1.2))) t)
  '(markdown-header-face-4 ((t (:inherit markdown-header-face :underline t :height 1.1))) t)
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))) t)
- '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t))
+ '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t)
+ '(org-done ((t (:strike-through t))))
+ '(org-headline-done ((t (:strike-through t)))))
 (put 'set-goal-column 'disabled nil)
