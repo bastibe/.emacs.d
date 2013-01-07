@@ -344,6 +344,9 @@
 (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 
+;; open *.m files as octave
+(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
+
 ;; open *.pdf files as images
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
