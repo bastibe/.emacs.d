@@ -248,20 +248,9 @@
   (beginning-of-line))
 
 ;; mark stuff semantically
-(define-prefix-command 'er/mark)
-(global-set-key (kbd "C-=") 'er/mark)
-(define-key er/mark (kbd "C-=") 'er/expand-region)
-(define-key er/mark (kbd "w") 'er/mark-word)
-(define-key er/mark (kbd "W") 'er/mark-symbol)
-(define-key er/mark (kbd "'") 'er/mark-inside-quotes)
-(define-key er/mark (kbd "\"") 'er/mark-outside-quotes)
-(define-key er/mark (kbd "[") 'er/mark-inside-quotes)
-(define-key er/mark (kbd "(") 'er/mark-inside-quotes)
-(define-key er/mark (kbd "{") 'er/mark-inside-quotes)
-(define-key er/mark (kbd "]") 'er/mark-outside-pairs)
-(define-key er/mark (kbd ")") 'er/mark-outside-pairs)
-(define-key er/mark (kbd "}") 'er/mark-outside-pairs)
-(define-key er/mark (kbd "l") 'bb/mark-line)
+(global-set-key (kbd "C-j") 'er/expand-region)
+(global-set-key (kbd "C-M-j") 'bb/mark-line)
+(global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
 (defun iedit-dwim (arg)
   "Starts iedit but uses \\[narrow-to-defun] to limit its scope."
