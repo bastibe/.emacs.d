@@ -413,7 +413,9 @@
 		  (lambda ()
 			(define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
 			(visual-line-mode t)
-			(turn-on-reftex))
+			(turn-on-reftex)
+            (local-unset-key (kbd "\""))
+            (local-set-key (kbd "M-\"") "“"))
 		  t)
 
 (setq TeX-PDF-mode t)
