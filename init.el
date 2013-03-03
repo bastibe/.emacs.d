@@ -65,6 +65,7 @@
 ;; Make Emacs look good
 ;; -----------------------------------------------------------------------------
 
+;; load my favourite theme of the day
 (load-theme 'sanityinc-tomorrow-day t)
 
 ;; set a nice looking font
@@ -342,6 +343,7 @@
  '(sentence-end-double-space nil))
 
 ;; enable code folding for python
+ '(safe-local-variable-values (quote ((backup-inhibited . t))))
 (add-hook 'python-mode-hook
 		  (lambda ()
 			(hs-minor-mode t))
@@ -522,5 +524,7 @@
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))) t)
  '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t)
  '(org-done ((t (:strike-through t))))
- '(org-headline-done ((t (:strike-through t)))))
+ '(org-headline-done ((t (:strike-through t))))
+ '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "controlHighlightColor"))))
+ '(powerline-active2 ((t (:inherit mode-line :background "grey40" :foreground "controlHighlightColor")))))
 (put 'set-goal-column 'disabled nil)
