@@ -116,6 +116,9 @@
 ;; Make Emacs behave nicely
 ;; -----------------------------------------------------------------------------
 
+;; don't ever minimize Emacs on C-y again. Ever.
+(define-key (current-global-map) [remap suspend-frame] 'yank)
+
 ;; recursive minibuffers are essential for ucs-insert in the minibuffer
 (setq enable-recursive-minibuffers t)
 
