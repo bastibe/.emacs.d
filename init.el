@@ -343,10 +343,10 @@
  '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
  '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
+ '(safe-local-variable-values (quote ((backup-inhibited . t))))
  '(sentence-end-double-space nil))
 
 ;; enable code folding for python
- '(safe-local-variable-values (quote ((backup-inhibited . t))))
 (add-hook 'python-mode-hook
 		  (lambda ()
 			(hs-minor-mode t))
