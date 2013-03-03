@@ -12,8 +12,12 @@
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
   (add-to-list 'exec-path "/Applications/MATLAB_R2012a_Student.app/bin/") ; Matlab
   (setenv "PATH" (concat "/opt/local/bin:/usr/texbin:" (getenv "PATH")))
+  (setq eshell-path-env
+        (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
+                "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
-  (setenv "LC_ALL" "en_US.UTF-8"))
+  (setenv "LC_ALL" "en_US.UTF-8")
+  (setq python-command "python3.2"))
 (when (eq system-type 'windows-nt)
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
   ;; so git opens emacs if invoked from emacs
