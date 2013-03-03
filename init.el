@@ -33,6 +33,8 @@
   ;; so emacs finds the vital binaries like diff.exe
   (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin"))
 
+(server-start)
+
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
 ;; -----------------------------------------------------------------------------
