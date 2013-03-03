@@ -53,7 +53,8 @@
 (defvar my-packages
   '(auto-complete expand-region fill-column-indicator htmlize ido-ubiquitous
                   iy-go-to-char magit markdown-mode mark-multiple undo-tree
-                  color-theme-sanityinc-tomorrow wrap-region iedit popup)
+                  color-theme-sanityinc-tomorrow wrap-region iedit popup
+                  multiple-cursors powerline)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
