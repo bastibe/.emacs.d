@@ -68,6 +68,9 @@
 ;; load my favourite theme of the day
 (load-theme 'sanityinc-tomorrow-day t)
 
+;; enable powerline
+(powerline-default)
+
 ;; set a nice looking font
 (set-face-attribute 'default nil :height my-font-height :family "DejaVu Sans Mono")
 
