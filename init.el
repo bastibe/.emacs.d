@@ -403,9 +403,15 @@
 	(doc-view-revert-buffer t t)
 	(switch-to-buffer-other-window tex-buffer-name)))
 
+(add-hook 'org-mode-hook
+          (lambda ()
+            (define-key org-mode-map (kbd "C-j") 'er/expand-region))
+            t)
+
 (add-hook 'LaTeX-mode-hook
 		  (lambda ()
 			(define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
+            (define-key LaTeX-mode-map (kbd "C-j") 'er/expand-region)
 			(visual-line-mode t)
 			(turn-on-reftex)
             (local-unset-key (kbd "\""))
