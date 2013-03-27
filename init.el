@@ -81,6 +81,8 @@
 	(tool-bar-mode -1)
     (menu-bar-mode -1))
 
+;; make org-mode fontify source code
+(setq org-src-fontify-natively t)
 
 ;; set window size to an arbitrary number of pixels
 (defun set-frame-pixel-size (frame width height)
