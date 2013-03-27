@@ -348,14 +348,6 @@
  '(safe-local-variable-values (quote ((backup-inhibited . t))))
  '(sentence-end-double-space nil))
 
-;; enable code folding for python
-(add-hook 'python-mode-hook
-		  (lambda ()
-			(hs-minor-mode t))
-		  t)
-(global-set-key (kbd "C-c @ @") 'hs-toggle-hiding)
-(setq python-remove-cwd-from-path nil)
-
 ;; set the default scheme implementation
 (setq scheme-program-name "csi")
 
