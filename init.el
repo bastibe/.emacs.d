@@ -16,8 +16,7 @@
         (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
-  (setenv "LC_ALL" "en_US.UTF-8")
-  (setq python-command "python3.2"))
+  (setenv "LC_ALL" "en_US.UTF-8"))
 (when (eq system-type 'windows-nt)
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
   ;; so git opens emacs if invoked from emacs
