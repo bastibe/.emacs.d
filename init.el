@@ -20,6 +20,7 @@
   (setq org-agenda-files (quote ("~/Dropbox/Elements/uni.org"))))
 (when (eq system-type 'windows-nt)
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
+  (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org")))
   ;; so git opens emacs if invoked from emacs
   (setenv "EDITOR" "C:/PROGRA~2/emacs/bin/emacs.exe")
   ;; set the home directory to the user directory instead of %appdata%
