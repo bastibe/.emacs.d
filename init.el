@@ -30,6 +30,8 @@
   (setenv "PATH" (concat "C:\\MinGW\\msys\\1.0\\bin;" (getenv "PATH")))
   ;; so shell uses the MinGW bash shell
   (setq explicit-shell-file-name "C:/MinGW/msys/1.0/bin/bash")
+  (setq ispell-dictionary "german")
+  (setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
   ;; so emacs finds the vital binaries like diff.exe
   (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin"))
 
