@@ -220,10 +220,10 @@
 (global-set-key (kbd "M-r") 'iy-go-to-char-backward)
 
 ;; enable mark-multiple
-(require 'mark-more-like-this)
-(global-set-key (kbd "C->") 'mark-next-like-this)
-(global-set-key (kbd "C-<") 'mark-previous-like-this)
-(global-set-key (kbd "C-*") 'mark-all-like-this)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-*") 'mc/mark-all-like-this)
+(global-set-key (kbd "M-C-*") 'mc/mark-all-like-this-in-defun)
 
 ;; enable sensible undo
 (require 'undo-tree)
