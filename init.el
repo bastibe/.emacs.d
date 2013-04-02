@@ -70,7 +70,8 @@
 (load-theme 'sanityinc-tomorrow-day t)
 
 ;; enable powerline
-(powerline-default)
+(require 'powerline)
+(powerline-center-theme)
 
 ;; set a nice looking font
 (set-face-attribute 'default nil :height my-font-height :family "DejaVu Sans Mono")
@@ -532,7 +533,5 @@
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))) t)
  '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t)
  '(org-done ((t (:strike-through t))))
- '(org-headline-done ((t (:strike-through t))))
- '(powerline-active1 ((t (:inherit mode-line :background "grey22" :foreground "controlHighlightColor"))))
- '(powerline-active2 ((t (:inherit mode-line :background "grey40" :foreground "controlHighlightColor")))))
+ '(org-headline-done ((t (:strike-through t)))))
 (put 'set-goal-column 'disabled nil)
