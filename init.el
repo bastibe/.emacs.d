@@ -226,7 +226,6 @@
 (global-set-key (kbd "M-C-*") 'mc/mark-all-like-this-in-defun)
 
 ;; enable sensible undo
-(require 'undo-tree)
 (global-undo-tree-mode)
 ;; make undo work the same way on the EN and DE keymap
 (global-set-key (kbd "C--") 'undo-tree-undo)
