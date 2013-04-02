@@ -179,14 +179,15 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Auto-resize eshell or Python windows to 15 lines of height
-;; TODO: this will loop infinitely if eshell is the only window available
 (add-hook 'window-configuration-change-hook
 		  (lambda ()
-			(when (or (string-equal (buffer-name) "*Python*")
-					  (string-equal (buffer-name) "*eshell*")
-					  (string-equal (buffer-name) "*tex-shell*"))
-			  (if (not (eq (window-height) 15))
-				  (enlarge-window (- 15 (window-height)))))))
+            ;; prevent infinite loop if there is only one window
+            (unless (= 1 (length (window-list nil -1)))
+              (when (or (string-equal (buffer-name) "*Python*")
+                        (string-equal (buffer-name) "*eshell*")
+                        (string-equal (buffer-name) "*tex-shell*"))
+                (if (not (eq (window-height) 15))
+                    (enlarge-window (- 15 (window-height))))))))
 
 ;; turn off the splash screen on startup
 (setq inhibit-startup-message t)
