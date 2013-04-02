@@ -311,6 +311,47 @@
                                  "Juni" "Juli" "August" "September"
                                  "Oktober" "November" "Dezember"])
 
+(defun bb/beginning-of-indentation ()
+  "Return the position of the first non-whitespace character in the line"
+  (save-excursion
+    (back-to-indentation)
+    (point)))
+
+(defun bb/beginning-of-line ()
+  "Return the position of the first character in the line"
+  (save-excursion
+    (move-beginning-of-line nil)
+    (point)))
+
+(defun bb/end-of-line ()
+  "Return the position of the last character in the line"
+  (save-excursion
+    (move-end-of-line nil)
+    (point)))
+
+(defun bb/move-backward ()
+  "Move point backwards to the first non-whitespace character in the line
+   or the first character in the line or the beginning of the buffer,
+   whichever comes first"
+  (interactive)
+  (cond
+   ((> (point) (bb/beginning-of-indentation))
+    (back-to-indentation))
+   ((> (point) (bb/beginning-of-line))
+    (move-beginning-of-line nil))
+   (t (beginning-of-buffer))))
+
+(defun bb/move-forward ()
+  "Move point forward to the end of the line or the end of the buffer,
+   whichever comes first"
+  (interactive)
+  (if (< (point) (bb/end-of-line))
+      (move-end-of-line nil)
+    (end-of-buffer)))
+
+(global-set-key (kbd "C-a") 'bb/move-backward)
+(global-set-key (kbd "C-e") 'bb/move-forward)
+
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
