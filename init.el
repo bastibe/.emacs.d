@@ -145,6 +145,7 @@
 (global-set-key (kbd "M-9") "}")
 (global-set-key (kbd "M-2") "„")
 (global-set-key (kbd "M-\"") "“")
+(global-set-key (kbd "M-|") "”")
 ;; Make backward-paragraph and forward-paragraph work the same on EN and DE key maps
 (global-set-key (kbd "M-Ü") 'backward-paragraph)
 (global-set-key (kbd "M-*") 'forward-paragraph)
