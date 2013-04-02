@@ -131,7 +131,7 @@
 ;; Make Emacs behave nicely
 ;; -----------------------------------------------------------------------------
 
-;; don't ever minimize Emacs on C-y again. Ever.
+;; don't ever minimize Emacs on C-z again. Ever.
 (define-key (current-global-map) [remap suspend-frame] 'yank)
 
 ;; recursive minibuffers are essential for ucs-insert in the minibuffer
@@ -177,6 +177,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Auto-resize eshell or Python windows to 15 lines of height
+;; TODO: this will loop infinitely if eshell is the only window available
 (add-hook 'window-configuration-change-hook
 		  (lambda ()
 			(when (or (string-equal (buffer-name) "*Python*")
@@ -188,7 +189,7 @@
 ;; turn off the splash screen on startup
 (setq inhibit-startup-message t)
 
-;; turn off the splash screen on startup
+;; turn off the scratch buffer header
 (setq initial-scratch-message nil)
 
 ;; store backup files where they don't bother me
@@ -214,7 +215,7 @@
 ;; enable backwards delete
 (global-set-key [kp-delete] 'delete-char)
 
-;; enable fast search
+;; enable fast character search
 (global-set-key (kbd "M-s") 'iy-go-to-char)
 (global-set-key (kbd "M-r") 'iy-go-to-char-backward)
 
