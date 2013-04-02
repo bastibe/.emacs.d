@@ -235,11 +235,6 @@
 ;; don't sound that bloody chime
 (setq ring-bell-function #'ignore)
 
-;; enable global autocomplete mode
-(add-to-list 'load-path "~/.emacs.d/auto-complete")
-(require 'auto-complete)
-(global-auto-complete-mode t)
-
 ;; delete region when I start to type
 (pending-delete-mode t)
 
