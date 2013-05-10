@@ -83,6 +83,7 @@
 
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
+(setq org-clock-mode-line-total 'current)
 
 ;; set window size to an arbitrary number of pixels
 (defun set-frame-pixel-size (frame width height)
