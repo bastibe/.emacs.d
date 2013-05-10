@@ -34,7 +34,9 @@
   (setq ispell-dictionary "german")
   (setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
   ;; so emacs finds the vital binaries like diff.exe
-  (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin"))
+  (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin")
+  (fset 'EasyCODEDelete
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([19 69 97 115 121 67 79 68 69 13 18 47 42 13 67108896 19 42 47 13 23] 0 "%d")) arg))))
 
 (server-start)
 
