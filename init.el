@@ -242,8 +242,8 @@
 ;; enable sensible undo
 (global-undo-tree-mode)
 ;; make undo work the same way on the EN and DE keymap
-(global-set-key (kbd "C--") 'undo-tree-undo)
-(global-set-key (kbd "C-_") 'undo-tree-redo)
+(define-key undo-tree-map (kbd "C--") 'undo-tree-undo)
+(define-key undo-tree-map (kbd "C-_") 'undo-tree-redo)
 
 ;; don't sound that bloody chime
 (setq ring-bell-function #'ignore)
