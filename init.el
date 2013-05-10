@@ -128,6 +128,11 @@
 ;; Make Emacs behave nicely
 ;; -----------------------------------------------------------------------------
 
+;; enable "dangerous" features
+(put 'narrow-to-region 'disabled nil)
+(put 'scroll-left 'disabled nil)
+(put 'set-goal-column 'disabled nil)
+
 ;; don't ever minimize Emacs on C-z again. Ever.
 (define-key (current-global-map) [remap suspend-frame] 'yank)
 
@@ -175,7 +180,8 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Auto-resize eshell or Python windows to 15 lines of height
-(add-hook 'window-configuration-change-hook
+;;(add-hook 'window-configuration-change-hook
+(add-hook 'post-command-hook
 		  (lambda ()
             ;; prevent infinite loop if there is only one window
             (unless (= 1 (length (window-list nil -1)))
@@ -375,17 +381,10 @@
 ;; -----------------------------------------------------------------------------
 
 ;; enable a few modules in Haskell mode
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
- '(diary-file "~/Dropbox/Elements/diary")
- '(ecb-options-version "2.40")
- '(haskell-mode-hook (quote (turn-on-haskell-indentation)))
- '(safe-local-variable-values (quote ((backup-inhibited . t))))
- '(sentence-end-double-space nil))
+(add-hook 'haskell-mode-hook
+          (lambda ()
+            (turn-on-haskell-indentation))
+          t)
 
 ;; set the default scheme implementation
 (setq scheme-program-name "csi")
@@ -444,6 +443,10 @@
 
 (add-hook 'org-mode-hook
           (lambda ()
+            ;; make DONE use strike through
+            (set-face-attribute 'org-done nil :strike-through t)
+            (set-face-attribute 'org-headline-done nil :strike-through t)
+            ;; overload C-j in org-mode, too
             (define-key org-mode-map (kbd "C-j") 'er/expand-region))
             t)
 
@@ -550,10 +553,18 @@
 ;; emacs's own customizations
 ;; -----------------------------------------------------------------------------
 
-
-(put 'narrow-to-region 'disabled nil)
-(put 'scroll-left 'disabled nil)
-(setq org-fontify-done-headline t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(diary-file "~/Dropbox/Elements/diary")
+ '(ecb-options-version "2.40")
+ '(org-agenda-files (quote ("~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org")))
+ '(python-shell-interpreter "python3.2")
+ '(safe-local-variable-values (quote ((backup-inhibited . t))))
+ '(sentence-end-double-space nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -566,7 +577,4 @@
  '(markdown-header-face-3 ((t (:inherit markdown-header-face :underline t :height 1.2))) t)
  '(markdown-header-face-4 ((t (:inherit markdown-header-face :underline t :height 1.1))) t)
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))) t)
- '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t)
- '(org-done ((t (:strike-through t))))
- '(org-headline-done ((t (:strike-through t)))))
-(put 'set-goal-column 'disabled nil)
+ '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))) t))
