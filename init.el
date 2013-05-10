@@ -55,7 +55,7 @@
 (defvar my-packages
   '(auctex color-theme-sanityinc-tomorrow company dash
            expand-region htmlize ido-ubiquitous iy-go-to-char magit
-           markdown-mode multiple-cursors popup powerline pymacs
+           markdown-mode multiple-cursors popup  pymacs
            undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
@@ -68,11 +68,7 @@
 ;; -----------------------------------------------------------------------------
 
 ;; load my favourite theme of the day
-(load-theme 'sanityinc-tomorrow-day t)
-
-;; enable powerline
-(require 'powerline)
-(powerline-center-theme)
+(load-theme 'sanityinc-tomorrow-night t)
 
 ;; set a nice looking font
 (set-face-attribute 'default nil :height my-font-height :family "DejaVu Sans Mono")
