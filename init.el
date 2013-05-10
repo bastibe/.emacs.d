@@ -145,11 +145,17 @@
 (global-set-key (kbd "M-8") "{")
 (global-set-key (kbd "M-9") "}")
 (global-set-key (kbd "M-2") "„")
-(global-set-key (kbd "M-\"") "“")
+(global-set-key (kbd "C-M-\"") "“")
 (global-set-key (kbd "M-|") "”")
 ;; Make backward-paragraph and forward-paragraph work the same on EN and DE key maps
 (global-set-key (kbd "M-Ü") 'backward-paragraph)
 (global-set-key (kbd "M-*") 'forward-paragraph)
+(global-set-key (kbd "C-c [") (defun insert-ue () (interactive) (insert-char 252))) ; ü
+(global-set-key (kbd "C-c ;") (defun insert-oe () (interactive) (insert-char 246))) ; ö
+(global-set-key (kbd "C-c '") (defun insert-ae () (interactive) (insert-char 228))) ; ä
+(global-set-key (kbd "C-c {") (defun insert-UE () (interactive) (insert-char 220))) ; Ü
+(global-set-key (kbd "C-c :") (defun insert-OE () (interactive) (insert-char 214))) ; Ö
+(global-set-key (kbd "C-c \"") (defun insert-AE () (interactive) (insert-char 196))) ; Ä
 
 ;; Make command history persistent
 (savehist-mode t)
