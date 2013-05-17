@@ -160,6 +160,7 @@
 (global-set-key (kbd "C-c {") (defun insert-UE () (interactive) (insert-char 220))) ; Ü
 (global-set-key (kbd "C-c :") (defun insert-OE () (interactive) (insert-char 214))) ; Ö
 (global-set-key (kbd "C-c \"") (defun insert-AE () (interactive) (insert-char 196))) ; Ä
+(setq default-input-method 'german-postfix)
 
 ;; Make command history persistent
 (savehist-mode t)
