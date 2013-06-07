@@ -58,13 +58,16 @@
 (defvar my-packages
   '(auctex color-theme-sanityinc-tomorrow company dash
            expand-region htmlize ido-ubiquitous iy-go-to-char magit
-           markdown-mode multiple-cursors popup  pymacs
+           markdown-mode multiple-cursors org-journal popup pymacs
            smex undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
 	(package-install p)))
+
+;; locally installed custom journal mode
+(require 'org-journal)
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs look good
@@ -578,9 +581,10 @@
  '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
  '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
- '(org-agenda-files (quote ("~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org")))
+ '(org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
+ '(org-agenda-files (quote ("~/Documents/journal/20130606" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org")))
  '(python-shell-interpreter "python3.2")
- '(safe-local-variable-values (quote ((backup-inhibited . t))))
+ '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
  '(sentence-end-double-space nil))
 
 (custom-set-faces
