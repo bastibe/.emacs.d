@@ -59,7 +59,7 @@
   '(auctex color-theme-sanityinc-tomorrow company dash
            expand-region htmlize ido-ubiquitous iy-go-to-char magit
            markdown-mode multiple-cursors org-journal popup pymacs
-           smex undo-tree wrap-region)
+           undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -261,12 +261,6 @@
 
 ;; always ask for `y` or `n` instead of `yes` or `no`
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-;; use cooler M-x
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; old M-x
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
 ;; use C-o and M-o to create a new line above or below point, somewhat like in vi
 (defun vi-open-line-above ()
