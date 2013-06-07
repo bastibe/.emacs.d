@@ -295,6 +295,13 @@
 (global-set-key (kbd "C-M-j") 'bb/mark-line)
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
+;; quick access to org-agenda and org-todo
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c t") 'org-todo-list)
+
+;; quick access to magit-status
+(global-set-key (kbd "C-c m") 'magit-status)
+
 (defun iedit-dwim (arg)
   "Starts iedit but uses \\[narrow-to-defun] to limit its scope."
   (interactive "P")
