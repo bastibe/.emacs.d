@@ -302,6 +302,12 @@
 ;; quick access to magit-status
 (global-set-key (kbd "C-c m") 'magit-status)
 
+;; quick access to list-packages
+(global-set-key (kbd "C-c p") 'list-packages)
+
+;; quick access to the calendar
+(global-set-key (kbd "C-c c") 'calendar)
+
 (defun iedit-dwim (arg)
   "Starts iedit but uses \\[narrow-to-defun] to limit its scope."
   (interactive "P")
