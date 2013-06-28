@@ -408,16 +408,20 @@
             (turn-on-haskell-indentation))
           t)
 
+(setq
+ python-shell-interpreter "ipython"
+ python-shell-interpreter-args ""
+ python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+ python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+ python-shell-completion-setup-code
+   "from IPython.core.completerlib import module_completion"
+ python-shell-completion-module-string-code
+   "';'.join(module_completion('''%s'''))\n"
+ python-shell-completion-string-code
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+
 ;; set the default scheme implementation
 (setq scheme-program-name "csi")
-
-;; open *.pyx files as python
-;(require 'cython-mode)
-(add-to-list 'auto-mode-alist '("\\.pyx\\'" . python-mode))
-(add-to-list 'auto-mode-alist '("\\.pxd\\'" . python-mode))
-
-;; open *.peproj files as python
-(add-to-list 'auto-mode-alist '("\\.peproj\\'" . python-mode))
 
 ;; open *.md files as markdown
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -584,7 +588,7 @@
  '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
  '(org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
- '(python-shell-interpreter "python3.2")
+ '(python-shell-interpreter "ipython")
  '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
  '(sentence-end-double-space nil))
 
