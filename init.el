@@ -17,7 +17,7 @@
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8")
-  (setq org-agenda-files (quote ("~/Documents/journal/20130606" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org"))))
+  (setq org-agenda-files (quote ("~/Documents/journal/" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org"))))
 (when (eq system-type 'windows-nt)
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
   (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org" "D:/Time Tracking/Journal/")))
