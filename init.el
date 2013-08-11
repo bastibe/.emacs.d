@@ -424,7 +424,11 @@
  python-shell-completion-module-string-code
    "';'.join(module_completion('''%s'''))\n"
  python-shell-completion-string-code
-   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
+ jedi:setup-keys t
+ jedi:complete-on-dot t)
+
+(add-hook 'python-mode-hook 'jedi:setup)
 
 ;; set the default scheme implementation
 (setq scheme-program-name "csi")
@@ -593,6 +597,8 @@
  '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
  '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
+ '(jedi:server-args (quote ("--sys-path" "~/.virtualenvs/numerics/lib/python3.3/site-packages")))
+ '(jedi:server-command (quote ("python3" "/Users/bb/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py")))
  '(org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
  '(python-shell-interpreter "ipython")
  '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
