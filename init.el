@@ -542,29 +542,6 @@
 (global-set-key [triple-wheel-up] 'down-triple)
 
 ;; -----------------------------------------------------------------------------
-;; ECB customization
-;; -----------------------------------------------------------------------------
-
-;; for some reason, ECB demands this do be set in order to start up correctly
-(setq stack-trace-on-error t)
-(semantic-mode t)
-;; fix typo in ecb.el (for ecb 2.40)
-(defun ecb-enable-own-temp-buffer-show-futition (arg)
-  (ecb-enable-own-temp-buffer-show-function arg))
-
-(setq
- ecb-activate-before-layout-draw-hook 'use-full-screen
- ecb-deactivate-hook 'use-left-half-screen
- ecb-layout-name "leftright-basic"
- ecb-source-file-regexps '((".*"
-							("\\(^\\(\\.\\|#\\)\\|\\(~$\\|\\.\\(elc\\|obj\\|o\\|class\\|lib\\|dll\\|a\\|so\\|cache\\|pyc\\|exe\\|sublime-workspace\\|sublime-project\\|org_archive\\)$\\)\\)")
-							("^\\.\\(emacs\\|gnus\\)$")))
- ecb-tip-of-the-day nil
- ecb-windows-width 40)
-(global-set-key (kbd "C-x c") 'ecb-goto-window-compilation)
-
-
-;; -----------------------------------------------------------------------------
 ;; Extend browse-url to be able to search for stuff on the web
 ;; -----------------------------------------------------------------------------
 
