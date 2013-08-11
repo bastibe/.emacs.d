@@ -8,10 +8,10 @@
                            ((eq system-type 'gnu/linux) 110)))
 
 (when (eq system-type 'darwin)
-  (add-to-list 'exec-path "/opt/local/bin/") ; MacPorts bin path
+  (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
   (add-to-list 'exec-path "/Applications/MATLAB_R2012a_Student.app/bin/") ; Matlab
-  (setenv "PATH" (concat "/opt/local/bin:/usr/texbin:" (getenv "PATH")))
+  (setenv "PATH" (concat "/usr/local/bin:/usr/texbin:" (getenv "PATH")))
   (setq eshell-path-env
         (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
