@@ -136,6 +136,9 @@
 ;; Make Emacs behave nicely
 ;; -----------------------------------------------------------------------------
 
+(global-set-key (kbd "C-x c") 'ns-do-hide-emacs)
+(global-set-key (kbd "s-w") 'ns-do-hide-emacs)
+
 ;; enable "dangerous" features
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
