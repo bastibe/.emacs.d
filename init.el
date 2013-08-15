@@ -21,6 +21,7 @@
                                  "~/Dropbox/Elements/arbeit.org"
                                  "~/Dropbox/Elements/life.org"
                                  "~/Dropbox/Elements/uni.org"))))
+
 (when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
   (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org"
@@ -40,6 +41,13 @@
   (setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
   ;; so emacs finds the vital binaries like diff.exe
   (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin")
+  ;; set correct python interpreter
+  (setq python-shell-interpreter "C:/WinPython/python-3.3.2.amd64/Scripts/ipython3.exe"
+        jedi:server-args
+        (quote ("--sys-path" "C:/WinPython/python-3.3.2.amd64/Lib/site-packages"))
+        jedi:server-command
+        (quote ("C:/WinPython/python-3.3.2.amd64/python.exe"
+                "C:/Users/449BBechtold/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py")))
   (fset 'EasyCODEDelete
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([19 69 97 115 121 67 79 68 69 13 18 47 42 13 67108896 19 42 47 13 23] 0 "%d")) arg))))
 
@@ -420,8 +428,6 @@
           t)
 
 (setq
- python-shell-interpreter "ipython"
- python-shell-interpreter-args ""
  python-shell-prompt-regexp "In \\[[0-9]+\\]: "
  python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
  python-shell-completion-setup-code
@@ -579,10 +585,7 @@
  '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
  '(diary-file "~/Dropbox/Elements/diary")
  '(ecb-options-version "2.40")
- '(jedi:server-args (quote ("--sys-path" "~/.virtualenvs/numerics/lib/python3.3/site-packages")))
- '(jedi:server-command (quote ("python3" "/Users/bb/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py")))
  '(org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
- '(python-shell-interpreter "ipython")
  '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
  '(sentence-end-double-space nil))
 
