@@ -17,10 +17,14 @@
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8")
-  (setq org-agenda-files (quote ("~/Documents/journal/" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org"))))
+  (setq org-agenda-files (quote ("~/Documents/journal/"
+                                 "~/Dropbox/Elements/arbeit.org"
+                                 "~/Dropbox/Elements/life.org"
+                                 "~/Dropbox/Elements/uni.org"))))
 (when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
-  (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org" "D:/Time Tracking/Journal/")))
+  (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org"
+                                 "D:/Time Tracking/Journal/")))
   (setq org-journal-dir "d:/Time Tracking/Journal/")
   ;; so git opens emacs if invoked from emacs
   (setenv "EDITOR" "C:/PROGRA~2/emacs/bin/emacs.exe")
