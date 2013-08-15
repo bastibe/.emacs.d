@@ -18,7 +18,7 @@
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8")
   (setq org-agenda-files (quote ("~/Documents/journal/" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org"))))
-(when (eq system-type 'windows-nt)
+(when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
   (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org" "D:/Time Tracking/Journal/")))
   (setq org-journal-dir "d:/Time Tracking/Journal/")
