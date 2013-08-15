@@ -440,6 +440,7 @@
  jedi:complete-on-dot t)
 
 (add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook 'auto-complete-mode)
 
 ;; set the default scheme implementation
 (setq scheme-program-name "csi")
