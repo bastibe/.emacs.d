@@ -7,10 +7,9 @@
                            ((eq system-type 'windows-nt) 100)
                            ((eq system-type 'gnu/linux) 110)))
 
-(when (eq system-type 'darwin)
+(when (and (eq system-type 'darwin) (string= (system-name) "randomtask"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
-  (add-to-list 'exec-path "/Applications/MATLAB_R2012a_Student.app/bin/") ; Matlab
   (setenv "PATH" (concat "/usr/local/bin:/usr/texbin:" (getenv "PATH")))
   (setq eshell-path-env
         (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
@@ -20,7 +19,13 @@
   (setq org-agenda-files (quote ("~/Documents/journal/"
                                  "~/Dropbox/Elements/arbeit.org"
                                  "~/Dropbox/Elements/life.org"
-                                 "~/Dropbox/Elements/uni.org"))))
+                                 "~/Dropbox/Elements/uni.org")))
+  (setq python-shell-interpreter "/Users/bb/.virtualenvs/numerics/bin/ipython3"
+        jedi:server-args
+        (quote ("--sys-path" "/Users/bb/.virtualenvs/numerics/lib/python3.3/site-packages/"))
+        jedi:server-command
+        (quote ("/Users/bb/.virtualenvs/numerics/bin/python"
+                "/Users/bb/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py"))))
 
 (when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
@@ -190,19 +195,8 @@
 (org-clock-persistence-insinuate)
 (setq org-time-stamp-rounding-minutes '(5 5))
 
-;; make org-clockreports as informative as possible
-(setq org-agenda-clockreport-parameter-plist
-      (quote (:link 1 :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
-
 ;; detect external file changes automatically
 (global-auto-revert-mode t)
-
-;; simplify window-movements
-(global-unset-key (kbd "C-c f"))
-(global-set-key (kbd "C-c f") 'windmove-right)
-(global-set-key (kbd "C-c b") 'windmove-left)
-(global-set-key (kbd "C-c n") 'windmove-down)
-(global-set-key (kbd "C-c p") 'windmove-up)
 
 ;; NO TABS. EVER.
 (setq-default indent-tabs-mode nil)
@@ -228,7 +222,6 @@
 ;; store backup files where they don't bother me
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups/")))
 
-
 ;; disable yank on mouse-2 (middle-click)
 (global-set-key [mouse-2] nil)
 
@@ -236,7 +229,7 @@
 (ido-mode t)
 (setq ido-enable-flex-matching t)
 (load "ido-goto-symbol")
-(global-set-key "\C-ci" 'ido-goto-symbol)
+;; (global-set-key "\C-ci" 'ido-goto-symbol)
 
 ;; join lines using keyboard shortcut
 (global-set-key (kbd "M-j") 'join-line)
@@ -268,7 +261,7 @@
 (setq ring-bell-function #'ignore)
 
 ;; delete region when I start to type
-(pending-delete-mode t)
+;; (pending-delete-mode t)
 
 ;; Easily wrap statements in delimiters
 (wrap-region-global-mode t)
@@ -321,23 +314,6 @@
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
 
-(defun iedit-dwim (arg)
-  "Starts iedit but uses \\[narrow-to-defun] to limit its scope."
-  (interactive "P")
-  (if arg
-      (iedit-mode)
-    (save-excursion
-      (save-restriction
-        (widen)
-        ;; this function determines the scope of 'iedit-start'.
-        (narrow-to-defun)
-        (if iedit-mode
-            (iedit-done)
-          ;; 'current-word' can of course be replaced by other function
-          (iedit-start (current-word)))))))
-
-(global-set-key (kbd "C-:") 'iedit-dwim)
-
 (defun halve-other-window-height ()
   "Expand current window to use half of the other window's lines."
   (interactive)
@@ -350,6 +326,7 @@
 (add-hook 'diary-display-hook 'fancy-diary-display)
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
+;; set up the calendar to look German
 (setq calendar-week-start-day 1
       calendar-day-name-array ["Sonntag" "Montag" "Dienstag" "Mittwoch"
                                "Donnerstag" "Freitag" "Samstag"]
@@ -398,6 +375,12 @@
 (global-set-key (kbd "C-a") 'bb/move-backward)
 (global-set-key (kbd "C-e") 'bb/move-forward)
 
+;; set up ansi-term to work with unicode correctly
+(add-hook 'term-exec-hook
+          (lambda ()
+            (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
+          t)
+
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
@@ -421,12 +404,7 @@
 ;; Set up some language specific stuff
 ;; -----------------------------------------------------------------------------
 
-;; enable a few modules in Haskell mode
-(add-hook 'haskell-mode-hook
-          (lambda ()
-            (turn-on-haskell-indentation))
-          t)
-
+;; set up python to use ipython and working auto-completion
 (setq
  python-shell-prompt-regexp "In \\[[0-9]+\\]: "
  python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
@@ -440,10 +418,8 @@
  jedi:complete-on-dot t)
 
 (add-hook 'python-mode-hook 'jedi:setup)
+(require 'auto-complete)
 (add-hook 'python-mode-hook 'auto-complete-mode)
-
-;; set the default scheme implementation
-(setq scheme-program-name "csi")
 
 ;; open *.md files as markdown
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -564,15 +540,6 @@
 					  (url-hexify-string url))))
 (global-set-key (kbd "C-c C-s") 'search)
 
-(defun chicken-doc (url)
-  "Opens a browser and searches the Scheme documentation for the given string"
-  (interactive "sDocumentation for: ")
-  (browse-url (concat "http://api.call-cc.org/cdoc?q="
-					  (url-hexify-string url))))
-(add-hook 'scheme-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-c s") 'chicken-doc)))
-
 
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
@@ -584,8 +551,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
- '(diary-file "~/Dropbox/Elements/diary")
- '(ecb-options-version "2.40")
  '(org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+")
  '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
  '(sentence-end-double-space nil))
