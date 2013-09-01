@@ -202,7 +202,6 @@
 (setq-default indent-tabs-mode nil)
 
 ;; Auto-resize eshell or Python windows to 15 lines of height
-;;(add-hook 'window-configuration-change-hook
 (add-hook 'post-command-hook
 		  (lambda ()
             ;; prevent infinite loop if there is only one window
@@ -228,8 +227,6 @@
 ;; enable ido mode and fuzzy matching
 (ido-mode t)
 (setq ido-enable-flex-matching t)
-(load "ido-goto-symbol")
-;; (global-set-key "\C-ci" 'ido-goto-symbol)
 
 ;; join lines using keyboard shortcut
 (global-set-key (kbd "M-j") 'join-line)
