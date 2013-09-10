@@ -95,7 +95,13 @@
 (load-theme 'sanityinc-tomorrow-night t)
 
 ;; set a nice looking font
-(set-face-attribute 'default nil :height my-font-height :family "DejaVu Sans Mono")
+(set-face-attribute 'default nil :height my-font-height :family "Ubuntu Mono")
+
+;; use some characters from DejaVu, since they are not present in Ubuntu Mono
+(mapc (lambda (x) (set-fontset-font t (cons x x) (font-spec
+                                :size (- (/ my-font-height 10) 1)
+                                :family "DejaVu Sans Mono")))
+       '(?Σ ?√ ?„ ?” ?“))
 
 ;; don't show hat pesky toolbar
 (if window-system
