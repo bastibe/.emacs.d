@@ -385,7 +385,7 @@
 (setq-default tab-width 4)
 
 ;; always indent automatically
-(electric-indent-mode t)
+(global-set-key (kbd "RET") 'newline-and-indent)
 
 ;; C/C++
 (setq c-default-style "linux"
