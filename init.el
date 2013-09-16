@@ -78,7 +78,7 @@
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
     expand-region htmlize ido-ubiquitous ido-vertical-mode iy-go-to-char jedi
     magit main-line markdown-mode multiple-cursors org-plus-contrib org-journal
-    popup pymacs smartparens undo-tree wrap-region)
+    popup pymacs smartparens undo-tree wrap-region yaml-mode)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -454,6 +454,10 @@
 
 ;; open *.pdf files as images
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
+
+;; open *.yaml files as yaml
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
