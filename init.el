@@ -76,8 +76,8 @@
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
     expand-region htmlize ido-ubiquitous iy-go-to-char jedi magit
-    markdown-mode multiple-cursors org-journal popup pymacs undo-tree
-    wrap-region)
+    markdown-mode multiple-cursors org-plus-contrib org-journal popup
+    pymacs undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
