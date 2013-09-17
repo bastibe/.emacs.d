@@ -121,8 +121,8 @@
 ;; set window size to the left half of the screen
 (defun use-left-half-screen ()
   (interactive)
-  (let* ((excess-width 56)
-		 (excess-height 48)
+  (let* ((excess-width 32)
+		 (excess-height 56)
          (half-screen-width (- (/ (x-display-pixel-width) 2) excess-width))
          (screen-height (- (x-display-pixel-height) excess-height)))
 	(set-frame-pixel-size (selected-frame) half-screen-width screen-height)
