@@ -84,9 +84,6 @@
   (when (not (package-installed-p p))
 	(package-install p)))
 
-;; locally installed custom journal mode
-(require 'org-journal)
-
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs look good
 ;; -----------------------------------------------------------------------------
