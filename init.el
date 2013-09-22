@@ -89,7 +89,7 @@
 ;; -----------------------------------------------------------------------------
 
 ;; load my favourite theme of the day
-(load-theme 'sanityinc-tomorrow-night t)
+(load-theme 'sanityinc-tomorrow-day t)
 
 ;; set a nice looking font
 (set-face-attribute 'default nil :height my-font-height :family "Ubuntu Mono")
