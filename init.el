@@ -7,7 +7,7 @@
                            ((eq system-type 'windows-nt) 100)
                            ((eq system-type 'gnu/linux) 110)))
 
-(when (and (eq system-type 'darwin) (string= (system-name) "randomtask"))
+(when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
   (setenv "PATH" (concat "/usr/local/bin:/usr/texbin:" (getenv "PATH")))
