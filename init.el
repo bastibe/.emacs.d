@@ -336,6 +336,8 @@
   (enlarge-window (/ (window-height (next-window)) 2)))
 (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
+(require 'org-journal)
+
 (setq view-diary-entries-initially t
       mark-diary-entries-in-calendar t
       number-of-diary-entries 7)
