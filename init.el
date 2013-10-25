@@ -20,6 +20,7 @@
                                  "~/Dropbox/Elements/arbeit.org"
                                  "~/Dropbox/Elements/life.org"
                                  "~/Dropbox/Elements/uni.org")))
+  (setq org-babel-python-command "~/.virtualenvs/numerics/bin/python")
   (setq python-shell-interpreter "/Users/bb/.virtualenvs/numerics/bin/ipython3"
         jedi:server-args
         (quote ("--sys-path" "/Users/bb/.virtualenvs/numerics/lib/python3.3/site-packages/"))
@@ -431,6 +432,9 @@
    "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
  jedi:setup-keys t
  jedi:complete-on-dot t)
+
+;; set up org-babel so it uses the correct python version
+(org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (require 'auto-complete)
