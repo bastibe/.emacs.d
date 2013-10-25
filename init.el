@@ -234,6 +234,9 @@
 ;; enable ido mode and fuzzy matching
 (ido-mode t)
 (setq ido-enable-flex-matching t)
+(require 'ido-vertical-mode)
+(ido-vertical-mode)
+(setq ido-auto-merge-delay-time 1)
 
 ;; join lines using keyboard shortcut
 (global-set-key (kbd "M-j") 'join-line)
