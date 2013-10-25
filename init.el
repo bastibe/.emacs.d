@@ -92,13 +92,21 @@
 (load-theme 'sanityinc-tomorrow-day t)
 
 ;; set a nice looking font
-(set-face-attribute 'default nil :height my-font-height :family "Ubuntu Mono")
+(set-face-attribute 'default nil
+                    :family "PragmataPro"
+                    :width 'normal
+                    :height my-font-height
+                    :weight 'normal)
 
-;; use some characters from DejaVu, since they are not present in Ubuntu Mono
-(mapc (lambda (x) (set-fontset-font t (cons x x) (font-spec
-                                :size (- (/ my-font-height 10) 1)
-                                :family "DejaVu Sans Mono")))
-       '(?Σ ?√ ?„ ?” ?“))
+;; Use Pragmata for Unicode, too
+(when (functionp 'set-fontset-font)
+  (set-fontset-font "fontset-default"
+                    'unicode
+                    (font-spec :family "PragmataPro"
+                               :width 'normal
+                               :size (/ my-font-height 10)
+                               :weight 'normal)))
+;; For testing purposes: →„Σ“←
 
 ;; don't show hat pesky toolbar
 (if window-system
