@@ -481,6 +481,14 @@
             (define-key org-mode-map (kbd "C-j") 'er/expand-region))
             t)
 
+(require 'ox-latex)
+(setq org-latex-listings 'minted
+      org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+
 (add-hook 'LaTeX-mode-hook
 		  (lambda ()
 			(define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
