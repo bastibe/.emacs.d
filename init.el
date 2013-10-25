@@ -212,6 +212,10 @@
 (org-clock-persistence-insinuate)
 (setq org-time-stamp-rounding-minutes '(5 5))
 
+;; make org-clockreports as informative as possible
+(setq org-agenda-clockreport-parameter-plist
+      (quote (:link 1 :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
+
 ;; detect external file changes automatically
 (global-auto-revert-mode t)
 
