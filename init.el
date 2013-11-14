@@ -76,8 +76,8 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
-    expand-region htmlize ido-ubiquitous iy-go-to-char jedi magit
-    main-line markdown-mode multiple-cursors org-plus-contrib org-journal
+    expand-region htmlize ido-ubiquitous ido-vertical-mode iy-go-to-char jedi
+    magit main-line markdown-mode multiple-cursors org-plus-contrib org-journal
     popup pymacs smartparens undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
@@ -244,7 +244,6 @@
 ;; enable ido mode and fuzzy matching
 (ido-mode t)
 (setq ido-enable-flex-matching t)
-(require 'ido-vertical-mode)
 (ido-vertical-mode)
 (setq ido-auto-merge-delay-time 1)
 
