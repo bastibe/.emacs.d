@@ -535,6 +535,17 @@
 			  (lambda () (interactive) (doc-view-previous-line-or-previous-page 3))))
 			t)
 
+(yas-global-mode t)
+(yas/load-directory "/Users/bb/.emacs.d/snippets")
+(add-hook 'org-mode-hook
+          (lambda ()
+            ;; yasnippet
+            (make-variable-buffer-local 'yas/trigger-key)
+            (setq yas/trigger-key [tab])
+            (add-to-list 'org-tab-first-hook
+                         (lambda ()
+                           (let ((yas/fallback-behavior 'return-nil)) (yas/expand))))
+            (define-key yas/keymap [tab] 'yas/next-field)))
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs scroll somewhat nicely
