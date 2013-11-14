@@ -183,7 +183,7 @@
 (setq enable-recursive-minibuffers t)
 
 ;; enter German special characters using the default OSX key combination
-(global-set-key (kbd "M-°") "“")
+(global-set-key (kbd "M-\"") "“")
 (global-set-key (kbd "M-/") "\\")
 (global-set-key (kbd "M-8") "{")
 (global-set-key (kbd "M-9") "}")
