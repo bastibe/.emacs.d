@@ -438,6 +438,8 @@
 
 ;; set up org-babel so it uses the correct python version
 (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
+;; allow org-mode to use alphabetical lists
+(setq org-list-allow-alphabetical t)
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (require 'auto-complete)
