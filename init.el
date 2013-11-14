@@ -78,7 +78,7 @@
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
     expand-region htmlize ido-ubiquitous iy-go-to-char jedi magit
     main-line markdown-mode multiple-cursors org-plus-contrib org-journal
-    popup pymacs undo-tree wrap-region)
+    popup pymacs smartparens undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -154,7 +154,8 @@
     (use-left-half-screen))
 
 ;; highlight matching parenthesis
-(show-paren-mode t)
+;; (show-paren-mode t)
+(show-smartparens-mode)
 
 ;; enable column number in info area
 (column-number-mode t)
