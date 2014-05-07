@@ -3,9 +3,6 @@
 ;; -----------------------------------------------------------------------------
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
-(setq my-font-height (cond ((eq system-type 'darwin) 120)
-                           ((eq system-type 'windows-nt) 100)
-                           ((eq system-type 'gnu/linux) 110)))
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
@@ -21,12 +18,12 @@
                                  "~/Dropbox/Elements/life.org"
                                  "~/Dropbox/Elements/uni.org")))
   (setq org-babel-python-command "~/.virtualenvs/numerics/bin/python")
-  (setq python-shell-interpreter "/Users/bb/.virtualenvs/numerics/bin/ipython3"
+  (setq python-shell-interpreter "/Users/bb/.conda/envs/thesis/bin/ipython"
         jedi:server-args
-        (quote ("--sys-path" "/Users/bb/.virtualenvs/numerics/lib/python3.3/site-packages/"))
+        (quote ("--sys-path" "/Users/bb/.conda/envs/thesis/lib/python3.3/site-packages/"))
         jedi:server-command
-        (quote ("/Users/bb/.virtualenvs/numerics/bin/python"
-                "/Users/bb/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py"))))
+        (quote ("/Users/bb/.conda/envs/thesis/bin/python"
+                "/Users/bb/.emacs.d/elpa/jedi-*/jediepcserver.py"))))
 
 (when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
@@ -57,17 +54,17 @@
   (fset 'EasyCODEDelete
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([19 69 97 115 121 67 79 68 69 13 18 47 42 13 67108896 19 42 47 13 23] 0 "%d")) arg))))
 
-(server-start)
-
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
 ;; -----------------------------------------------------------------------------
 
 (require 'package)
+(setq package-archive-exclude-alist '(("melpa")))
 (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
 				  ("elpa" . "http://tromey.com/elpa/")
 				  ("gnu" . "http://elpa.gnu.org/packages/")
-                  ("org" . "http://orgmode.org/elpa/")))
+                  ("org" . "http://orgmode.org/elpa/")
+                  ("melpa" . "http://melpa.milkbox.net/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
@@ -76,9 +73,10 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
-    expand-region htmlize ido-ubiquitous ido-vertical-mode iy-go-to-char jedi
-    magit main-line markdown-mode multiple-cursors org-plus-contrib org-journal
-    popup pymacs smartparens undo-tree wrap-region yaml-mode)
+    expand-region frame-restore htmlize ido-ubiquitous ido-vertical-mode
+    iy-go-to-char jedi magit main-line markdown-mode multiple-cursors
+    org-plus-contrib org-journal popup pymacs smartparens undo-tree wrap-region
+    yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -89,10 +87,18 @@
 ;; Make Emacs look good
 ;; -----------------------------------------------------------------------------
 
+;; restore frame configuration
+(frame-restore-mode t)
+
 ;; load my favourite theme of the day
 (load-theme 'sanityinc-tomorrow-day t)
 
 ;; set a nice looking font
+(setq my-font-height (cond ((eq system-type 'darwin) 130)
+                           ((eq system-type 'windows-nt) 100)
+                           ((eq system-type 'gnu/linux) 110)))
+
+
 (set-face-attribute 'default nil
                     :family "PragmataPro"
                     :width 'normal
@@ -122,37 +128,6 @@
 (setq org-src-fontify-natively t)
 (setq org-clock-mode-line-total 'current)
 
-;; set window size to an arbitrary number of pixels
-(defun set-frame-pixel-size (frame width height)
-  "Sets size of FRAME to WIDTH by HEIGHT, measured in pixels."
-  (let ((pixels-per-char-width (/ (frame-pixel-width) (frame-width)))
-		(pixels-per-char-height (/ (frame-pixel-height) (frame-height))))
-	(set-frame-size frame
-					(floor (/ width pixels-per-char-width))
-					(floor (/ height pixels-per-char-height)))))
-
-;; set window size to the left half of the screen
-(defun use-left-half-screen ()
-  (interactive)
-  (let* ((excess-width 32)
-		 (excess-height 56)
-         (half-screen-width (- (/ (x-display-pixel-width) 2) excess-width))
-         (screen-height (- (x-display-pixel-height) excess-height)))
-	(set-frame-pixel-size (selected-frame) half-screen-width screen-height)
-    (set-frame-position (selected-frame) 0 0)))
-
-(defun use-full-screen ()
-  (interactive)
-  (let* ((excess-width 56)
-         (excess-height 48)
-         (screen-width (- (x-display-pixel-width) excess-width))
-         (screen-height (- (x-display-pixel-height) excess-height)))
-  (set-frame-pixel-size (selected-frame) screen-width screen-height)
-  (set-frame-position (selected-frame) 0 0)))
-
-(if window-system
-    (use-left-half-screen))
-
 ;; highlight matching parenthesis
 ;; (show-paren-mode t)
 (show-smartparens-mode)
@@ -162,6 +137,7 @@
 
 ;; in magit and diary mode, use word wrap
 (add-hook 'magit-mode-hook (lambda () (visual-line-mode t)) t)
+(add-hook 'magit-log-edit-mode-hook (lambda () (visual-line-mode t)) t)
 (add-hook 'diary-mode-hook (lambda () (visual-line-mode t)) t)
 
 ;; -----------------------------------------------------------------------------
@@ -241,6 +217,8 @@
 
 ;; store backup files where they don't bother me
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups/")))
+;; don't create #autosave-files#
+(setq auto-save-default nil)
 
 ;; disable yank on mouse-2 (middle-click)
 (global-set-key [mouse-2] nil)
@@ -340,8 +318,6 @@
   (enlarge-window (/ (window-height (next-window)) 2)))
 (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
-(require 'org-journal)
-
 (setq view-diary-entries-initially t
       mark-diary-entries-in-calendar t
       number-of-diary-entries 7)
@@ -439,14 +415,13 @@
  jedi:setup-keys t
  jedi:complete-on-dot t)
 
-;; set up org-babel so it uses the correct python version
-(org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
 ;; allow org-mode to use alphabetical lists
 (setq org-list-allow-alphabetical t)
+(setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
 
 (add-hook 'python-mode-hook 'jedi:setup)
-(require 'auto-complete)
-(add-hook 'python-mode-hook 'auto-complete-mode)
+;;(autoload 'auto-complete "auto-complete-mode" "Auto Complete Mode" t)
+;;(add-hook 'python-mode-hook 'auto-complete-mode)
 
 ;; open *.md files as markdown
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -469,18 +444,14 @@
 			(visual-line-mode t))
 		  t)
 
-;; start up org mode with visual-line-mode and org-indent-mode
-(add-hook 'org-mode-hook
-		  (lambda ()
-			(visual-line-mode t))
-		  t)
 (setq org-startup-indented t)
 
 ;; start up latex mode with visual-line-mode
 (add-hook 'latex-mode-hook
 		  (lambda ()
 			(visual-line-mode t)
-			(turn-on-reftex))
+			(turn-on-reftex)
+            (yas-minor-mode t))
 		  t)
 
 ;; open/show pdf file within Emacs using doc-view-mode
@@ -495,23 +466,6 @@
 		(doc-view-mode))
 	(doc-view-revert-buffer t t)
 	(switch-to-buffer-other-window tex-buffer-name)))
-
-(add-hook 'org-mode-hook
-          (lambda ()
-            ;; make DONE use strike through
-            (set-face-attribute 'org-done nil :strike-through t)
-            (set-face-attribute 'org-headline-done nil :strike-through t)
-            ;; overload C-j in org-mode, too
-            (define-key org-mode-map (kbd "C-j") 'er/expand-region))
-            t)
-
-(require 'ox-latex)
-(setq org-latex-listings 'minted
-      org-latex-pdf-process
-      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
-        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-(add-to-list 'org-latex-packages-alist '("" "minted"))
 
 (add-hook 'LaTeX-mode-hook
 		  (lambda ()
@@ -544,40 +498,59 @@
 			  (lambda () (interactive) (doc-view-previous-line-or-previous-page 3))))
 			t)
 
-(yas-global-mode t)
-(yas/load-directory "/Users/bb/.emacs.d/snippets")
+(autoload 'ox-latex "org-mode" "Org Mode." t)
+(autoload 'ox-html "org-mode" "Org Mode." t)
+(autoload 'ox-rss "org-mode" "Org Mode." t)
+(autoload 'ox-publish "org-mode" "Org Mode." t)
 (add-hook 'org-mode-hook
           (lambda ()
             ;; yasnippet
+            (yas-minor-mode t)
+            ;; (yas/load-directory "/Users/bb/.emacs.d/snippets")
+            ;; set up org-babel so it uses the correct python version
+            (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
             (make-variable-buffer-local 'yas/trigger-key)
             (setq yas/trigger-key [tab])
             (add-to-list 'org-tab-first-hook
                          (lambda ()
                            (let ((yas/fallback-behavior 'return-nil)) (yas/expand))))
-            (define-key yas/keymap [tab] 'yas/next-field)))
+            (define-key yas/keymap [tab] 'yas/next-field)
+            ;; turn on visual-line-mode
+            (visual-line-mode t)
+            ;; make DONE use strike through
+            (set-face-attribute 'org-done nil :strike-through t)
+            (set-face-attribute 'org-headline-done nil :strike-through t)
+            ;; overload C-j in org-mode, too
+            (define-key org-mode-map (kbd "C-j") 'er/expand-region)
+            (setq org-latex-listings 'minted
+                  org-latex-pdf-process
+                  '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                    "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+            (add-to-list 'org-latex-packages-alist '("" "minted"))))
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs scroll somewhat nicely
 ;; -----------------------------------------------------------------------------
 
-;; sadly, Emacs does not handle all scroll events on OSX. Hence, inertia
-;;   scrolling does not work properly. This is the closest approximation I could
-;;   come up with.
-(setq mouse-wheel-progressive-speed nil)
-(setq redisplay-dont-pause t)
-(defun up-single () (interactive) (scroll-up 1))
-(defun down-single () (interactive) (scroll-down 1))
-(defun up-double () (interactive) (scroll-up 2))
-(defun down-double () (interactive) (scroll-down 2))
-(defun up-triple () (interactive) (scroll-up 5))
-(defun down-triple () (interactive) (scroll-down 5))
+;; ;; sadly, Emacs does not handle all scroll events on OSX. Hence, inertia
+;; ;;   scrolling does not work properly. This is the closest approximation I could
+;; ;;   come up with.
+;; (setq mouse-wheel-progressive-speed nil)
+;; (setq redisplay-dont-pause t)
+;; (defun up-single () (interactive) (scroll-up 1))
+;; (defun down-single () (interactive) (scroll-down 1))
+;; (defun up-double () (interactive) (scroll-up 2))
+;; (defun down-double () (interactive) (scroll-down 2))
+;; (defun up-triple () (interactive) (scroll-up 5))
+;; (defun down-triple () (interactive) (scroll-down 5))
 
-(global-set-key [wheel-down] 'up-single)
-(global-set-key [wheel-up] 'down-single)
-(global-set-key [double-wheel-down] 'up-double)
-(global-set-key [double-wheel-up] 'down-double)
-(global-set-key [triple-wheel-down] 'up-triple)
-(global-set-key [triple-wheel-up] 'down-triple)
+;; (global-set-key [wheel-down] 'up-single)
+;; (global-set-key [wheel-up] 'down-single)
+;; (global-set-key [double-wheel-down] 'up-double)
+;; (global-set-key [double-wheel-up] 'down-double)
+;; (global-set-key [triple-wheel-down] 'up-triple)
+;; (global-set-key [triple-wheel-up] 'down-triple)
 
 ;; -----------------------------------------------------------------------------
 ;; Extend browse-url to be able to search for stuff on the web
@@ -594,9 +567,6 @@
 ;; Set up blogging in Emacs
 ;; -----------------------------------------------------------------------------
 
-(require 'ox-html)
-(require 'ox-rss)
-(require 'ox-publish)
 (setq org-publish-project-alist
       '(("blog"
          :components ("blog-content" "blog-static" "blog-rss"))
@@ -625,6 +595,10 @@
           <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin' rel='stylesheet' type='text/css'>
           <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
           <link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
+          <link rel=\"icon\" href=\"static/favicon.ico\">
+          <link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
+          <link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
+          <link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
           <title>Basti's Scratchpad on the Internet</title>
           <meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\" />
           <meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">"
@@ -658,7 +632,8 @@
               </script>
               <noscript>Please enable JavaScript to view the
                   <a href=\"http://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript>
-              <a href=\"http://disqus.com\" class=\"dsq-brlink\">comments powered by <span class=\"logo-disqus\">Disqus</span></a>")))
+              <a href=\"http://disqus.com\" class=\"dsq-brlink\">comments powered by <span class=\"logo-disqus\">Disqus</span></a>
+<center><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" href=\"http://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"http://creativecommons.org/ns#\" href=\"http://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")))
          :exclude "rss.org\\|archive.org\\|theindex.org")
         ("blog-rss"
          :base-directory "~/Projects/blog/posts"
@@ -667,6 +642,7 @@
          :publishing-function (org-rss-publish-to-rss)
          :html-link-home "http://bastibe.de/"
          :html-link-use-abs-url t
+         :rss-image-url "http://bastibe.de/static/favicon.png"
          :exclude ".*"
          :include ("rss.org")
          :with-toc nil
@@ -674,10 +650,21 @@
          :title "Basti's Scratchpad on the Internet")
         ("blog-static"
          :base-directory "~/Projects/blog/static"
-         :base-extension "png\\|jpg\\|css"
+         :base-extension "png\\|jpg\\|css\\|ico"
          :publishing-directory "~/Projects/blog/publish/static"
          :recursive t
          :publishing-function org-publish-attachment)))
+
+(defadvice org-rss-headline
+  (around my-rss-headline (headline contents info) activate)
+  "only use org-rss-headline for top level headlines"
+  (if (< (org-export-get-relative-level headline info) 2)
+      ad-do-it
+    (setq ad-return-value (org-html-headline headline contents info))))
+
+;; This slows down org-publish to a crawl, and it is not needed since
+;; I use magit anyway.
+(remove-hook 'find-file-hooks 'vc-find-file-hook)
 
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
@@ -689,7 +676,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(mac-command-modifier (quote hyper))
+ '(mac-option-modifier (quote meta))
  '(org-agenda-file-regexp "\\`[^.].*\\.org\\'\\|[0-9]+$")
+ '(org-agenda-files (quote ("~/Projects/thesis/masterarbeit.org" "/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org")))
  '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
  '(send-mail-function (quote mailclient-send-it))
  '(sentence-end-double-space nil))
