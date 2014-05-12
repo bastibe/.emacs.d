@@ -22,8 +22,11 @@
         jedi:server-args
         (quote ("--sys-path" "/Users/bb/.conda/envs/thesis/lib/python3.3/site-packages/"))
         jedi:server-command
-        (quote ("/Users/bb/.conda/envs/thesis/bin/python"
-                "/Users/bb/.emacs.d/elpa/jedi-*/jediepcserver.py"))))
+        `("/Users/bb/.conda/envs/thesis/bin/python"
+          ;; grab whichever version of jediepcserver is installed
+          ,(concat "/Users/bb/.emacs.d/elpa/"
+                   (car (directory-files "~/.emacs.d/elpa" nil "jedi"))
+                   "/jediepcserver.py"))))
 
 (when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
