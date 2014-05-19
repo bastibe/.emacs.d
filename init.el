@@ -67,7 +67,8 @@
 				  ("elpa" . "http://tromey.com/elpa/")
 				  ("gnu" . "http://elpa.gnu.org/packages/")
                   ("org" . "http://orgmode.org/elpa/")
-                  ("melpa" . "http://melpa.milkbox.net/packages/")))
+                  ("melpa" . "http://melpa.milkbox.net/packages/")
+                  ("melpa-stable" . "http://melpa-stable.milkbox.net/packages")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
@@ -78,8 +79,8 @@
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
     expand-region frame-restore htmlize ido-ubiquitous ido-vertical-mode
     iy-go-to-char jedi magit main-line markdown-mode multiple-cursors
-    org-plus-contrib org-journal popup pymacs smartparens undo-tree wrap-region
-    yasnippet)
+    org-plus-contrib org-journal popup pymacs smartparens undo-tree
+    web-mode wrap-region yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -430,6 +431,8 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 
 ;; open *.m files as octave
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
