@@ -305,7 +305,15 @@
 
 ;; quick access to org-agenda and org-todo
 (global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c t") 'org-todo-list)
+
+(defun term-other-window ()
+  "Create or switch to a terminal in another window"
+  (interactive)
+  (switch-to-buffer-other-window "*terminal*")
+  (term "fish"))
+
+;; quick access to a terminal
+(global-set-key (kbd "C-c t") 'term-other-window)
 
 ;; quick access to magit-status
 (global-set-key (kbd "C-c m") 'magit-status)
