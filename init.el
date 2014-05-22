@@ -67,8 +67,7 @@
 				  ("elpa" . "http://tromey.com/elpa/")
 				  ("gnu" . "http://elpa.gnu.org/packages/")
                   ("org" . "http://orgmode.org/elpa/")
-                  ("melpa" . "http://melpa.milkbox.net/packages/")
-                  ("melpa-stable" . "http://melpa-stable.milkbox.net/packages")))
+                  ("melpa-stable" . "http://melpa-stable.milkbox.net/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
