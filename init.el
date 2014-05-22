@@ -78,7 +78,7 @@
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
     expand-region frame-restore htmlize ido-ubiquitous ido-vertical-mode
-    iy-go-to-char jedi magit main-line markdown-mode multiple-cursors
+    iy-go-to-char jedi magit markdown-mode multiple-cursors
     org-plus-contrib org-journal popup pymacs smartparens undo-tree
     web-mode wrap-region yasnippet)
   "A list of packages to ensure are installed at launch.")
@@ -125,8 +125,6 @@
     (menu-bar-mode -1))
 
 ;; use mainline
-(require 'cl) ;; main-line uses cl
-(require 'main-line)
 
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
