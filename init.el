@@ -20,13 +20,15 @@
   (setq org-babel-python-command "~/.virtualenvs/numerics/bin/python")
   (setq python-shell-interpreter "/Users/bb/.conda/envs/thesis/bin/ipython"
         jedi:server-args
-        (quote ("--sys-path" "/Users/bb/.conda/envs/thesis/lib/python3.3/site-packages/"))
+        (quote ("--sys-path" "/Users/bb/.conda/envs/thesis/lib/python3.4/site-packages/"))
         jedi:server-command
         `("/Users/bb/.conda/envs/thesis/bin/python"
           ;; grab whichever version of jediepcserver is installed
           ,(concat "/Users/bb/.emacs.d/elpa/"
                    (car (directory-files "~/.emacs.d/elpa" nil "jedi"))
-                   "/jediepcserver.py"))))
+                   "/jediepcserver.py")))
+  (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
+  (setq default-directory "~"))
 
 (when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
   (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
@@ -79,7 +81,7 @@
     expand-region frame-restore htmlize ido-ubiquitous ido-vertical-mode
     iy-go-to-char jedi magit markdown-mode multiple-cursors
     org-plus-contrib org-journal popup pymacs smartparens undo-tree
-    web-mode wrap-region yasnippet)
+    wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -147,6 +149,7 @@
 
 (global-set-key (kbd "C-x c") 'ns-do-hide-emacs)
 (global-set-key (kbd "s-w") 'ns-do-hide-emacs)
+(setq ns-pop-up-frames nil)
 
 ;; enable "dangerous" features
 (put 'narrow-to-region 'disabled nil)
