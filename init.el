@@ -187,6 +187,9 @@
 ;; Make ispell and flyspell work with aspell instead of ispell
 (setq ispell-prefer-aspell t)
 
+;; Allow quotes in org source blocks
+(setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
+
 ;; make clock persistent
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -436,7 +439,6 @@
 
 ;; allow org-mode to use alphabetical lists
 (setq org-list-allow-alphabetical t)
-(setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
 
 (add-hook 'python-mode-hook 'jedi:setup)
 ;;(autoload 'auto-complete "auto-complete-mode" "Auto Complete Mode" t)
