@@ -77,11 +77,11 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(auto-complete auctex color-theme-sanityinc-tomorrow company dash
-    expand-region frame-restore htmlize ido-ubiquitous ido-vertical-mode
-    iy-go-to-char jedi magit markdown-mode multiple-cursors
-    org-plus-contrib org-journal popup pymacs smartparens undo-tree
-    wrap-region yaml-mode yasnippet)
+  '(auto-complete auctex color-theme-sanityinc-tomorrow company
+    dash expand-region frame-restore helm htmlize ido-ubiquitous
+    ido-vertical-mode iy-go-to-char jedi magit markdown-mode
+    multiple-cursors org-plus-contrib org-journal popup pymacs
+    smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -371,6 +371,15 @@
 
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
+
+;; quick access to helm-imenu
+(global-set-key (kbd "C-c i") 'helm-imenu)
+
+;; quick access to helm-mini
+(global-set-key (kbd "C-c b") 'helm-mini)
+
+;; quick access to helm-mini
+(global-set-key (kbd "C-c f") 'helm-find-files)
 
 (defun halve-other-window-height ()
   "Expand current window to use half of the other window's lines."
