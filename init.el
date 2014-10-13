@@ -17,7 +17,7 @@
                                  "~/Dropbox/Elements/arbeit.org"
                                  "~/Dropbox/Elements/life.org"
                                  "~/Dropbox/Elements/uni.org")))
-  (setq org-babel-python-command "~/.virtualenvs/numerics/bin/python")
+  (setq org-babel-python-command "~/.conda/envs/thesis/bin/python")
   (setq python-shell-interpreter "/Users/bb/.conda/envs/thesis/bin/ipython"
         jedi:server-args
         (quote ("--sys-path" "/Users/bb/.conda/envs/thesis/lib/python3.4/site-packages/"))
@@ -27,37 +27,9 @@
           ,(concat "/Users/bb/.emacs.d/elpa/"
                    (car (directory-files "~/.emacs.d/elpa" nil "jedi"))
                    "/jediepcserver.py")))
+  ;;(setq yas-snippet-dirs "~/.emacs.d/snippets")
   (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
   (setq default-directory "~"))
-
-(when (and (eq system-type 'windows-nt) (string= (system-name) "L4490002"))
-  (setq magit-git-executable "C:/Users/449BBechtold/AppData/Local/Programs/Git/bin/git.exe")
-  (setq org-agenda-files (quote ("d:/Time Tracking/Sennheiser.org"
-                                 "D:/Time Tracking/Journal/")))
-  (setq org-journal-dir "d:/Time Tracking/Journal/")
-  ;; so git opens emacs if invoked from emacs
-  (setenv "EDITOR" "C:/PROGRA~2/emacs/bin/emacs.exe")
-  ;; set the home directory to the user directory instead of %appdata%
-  (setenv "HOME" "C:/Users/449BBechtold/")
-  ;; so eshell uses git.exe instead of git.cmd
-  (setenv "PATH" (concat "C:\\Program Files (x86)\\Git\\bin;" (getenv "PATH")))
-  ;; so shell finds all the msys binaries
-  (setenv "PATH" (concat "C:\\MinGW\\msys\\1.0\\bin;" (getenv "PATH")))
-  ;; so shell uses the MinGW bash shell
-  (setq explicit-shell-file-name "C:/MinGW/msys/1.0/bin/bash")
-  (setq ispell-dictionary "german")
-  (setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
-  ;; so emacs finds the vital binaries like diff.exe
-  (add-to-list 'exec-path "C:/MinGW/msys/1.0/bin")
-  ;; set correct python interpreter
-  (setq python-shell-interpreter "C:/WinPython/python-3.3.2.amd64/Scripts/ipython3.exe"
-        jedi:server-args
-        (quote ("--sys-path" "C:/WinPython/python-3.3.2.amd64/Lib/site-packages"))
-        jedi:server-command
-        (quote ("C:/WinPython/python-3.3.2.amd64/python.exe"
-                "C:/Users/449BBechtold/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py")))
-  (fset 'EasyCODEDelete
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([19 69 97 115 121 67 79 68 69 13 18 47 42 13 67108896 19 42 47 13 23] 0 "%d")) arg))))
 
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
@@ -80,7 +52,7 @@
   '(auto-complete auctex color-theme-sanityinc-tomorrow company
     dash expand-region frame-restore helm htmlize ido-ubiquitous
     ido-vertical-mode iy-go-to-char jedi magit markdown-mode
-    multiple-cursors org-plus-contrib org-journal popup pymacs
+    multiple-cursors org-journal popup pymacs
     smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
@@ -109,6 +81,7 @@
                     :width 'normal
                     :height my-font-height
                     :weight 'normal)
+
 
 ;; Use Pragmata for Unicode, too
 (when (functionp 'set-fontset-font)
@@ -144,7 +117,7 @@
 (add-hook 'diary-mode-hook (lambda () (visual-line-mode t)) t)
 
 ;; make emacs visual-line wrap at some column
-(defvar visual-wrap-column nil)
+(defvar visual-wrap-column 0)
 
 (defun set-visual-wrap-column (new-wrap-column &optional buffer)
   "Force visual line wrap at NEW-WRAP-COLUMN in BUFFER (defaults
@@ -168,20 +141,20 @@
 
 (defun update-visual-wrap-column ()
   (if (not visual-wrap-column)
-      (set-window-margins nil nil)
+      (set-window-margins nil 1)
     (let* ((current-margins (window-margins))
+           (left-margin (or (car current-margins) 1))
            (right-margin (or (cdr current-margins) 0))
            (current-width (window-width))
            (current-available (+ current-width right-margin)))
       (if (<= current-available visual-wrap-column)
-          (set-window-margins nil (car current-margins))
-        (set-window-margins nil (car current-margins)
+          (set-window-margins nil left-margin)
+        (set-window-margins nil left-margin
                             (- current-available visual-wrap-column))))))
 
 ;; make fringes more beautiful
 (set-fringe-mode 0) ; disable fringes
 ;; ensure that the left margin is always 1
-(add-hook 'window-configuration-change-hook (lambda () (set-window-margins nil 1)))
 (set-display-table-slot standard-display-table 'wrap ?→) ; eol wrap character
 (set-display-table-slot standard-display-table 'truncation ?→) ; bol wrap char
 ;; TODO clicking the margin should position cursor at eol/bol
@@ -190,9 +163,12 @@
 ;; Make Emacs behave nicely
 ;; ----------------------------------------------------------------------------
 
-(global-set-key (kbd "C-x c") 'ns-do-hide-emacs)
-(global-set-key (kbd "s-w") 'ns-do-hide-emacs)
+(require 'osx-pseudo-daemon)
+(setq osx-pseudo-daemon-mode t)
 (setq ns-pop-up-frames nil)
+
+;; load all snippets, but don't turn on yas everywhere
+(yas-global-mode nil)
 
 ;; enable "dangerous" features
 (put 'narrow-to-region 'disabled nil)
@@ -580,12 +556,30 @@
 (autoload 'ox-html "org-mode" "Org Mode." t)
 (autoload 'ox-rss "org-mode" "Org Mode." t)
 (autoload 'ox-publish "org-mode" "Org Mode." t)
-(eval-after-load 'org-mode
-  '(yas-load-directory "/Users/bb/.emacs.d/snippets"))
+(add-hook 'org-load-hook (lambda () (yas-reload-all)))
 (add-hook 'org-mode-hook
-          (lambda ()
-            ;; yasnippet
+          (lambda ()            ;; yasnippet
             (yas-minor-mode t)
+            ;; convert cite: links to \cite{...}
+            (org-add-link-type "cite"
+                 (defun follow-cite (name)
+                   "Open bibliography and jump to appropriate entry.
+                    The document must contain \bibliography{filename}
+                    somewhere for this to work"
+                   (find-file-other-window
+                    (save-excursion
+                      (beginning-of-buffer)
+                      (save-match-data
+                        (re-search-forward "\\\\bibliography{\\([^}]+\\)}")
+                        (concat (match-string 1) ".bib"))))
+                   (beginning-of-buffer)
+                   (search-forward name))
+                 (defun export-cite (path desc format)
+                   "Export [[cite:cohen93]] as \cite{cohen93} in LaTeX."
+                   (if (eq format 'latex)
+                       (if (or (not desc) (equal 0 (search "cite:" desc)))
+                           (format "\\cite{%s}" path)
+                         (format "\\cite[%s]{%s}" desc path)))))
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
             (make-variable-buffer-local 'yas/trigger-key)
@@ -604,9 +598,26 @@
             (setq org-latex-listings 'minted
                   org-latex-pdf-process
                   '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                    "bibtex %b"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-            (add-to-list 'org-latex-packages-alist '("" "minted"))))
+            (add-to-list 'org-latex-packages-alist '("" "minted"))
+            (set-face-attribute 'variable-pitch nil
+                                :family "Cambria"
+                                :height (+ my-font-height 20))
+            (set-face-attribute 'fixed-pitch nil
+                                :family "PragmataPro"
+                                :height my-font-height)
+            (mapc (lambda (face)
+                    (set-face-attribute face nil
+                                        :family (face-attribute 'fixed-pitch :family)
+                                        :height (face-attribute 'fixed-pitch :height)))
+                    '(org-block-begin-line org-code org-link org-meta-line
+                      org-block-background org-document-info-keyword
+                      font-lock-comment-face))
+            (set-face-attribute 'org-level-1 nil :height (+ my-font-height 40))
+            (set-face-attribute 'org-level-2 nil :height (+ my-font-height 30))
+            (setq org-confirm-babel-evaluate nil)))
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs scroll somewhat nicely
@@ -728,6 +739,16 @@
       ad-do-it
     (setq ad-return-value (org-html-headline headline contents info))))
 
+(defadvice org-preview-latex-fragment (around non-xelatex-org-preview-latex-fragment)
+  "Strip down the LaTeX process to the bare minimum when compiling fragments"
+  (let ((org-latex-default-packages-alist
+        '((""     "amsmath"   t)
+          (""     "amssymb"   t)))
+        (org-latex-pdf-process
+         '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+       ad-do-it))
+(ad-activate 'org-preview-latex-fragment)
+
 ;; This slows down org-publish to a crawl, and it is not needed since
 ;; I use magit anyway.
 (remove-hook 'find-file-hooks 'vc-find-file-hook)
@@ -747,12 +768,20 @@
  '(ns-alternate-modifier (quote meta))
  '(ns-command-modifier (quote hyper))
  '(org-agenda-files (quote ("~/Projects/thesis/masterarbeit.org" "/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org")))
+ '(org-export-babel-evaluate nil)
  '(org-export-latex-classes (quote (("article" "\\documentclass[11pt,a4paper]{article}" ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}") ("\\paragraph{%s}" . "\\paragraph*{%s}") ("\\subparagraph{%s}" . "\\subparagraph*{%s}")) ("report" "\\documentclass[11pt]{report}" ("\\part{%s}" . "\\part*{%s}") ("\\chapter{%s}" . "\\chapter*{%s}") ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}")) ("book" "\\documentclass[11pt]{book}" ("\\part{%s}" . "\\part*{%s}") ("\\chapter{%s}" . "\\chapter*{%s}") ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}")) ("beamer" "\\documentclass{beamer}" org-beamer-sectioning))))
+ '(org-latex-create-formula-image-program (quote imagemagick))
  '(org-latex-default-packages-alist (quote (("" "microtype" nil) ("" "polyglossia" nil) "\\setdefaultlanguage{german}" "\\setotherlanguage{english}" ("" "fontspec" nil) "\\setmainfont{Calibri}" ("" "fixltx2e" nil) ("" "graphicx" t) ("" "longtable" nil) ("" "float" nil) ("" "wrapfig" nil) ("" "rotating" nil) ("normalem" "ulem" t) ("" "amsmath" t) ("" "textcomp" t) ("" "marvosym" t) ("" "wasysym" t) ("" "amssymb" t) ("" "hyperref" nil) "\\tolerance=1000")))
  '(org-latex-listings (quote minted))
  '(safe-local-variable-values (quote ((org-startup-folded "content") (org-set-startup-cisibility (quote content)) (backup-inhibited . t))))
  '(send-mail-function (quote mailclient-send-it))
- '(sentence-end-double-space nil))
+ '(sentence-end-double-space nil)
+ '(writeroom-disable-fringe nil)
+ '(writeroom-disable-mode-line nil)
+ '(writeroom-fullscreen-effect (quote maximized))
+ '(writeroom-global-effects nil)
+ '(writeroom-maximize-window nil)
+ '(writeroom-width 120))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
