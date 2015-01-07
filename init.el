@@ -11,10 +11,8 @@
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8")
-  (setq org-agenda-files (quote ("~/Documents/journal/"
-                                 "~/Dropbox/Elements/arbeit.org"
-                                 "~/Dropbox/Elements/life.org"
-                                 "~/Dropbox/Elements/uni.org")))
+  (setq org-agenda-files (quote ("~/Documents/journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
   (setq org-babel-python-command "~/.conda/envs/thesis/bin/python")
   (setq python-shell-interpreter "/Users/bb/.conda/envs/thesis/bin/ipython"
         jedi:server-args
@@ -831,7 +829,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "xelatex -shell-escape")
- '(TeX-PDF-mode nil)
+ '(TeX-PDF-mode nil t)
  '(custom-safe-themes
    (quote
     ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
@@ -889,7 +887,7 @@
      ("" "hyperref" nil)
      "\\tolerance=1000")))
  '(org-latex-default-table-environment "longtable")
- '(org-latex-listings (quote minted) t)
+ '(org-latex-listings (quote minted))
  '(org-latex-tables-centered nil)
  '(safe-local-variable-values
    (quote
