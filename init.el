@@ -5,6 +5,7 @@
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
+  (add-to-list 'exec-path "/Users/bb/miniconda3/bin/") ; python path
   (setenv "PATH" (concat "/usr/local/bin:/usr/texbin:" (getenv "PATH")))
   (setq eshell-path-env
         (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
@@ -13,12 +14,12 @@
   (setenv "LC_ALL" "en_US.UTF-8")
   (setq org-agenda-files (quote ("~/Documents/journal/"))
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
-  (setq org-babel-python-command "~/.conda/envs/thesis/bin/python")
-  (setq python-shell-interpreter "/Users/bb/.conda/envs/thesis/bin/ipython"
+  (setq org-babel-python-command "/Users/bb/miniconda3/envs/emacs/bin/python")
+  (setq python-shell-interpreter "/Users/bb/miniconda3/envs/emacs/bin/ipython"
         jedi:server-args
-        (quote ("--sys-path" "/Users/bb/.conda/envs/thesis/lib/python3.4/site-packages/"))
+        (quote ("--sys-path" "/Users/bb/miniconda3/envs/emacs/lib/python3.4/site-packages/"))
         jedi:server-command
-        `("/Users/bb/.conda/envs/thesis/bin/python"
+        `("/Users/bb/miniconda3/envs/emacs/bin/python"
           ;; grab whichever version of jediepcserver is installed
           ,(concat "/Users/bb/.emacs.d/elpa/"
                    (car (directory-files "~/.emacs.d/elpa" nil "jedi"))
@@ -45,11 +46,11 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(auto-complete auctex color-theme-sanityinc-tomorrow company
-    dash expand-region helm htmlize ido-ubiquitous
+  '(auto-complete auctex color-theme-sanityinc-tomorrow
+    concurrent dash ess expand-region helm htmlize ido-ubiquitous
     ido-vertical-mode iy-go-to-char jedi magit markdown-mode
-    multiple-cursors org-journal popup pymacs
-    smartparens undo-tree wrap-region yaml-mode yasnippet)
+    multiple-cursors org-journal popup smartparens undo-tree
+    wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -91,14 +92,11 @@
 	(tool-bar-mode -1)
     (menu-bar-mode -1))
 
-;; use mainline
-
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
 (setq org-clock-mode-line-total 'current)
 
 ;; highlight matching parenthesis
-;; (show-paren-mode t)
 (show-smartparens-mode)
 
 ;; enable column number in info area
@@ -146,7 +144,8 @@
                             (- current-available visual-wrap-column))))))
 
 ;; make fringes more beautiful
-(set-fringe-mode 0) ; disable fringes
+(if window-system
+    (set-fringe-mode 0)) ; disable fringes
 ;; ensure that the left margin is always 1
 (set-display-table-slot standard-display-table 'wrap ?→) ; eol wrap character
 (set-display-table-slot standard-display-table 'truncation ?→) ; bol wrap char
@@ -219,17 +218,6 @@
 ;; NO TABS. EVER.
 (setq-default indent-tabs-mode nil)
 
-;; Auto-resize eshell or Python windows to 15 lines of height
-(add-hook 'post-command-hook
-		  (lambda ()
-            ;; prevent infinite loop if there is only one window
-            (unless (= 1 (length (window-list nil -1)))
-              (when (or (string-equal (buffer-name) "*Python*")
-                        (string-equal (buffer-name) "*eshell*")
-                        (string-equal (buffer-name) "*tex-shell*"))
-                (if (not (eq (window-height) 15))
-                    (enlarge-window (- 15 (window-height))))))))
-
 ;; turn off the splash screen on startup
 (setq inhibit-startup-message t)
 
@@ -269,6 +257,7 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-*") 'mc/mark-all-like-this)
 (global-set-key (kbd "M-C-*") 'mc/mark-all-like-this-in-defun)
+(global-set-key (kbd "C-'") 'mc/edit-lines)
 
 ;; enable sensible undo
 (global-undo-tree-mode)
@@ -278,9 +267,6 @@
 
 ;; don't sound that bloody chime
 (setq ring-bell-function #'ignore)
-
-;; delete region when I start to type
-;; (pending-delete-mode t)
 
 ;; Easily wrap statements in delimiters
 (wrap-region-global-mode t)
@@ -322,6 +308,7 @@
 
 ;; quick access to org-agenda and org-todo
 (global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c j") 'org-journal-new-entry)
 
 (defun term-other-window ()
   "Create or switch to a terminal in another window"
@@ -342,6 +329,9 @@
 
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
+
+;; this makes helm work
+(require 'helm-plugin)
 
 ;; quick access to helm-imenu
 (global-set-key (kbd "C-c i") 'helm-imenu)
@@ -446,68 +436,16 @@
 (setq lua-indent-level 4)
 
 ;; -----------------------------------------------------------------------------
-;; Set up mu4e
-;; -----------------------------------------------------------------------------
-
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-(require 'mu4e)
-(setq mu4e-maildir "/Users/bb/.mail")
-
-(defun my-render-html-message ()
-  (let ((dom (libxml-parse-html-region (point-min) (point-max))))
-    (erase-buffer)
-    (shr-insert-document dom)
-    (goto-char (point-min))))
-
-(setq mu4e-html2text-command 'my-render-html-message)
-
-(setq mu4e-refile-folder
-      (lambda (msg)
-        (message (concat (file-name-directory (mu4e-message-field msg :maildir))
-                         "Archive"))))
-(setq mu4e-trash-folder
-      (lambda (msg)
-        (message (concat (file-name-directory (mu4e-message-field msg :maildir))
-                         "Trash"))))
-(setq mu4e-drafts-folder
-      (lambda (msg)
-        (message (concat (file-name-directory (mu4e-message-field msg :maildir))
-                         "Drafts"))))
-(setq mu4e-sent-folder
-      (lambda (msg)
-        (message (concat (file-name-directory (mu4e-message-field msg :maildir))
-                         "Sent"))))
-
-;; -----------------------------------------------------------------------------
 ;; Set up some language specific stuff
 ;; -----------------------------------------------------------------------------
 
-;; set up python to use ipython and working auto-completion
-(setq
- python-shell-prompt-regexp "In \\[[0-9]+\\]: "
- python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
- python-shell-completion-setup-code
-   "from IPython.core.completerlib import module_completion"
- python-shell-completion-module-string-code
-   "';'.join(module_completion('''%s'''))\n"
- python-shell-completion-string-code
-   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n"
- jedi:setup-keys t
- jedi:complete-on-dot t)
-
 ;; allow org-mode to use alphabetical lists
 (setq org-list-allow-alphabetical t)
-
-(add-hook 'python-mode-hook 'jedi:setup)
-;;(autoload 'auto-complete "auto-complete-mode" "Auto Complete Mode" t)
-;;(add-hook 'python-mode-hook 'auto-complete-mode)
 
 ;; open *.md files as markdown
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-
-;; (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 
 ;; open *.m files as octave
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
@@ -518,6 +456,13 @@
 ;; open *.yaml files as yaml
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
+
+;; open *.jl files as julia
+(require 'ess-site)
+(add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode))
+
+;; open *.py files as elpy Python
+(elpy-enable)
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
@@ -667,7 +612,8 @@
                                         :height (face-attribute 'fixed-pitch :height)))
                     '(org-block-begin-line org-code org-link org-meta-line
                       org-block-background org-document-info-keyword
-                      font-lock-comment-face org-table))
+                      font-lock-comment-face org-table org-special-keyword
+                      org-property-value))
             (set-face-attribute 'org-level-1 nil :height (+ my-font-height 40))
             (set-face-attribute 'org-level-2 nil :height (+ my-font-height 30))
             (set-face-attribute 'org-level-3 nil :weight 'bold)
@@ -833,11 +779,12 @@
  '(custom-safe-themes
    (quote
     ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(magit-diff-refine-hunk t)
  '(ns-alternate-modifier (quote meta))
  '(ns-command-modifier (quote hyper))
  '(org-agenda-files
    (quote
-    ("/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513" "~/Dropbox/Elements/arbeit.org" "~/Dropbox/Elements/life.org" "~/Dropbox/Elements/uni.org")))
+    ("/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513")))
  '(org-export-babel-evaluate nil)
  '(org-export-latex-classes
    (quote
@@ -887,7 +834,7 @@
      ("" "hyperref" nil)
      "\\tolerance=1000")))
  '(org-latex-default-table-environment "longtable")
- '(org-latex-listings (quote minted))
+ '(org-latex-listings (quote minted) t)
  '(org-latex-tables-centered nil)
  '(safe-local-variable-values
    (quote
