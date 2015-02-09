@@ -852,4 +852,5 @@
  '(markdown-header-face-3 ((t (:inherit markdown-header-face :underline t :height 1.2))))
  '(markdown-header-face-4 ((t (:inherit markdown-header-face :underline t :height 1.1))))
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))))
- '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t)))))
+ '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))))
+ '(markdown-header-rule-face ((t (:inherit markdown-header-face :height 1.5)))))
