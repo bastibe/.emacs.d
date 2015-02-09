@@ -49,8 +49,8 @@
   '(auto-complete auctex color-theme-sanityinc-tomorrow
     concurrent dash ess expand-region htmlize idomenu
     ido-ubiquitous ido-vertical-mode iy-go-to-char jedi magit
-    markdown-mode multiple-cursors org-journal popup smartparens
-    undo-tree wrap-region yaml-mode yasnippet)
+    markdown-mode multiple-cursors org-journal popup s
+    smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
