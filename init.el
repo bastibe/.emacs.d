@@ -416,6 +416,20 @@
       (unless (file-exists-p dir)
         (make-directory dir)))))
 
+(require 's)
+
+(defun select-python ()
+  "Select ipython from a conda env that matches the current git repo"
+  (interactive)
+  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel ^/dev/null"))))
+    (when (and (> (length git-path) 0)
+               (file-directory-p git-path)
+               (file-directory-p (concat "/Users/bb/miniconda3/envs/" (file-name-base git-path))))
+      (make-local-variable 'python-shell-interpreter)
+      (setq python-shell-interpreter (concat "/Users/bb/miniconda3/envs/" (file-name-base git-path) "/bin/ipython")))))
+
+(add-hook 'find-file-hook 'select-python)
+
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
