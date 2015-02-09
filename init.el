@@ -47,10 +47,10 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow
-    concurrent dash ess expand-region helm htmlize ido-ubiquitous
-    ido-vertical-mode iy-go-to-char jedi magit markdown-mode
-    multiple-cursors org-journal popup smartparens undo-tree
-    wrap-region yaml-mode yasnippet)
+    concurrent dash ess expand-region htmlize idomenu
+    ido-ubiquitous ido-vertical-mode iy-go-to-char jedi magit
+    markdown-mode multiple-cursors org-journal popup smartparens
+    undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -94,7 +94,6 @@
 
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
-(setq org-clock-mode-line-total 'current)
 
 ;; highlight matching parenthesis
 (show-smartparens-mode)
@@ -161,9 +160,6 @@
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
 (global-set-key (kbd "H-w") 'delete-window)
 
-;; load all snippets, but don't turn on yas everywhere
-(yas-global-mode nil)
-
 ;; enable "dangerous" features
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
@@ -202,15 +198,6 @@
 
 ;; Allow quotes in org source blocks
 (setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
-
-;; make clock persistent
-(setq org-clock-persist 'history)
-(org-clock-persistence-insinuate)
-(setq org-time-stamp-rounding-minutes '(5 5))
-
-;; make org-clockreports as informative as possible
-(setq org-agenda-clockreport-parameter-plist
-      (quote (:link 1 :maxlevel 5 :fileskip0 t :compact t :narrow 80)))
 
 ;; detect external file changes automatically
 (global-auto-revert-mode t)
@@ -330,17 +317,8 @@
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
 
-;; this makes helm work
-(require 'helm-plugin)
-
-;; quick access to helm-imenu
-(global-set-key (kbd "C-c i") 'helm-imenu)
-
-;; quick access to helm-mini
-(global-set-key (kbd "C-c b") 'helm-mini)
-
-;; quick access to helm-mini
-(global-set-key (kbd "C-c f") 'helm-find-files)
+;; quickly jump to imenu locations
+(global-set-key (kbd "C-c i") 'idomenu)
 
 (defun halve-other-window-height ()
   "Expand current window to use half of the other window's lines."
@@ -416,7 +394,7 @@
       (unless (file-exists-p dir)
         (make-directory dir)))))
 
-(require 's)
+(autoload 's-trim "s")
 
 (defun select-python ()
   "Select ipython from a conda env that matches the current git repo"
@@ -468,15 +446,12 @@
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
 ;; open *.yaml files as yaml
-(require 'yaml-mode)
+(autoload 'yaml-mode "yaml-mode")
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
 
 ;; open *.jl files as julia
-(require 'ess-site)
+(autoload 'julia-mode "ess-site")
 (add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode))
-
-;; open *.py files as elpy Python
-(elpy-enable)
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
@@ -852,7 +827,8 @@
  '(org-latex-tables-centered nil)
  '(safe-local-variable-values
    (quote
-    ((org-startup-folded "content")
+    ((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
+     (org-startup-folded "content")
      (org-set-startup-cisibility
       (quote content))
      (backup-inhibited . t))))
