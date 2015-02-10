@@ -47,7 +47,7 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow
-    concurrent dash ess expand-region htmlize idomenu
+    concurrent dash elpy ess expand-region htmlize idomenu
     ido-ubiquitous ido-vertical-mode iy-go-to-char jedi magit
     markdown-mode multiple-cursors org-journal popup s
     smartparens undo-tree wrap-region yaml-mode yasnippet)
@@ -396,15 +396,24 @@
 
 (autoload 's-trim "s")
 
+(defun shell-command-stdout-to-string (command)
+  "Execute shell command COMMAND and return its stdout as a string."
+  (with-output-to-string
+    (with-current-buffer
+      standard-output
+      (process-file shell-file-name nil '(t nil) nil shell-command-switch command))))
+
 (defun select-python ()
   "Select ipython from a conda env that matches the current git repo"
   (interactive)
-  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel ^/dev/null"))))
+  (let ((git-path (s-trim (shell-command-stdout-to-string "git rev-parse --show-toplevel")))
+        (env-path "/Users/bb/miniconda3/envs/")
+        (env-bin "/bin/ipython"))
     (when (and (> (length git-path) 0)
                (file-directory-p git-path)
-               (file-directory-p (concat "/Users/bb/miniconda3/envs/" (file-name-base git-path))))
+               (file-directory-p (concat env-path (file-name-base git-path))))
       (make-local-variable 'python-shell-interpreter)
-      (setq python-shell-interpreter (concat "/Users/bb/miniconda3/envs/" (file-name-base git-path) "/bin/ipython")))))
+      (setq python-shell-interpreter (concat env-path (file-name-base git-path) env-bin)))))
 
 (add-hook 'find-file-hook 'select-python)
 
@@ -452,6 +461,11 @@
 ;; open *.jl files as julia
 (autoload 'julia-mode "ess-site")
 (add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode))
+
+;; open *.py files as python
+;; (autoload 'elpy-enable "elpy")
+;; (elpy-enable)
+(add-to-list 'auto-mode-alist '("\\.py\\'" . (lambda () (elpy-enable) (python-mode))))
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
