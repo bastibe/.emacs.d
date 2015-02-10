@@ -533,6 +533,7 @@
 (autoload 'ox-html "org-mode" "Org Mode." t)
 (autoload 'ox-rss "org-mode" "Org Mode." t)
 (autoload 'ox-publish "org-mode" "Org Mode." t)
+(autoload 'yas-reload-all "yasnippet")
 (add-hook 'org-load-hook (lambda () (yas-reload-all)))
 (add-hook 'org-mode-hook
           (lambda ()            ;; yasnippet
