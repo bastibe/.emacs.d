@@ -396,17 +396,10 @@
 
 (autoload 's-trim "s")
 
-(defun shell-command-stdout-to-string (command)
-  "Execute shell command COMMAND and return its stdout as a string."
-  (with-output-to-string
-    (with-current-buffer
-      standard-output
-      (process-file shell-file-name nil '(t nil) nil shell-command-switch command))))
-
 (defun select-python ()
   "Select ipython from a conda env that matches the current git repo"
   (interactive)
-  (let ((git-path (s-trim (shell-command-stdout-to-string "git rev-parse --show-toplevel")))
+  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel")))
         (env-path "/Users/bb/miniconda3/envs/")
         (env-bin "/bin/ipython"))
     (when (and (> (length git-path) 0)
