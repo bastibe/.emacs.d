@@ -443,6 +443,7 @@
 
 ;; open *.m files as octave
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
+(setq octave-block-offset 4)
 
 ;; open *.pdf files as images
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
