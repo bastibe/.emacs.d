@@ -27,6 +27,10 @@
   (setq mac-option-modifier 'meta)
   (setq mac-command-modifier 'super)
   (setq default-directory "~"))
+(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
+  (setq org-agenda-files (quote ("~/Documents/journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
+  (setq default-directory "~"))
 
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
