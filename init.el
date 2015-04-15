@@ -405,12 +405,15 @@
   (interactive)
   (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel")))
         (env-path "/Users/bb/miniconda3/envs/")
-        (env-bin "/bin/ipython"))
+        (env-ipython "/bin/ipython")
+        (env-python "/bin/python"))
     (when (and (> (length git-path) 0)
                (file-directory-p git-path)
                (file-directory-p (concat env-path (file-name-base git-path))))
       (make-local-variable 'python-shell-interpreter)
-      (setq python-shell-interpreter (concat env-path (file-name-base git-path) env-bin)))))
+      (setq python-shell-interpreter (concat env-path (file-name-base git-path) env-ipython))
+      (make-local-variable 'org-babel-python-command)
+      (setq org-babel-python-command (concat env-path (file-name-base git-path) env-python)))))
 
 (add-hook 'find-file-hook 'select-python)
 
