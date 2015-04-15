@@ -658,100 +658,54 @@
 ;; Set up blogging in Emacs
 ;; -----------------------------------------------------------------------------
 
-(setq org-publish-project-alist
-      '(("blog"
-         :components ("blog-content" "blog-static" "blog-rss"))
-        ("blog-content"
-         :base-directory "~/Projects/blog/posts"
-         :html-extension "html"
-         :base-extension "org"
-         :publishing-directory "~/Projects/blog/publish"
-         :publishing-function (org-html-publish-to-html)
-         :auto-sitemap t
-         :sitemap-filename "archive.org"
-         :sitemap-title "Archive"
-         :sitemap-sort-files anti-chronologically
-         :sitemap-style list
-         :makeindex t
-         :recursive t
-         :section-numbers nil
-         :with-toc nil
-         :with-latex t
-         :html-head-include-default-style nil
-         :html-head-include-scripts nil
-         :html-head-extra
-         "<link rel=\"alternate\" type=\"appliation/rss+xml\"
-                href=\"http://bastibe.de/rss.xml\"
-                title=\"RSS feed for bastibe.de\">
-          <link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin' rel='stylesheet' type='text/css'>
-          <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
-          <link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
-          <link rel=\"icon\" href=\"static/favicon.ico\">
-          <link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
-          <link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
-          <link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
-          <title>Basti's Scratchpad on the Internet</title>
-          <meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\" />
-          <meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">"
-         :html-preamble
-         "<div class=\"header\">
-              <a href=\"http://bastibe.de\">Basti's Scratchpad on the Internet</a>
-              <div class=\"sitelinks\">
-                  <a href=\"http://alpha.app.net/bastibe\">alpha.app.net</a>  | <a href=\"http://github.com/bastibe\">Github</a>
-              </div>
-          </div>"
-         :html-postamble
-         (lambda (info)
-           "Do not show disqus for Archive and Recent Posts"
-           (cond ((string= (car (plist-get info :title)) "Archive") "")
-                 ((string= (car (plist-get info :title)) "Recent Posts")
-                  "<div id=\"archive\"><a href=\"archive.html\">Other posts</a></div>")
-                 (t
-             "<div id=\"archive\"><a href=\"archive.html\">Other posts</a></div>
-              <div id=\"disqus_thread\"></div>
-              <script type=\"text/javascript\">
-              /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-              var disqus_shortname = 'bastibe';
-              /* * * DON'T EDIT BELOW THIS LINE * * */
-              (function() {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                  })();
-              </script>
-              <noscript>Please enable JavaScript to view the
-                  <a href=\"http://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript>
-              <a href=\"http://disqus.com\" class=\"dsq-brlink\">comments powered by <span class=\"logo-disqus\">Disqus</span></a>
-<center><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" href=\"http://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"http://creativecommons.org/ns#\" href=\"http://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")))
-         :exclude "rss.org\\|archive.org\\|theindex.org")
-        ("blog-rss"
-         :base-directory "~/Projects/blog/posts"
-         :base-extension "org"
-         :publishing-directory "~/Projects/blog/publish"
-         :publishing-function (org-rss-publish-to-rss)
-         :html-link-home "http://bastibe.de/"
-         :html-link-use-abs-url t
-         :rss-image-url "http://bastibe.de/static/favicon.png"
-         :exclude ".*"
-         :include ("rss.org")
-         :with-toc nil
-         :section-numbers nil
-         :title "Basti's Scratchpad on the Internet")
-        ("blog-static"
-         :base-directory "~/Projects/blog/static"
-         :base-extension "png\\|jpg\\|css\\|ico"
-         :publishing-directory "~/Projects/blog/publish/static"
-         :recursive t
-         :publishing-function org-publish-attachment)))
+(setq org-static-blog-publish-title "Bastibe.de")
+(setq org-static-blog-publish-url "http://bastibe.de/")
+(setq org-static-blog-publish-directory "~/Projects/blog/")
+(setq org-static-blog-posts-directory "~/Projects/blog/posts/")
+(setq org-static-blog-drafts-directory "~/Projects/blog/drafts/")
+(setq org-export-with-toc nil)
+(setq org-export-with-section-numbers nil)
 
-(defadvice org-rss-headline
-  (around my-rss-headline (headline contents info) activate)
-  "only use org-rss-headline for top level headlines"
-  (if (< (org-export-get-relative-level headline info) 2)
-      ad-do-it
-    (setq ad-return-value (org-html-headline headline contents info))))
+(setq org-static-blog-page-header
+"<meta  name=\"author\" content=\"Bastian Bechtold\" />
+<link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+<link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
+<link rel=\"icon\" href=\"static/favicon.ico\">
+<link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
+<link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
+<link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
+<script type=\"text/javascript\" src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML\"> </script>
+<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\" />
+<meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">")
+
+(setq org-static-blog-page-preamble
+"<div class=\"header\">
+  <a href=\"http://bastibe.de\">Basti's Scratchpad on the Internet</a>
+  <div class=\"sitelinks\">
+    <a href=\"http://alpha.app.net/bastibe\">alpha.app.net</a> | <a href=\"http://github.com/bastibe\">Github</a>
+  </div>
+</div>")
+
+(setq org-static-blog-page-postamble
+"<div id=\"archive\">
+  <a href=\"archive.html\">Other posts</a>
+</div>
+<div id=\"disqus_thread\"></div>
+<script type=\"text/javascript\">
+  var disqus_shortname = 'bastibe';
+  (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the
+<a href=\"http://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript>
+<a href=\"http://disqus.com\" class=\"dsq-brlink\">comments powered by <span class=\"logo-disqus\">Disqus</span></a>
+<center><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" href=\"http://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"http://creativecommons.org/ns#\" href=\"http://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
 
 (defadvice org-preview-latex-fragment (around non-xelatex-org-preview-latex-fragment)
   "Strip down the LaTeX process to the bare minimum when compiling fragments"
