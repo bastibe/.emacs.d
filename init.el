@@ -160,13 +160,14 @@
 
 (desktop-save-mode t)
 
-(defalias 'evil-insert-state 'evil-emacs-state)
-(define-key evil-emacs-state-map [escape] 'evil-normal-state)
-(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-(add-to-list 'evil-emacs-state-modes 'python-mode)
-(add-to-list 'evil-emacs-state-modes 'org-mode)
-(add-to-list 'evil-emacs-state-modes 'git-commit-mode)
+(add-hook 'evil-mode-hook (lambda ()
+  (defalias 'evil-insert-state 'evil-emacs-state)
+  (define-key evil-emacs-state-map [escape] 'evil-normal-state)
+  (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+  (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+  (add-to-list 'evil-emacs-state-modes 'python-mode)
+  (add-to-list 'evil-emacs-state-modes 'org-mode)
+  (add-to-list 'evil-emacs-state-modes 'git-commit-mode)))
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
