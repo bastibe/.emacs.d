@@ -2,6 +2,10 @@
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
 
+(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
+  (setq org-agenda-files (quote ("~/Documents/journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")  )
+
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
   (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
