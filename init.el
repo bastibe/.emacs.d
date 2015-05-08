@@ -166,7 +166,9 @@
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 (dolist (source '(python-mode org-mode git-commit-mode help-mode
-                              compilation-mode emacs-lisp-mode))
+                              compilation-mode emacs-lisp-mode
+                              lisp-interaction-mode julia-mode
+                              fundamental-mode calendar-mode))
   (add-to-list 'evil-emacs-state-modes source))
 (add-hook 'evil-mode-hook 'evil-emacs-state)
 
