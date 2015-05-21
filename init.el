@@ -4,7 +4,8 @@
 
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")  )
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
+        conda-env-path "/home/bb/miniconda3/envs/"))
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
@@ -20,6 +21,7 @@
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
   (setq org-babel-python-command "/Users/bb/miniconda3/envs/emacs/bin/python")
   (setq python-shell-interpreter "/Users/bb/miniconda3/envs/emacs/bin/ipython"
+        conda-env-path "/Users/bb/miniconda3/envs/"
         jedi:server-args
         (quote ("--sys-path" "/Users/bb/miniconda3/envs/emacs/lib/python3.4/site-packages/"))
         jedi:server-command
@@ -422,7 +424,7 @@
   "Select ipython from a conda env that matches the current git repo"
   (interactive)
   (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel")))
-        (env-path "/Users/bb/miniconda3/envs/")
+        (env-path conda-env-path)
         (env-ipython "/bin/ipython")
         (env-python "/bin/python"))
     (when (and (> (length git-path) 0)
