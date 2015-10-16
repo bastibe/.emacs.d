@@ -5,7 +5,7 @@
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
-        conda-env-path "/home/bb/miniconda3/envs/"))
+        conda-env-path "/home/bb/.miniconda3/envs/"))
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
@@ -57,9 +57,9 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow
-    concurrent dash elpy ess evil expand-region htmlize idomenu
-    ido-ubiquitous ido-vertical-mode iy-go-to-char jedi magit
-    markdown-mode multiple-cursors org-journal popup s
+    concurrent dash elpy ess expand-region flyspell-popup htmlize
+    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char jedi
+    magit markdown-mode multiple-cursors org-journal popup s
     smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
@@ -77,7 +77,7 @@
 ;; set a nice looking font
 (setq my-font-height (cond ((eq system-type 'darwin) 130)
                            ((eq system-type 'windows-nt) 100)
-                           ((eq system-type 'gnu/linux) 110)))
+                           ((eq system-type 'gnu/linux) 100)))
 
 
 (set-face-attribute 'default nil
@@ -164,21 +164,23 @@
 ;; Make Emacs behave nicely
 ;; ----------------------------------------------------------------------------
 
+(setq org-journal-file-pattern "%Y%m%d.org")
+
 (desktop-save-mode t)
 
-(evil-mode t)
-(defalias 'evil-insert-state 'evil-emacs-state)
-(define-key evil-emacs-state-map [escape] 'evil-normal-state)
-(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-(dolist (source '(python-mode org-mode git-commit-mode help-mode
-                              compilation-mode emacs-lisp-mode
-                              lisp-interaction-mode julia-mode
-                              fundamental-mode calendar-mode
-                              org-journal-mode markdown-mode
-                              octave-mode))
-  (add-to-list 'evil-emacs-state-modes source))
-(add-hook 'evil-mode-hook 'evil-emacs-state)
+;; (evil-mode t)
+;; (defalias 'evil-insert-state 'evil-emacs-state)
+;; (define-key evil-emacs-state-map [escape] 'evil-normal-state)
+;; (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+;; (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+;; (dolist (source '(python-mode org-mode git-commit-mode help-mode
+;;                               compilation-mode emacs-lisp-mode
+;;                               lisp-interaction-mode julia-mode
+;;                               fundamental-mode calendar-mode
+;;                               org-journal-mode markdown-mode
+;;                               octave-mode text-mode latex-mode))
+;;   (add-to-list 'evil-emacs-state-modes source))
+;; (add-hook 'evil-mode-hook 'evil-emacs-state)
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -219,6 +221,8 @@
 
 ;; Make ispell and flyspell work with aspell instead of ispell
 (setq ispell-prefer-aspell t)
+(setq ispell-really-hunspell t)
+(add-hook 'flyspell-mode-hook #'flyspell-popup-auto-correct-mode)
 
 ;; Allow quotes in org source blocks
 (setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
@@ -579,30 +583,6 @@
                        (if (or (not desc) (equal 0 (search "cite:" desc)))
                            (format "\\cite{%s}" path)
                          (format "\\cite[%s]{%s}" desc path)))))
-            ;; functionality to have unnumbered sections
-            (defun headline-numbering-filter (data backend info)
-              "No numbering in headlines that have a property :numbers: no"
-              (let* ((beg (next-property-change 0 data))
-                     (headline (if beg (get-text-property beg :parent data))))
-                (if (and (eq backend 'latex)
-                         (string= (org-element-property :NUMBERS headline) "no"))
-                    (with-temp-buffer
-                      (insert data)
-                      (beginning-of-buffer)
-                      (re-search-forward "\\(part\\|chapter\\|\\(?:sub\\)*section\\|\\(?:sub\\)?paragraph\\)")
-                      (replace-match "\\1*")
-                      (buffer-string))
-                  data)))
-            ;; functionality to have sections on their own page
-            (defun headline-new-page-filter (data backend info)
-              "Insert newline before headlines with a property :newpage: t"
-              (let* ((beg (next-property-change 0 data))
-                     (headline (if beg (get-text-property beg :parent data))))
-                (if (and (eq backend 'latex)
-                         (string= (org-element-property :NEWPAGE headline) "t"))
-                    (concat "\\newpage\n" data)
-                  data)))
-            (setq org-export-filter-headline-functions '(headline-numbering-filter headline-new-page-filter))
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
             (make-variable-buffer-local 'yas/trigger-key)
@@ -635,10 +615,14 @@
                     (set-face-attribute face nil
                                         :family (face-attribute 'fixed-pitch :family)
                                         :height (face-attribute 'fixed-pitch :height)))
-                    '(org-block-begin-line org-code org-link org-meta-line
-                      org-block-background org-document-info-keyword
-                      font-lock-comment-face org-table org-special-keyword
-                      org-property-value))
+                  '(org-block-begin-line
+                    org-code org-link org-meta-line
+                    ;;org-block-background
+                    org-document-info-keyword
+                    font-lock-comment-face
+                    org-table
+                    org-special-keyword
+                    org-property-value))
             (set-face-attribute 'org-level-1 nil :height (+ my-font-height 40))
             (set-face-attribute 'org-level-2 nil :height (+ my-font-height 30))
             (set-face-attribute 'org-level-3 nil :weight 'bold)
@@ -683,9 +667,9 @@
 
 (setq org-static-blog-publish-title "Bastibe.de")
 (setq org-static-blog-publish-url "http://bastibe.de/")
-(setq org-static-blog-publish-directory "~/Projects/blog/")
-(setq org-static-blog-posts-directory "~/Projects/blog/posts/")
-(setq org-static-blog-drafts-directory "~/Projects/blog/drafts/")
+(setq org-static-blog-publish-directory "~/projects/blog/")
+(setq org-static-blog-posts-directory "~/projects/blog/posts/")
+(setq org-static-blog-drafts-directory "~/projects/blog/drafts/")
 (setq org-export-with-toc nil)
 (setq org-export-with-section-numbers nil)
 
@@ -758,12 +742,16 @@
  '(custom-safe-themes
    (quote
     ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(elpy-modules
+   (quote
+    (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults)))
  '(magit-diff-refine-hunk t)
+ '(magit-push-always-verify nil)
  '(ns-alternate-modifier (quote meta))
  '(ns-command-modifier (quote hyper))
  '(org-agenda-files
    (quote
-    ("/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513")))
+    ("~/Documents/journal/20150917" "/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513")))
  '(org-export-babel-evaluate nil)
  '(org-export-latex-classes
    (quote
@@ -815,6 +803,7 @@
  '(org-latex-default-table-environment "longtable")
  '(org-latex-listings (quote minted) t)
  '(org-latex-tables-centered nil)
+ '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
     ((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
