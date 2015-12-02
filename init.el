@@ -38,6 +38,10 @@
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
   (setq default-directory "~"))
 
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
 ;; -----------------------------------------------------------------------------
