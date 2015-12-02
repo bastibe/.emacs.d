@@ -34,10 +34,14 @@
   (setq mac-command-modifier 'super)
   (setq default-directory "~")
   (global-set-key (kbd "H-f") isearch-forward))
+
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
   (setq default-directory "~"))
+
+(when (and (eq system-type 'windows-nt) (string= (user-login-name) "Bastian"))
+  (setq conda-env-path "C:/Users/Bastian/Miniconda3/envs"))
 
 (require 'server)
 (unless (server-running-p)
