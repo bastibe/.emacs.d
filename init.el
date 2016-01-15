@@ -471,6 +471,7 @@
 ;; open *.m files as octave
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 (setq octave-block-offset 4)
+(add-hook 'octave-mode-hook (lambda () (setq-local comment-start "%")))
 
 ;; open *.pdf files as images
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
