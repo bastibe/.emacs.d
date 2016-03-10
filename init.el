@@ -479,7 +479,24 @@
 ;; open *.m files as octave
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 (setq octave-block-offset 4)
-(add-hook 'octave-mode-hook (lambda () (setq-local comment-start "%")))
+;; use single-percent comments
+(setq octave-comment-char ?%)
+(add-hook 'octave-mode-hook
+          (lambda ()
+            (setq-local comment-add 0)
+            ;; overwrite octave indentation logic
+            (defun octave-indent-comment ()
+              "A function for `smie-indent-functions' (which see)."
+              (save-excursion
+                (back-to-indentation)
+                (cond
+                 ((octave-in-string-or-comment-p) nil)
+                 ((looking-at-p "\\(\\s<\\)\\1\\{2,\\}")
+                  0)
+                 ;; keep documentation comments at bol
+                 ((= (current-column) 0) 0)
+                 ;; no more special-casing for double-comments
+                 )))))
 
 ;; open *.pdf files as images
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
