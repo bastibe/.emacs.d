@@ -97,7 +97,7 @@
                     'unicode
                     (font-spec :family "PragmataPro"
                                :width 'normal
-                               :size (/ my-font-height 10)
+                               :height my-font-height
                                :weight 'normal)))
 ;; For testing purposes: →„Σ“←
 
@@ -169,8 +169,6 @@
 ;; ----------------------------------------------------------------------------
 
 (setq org-journal-file-pattern "%Y%m%d.org")
-
-(desktop-save-mode t)
 
 ;; (evil-mode t)
 ;; (defalias 'evil-insert-state 'evil-emacs-state)
