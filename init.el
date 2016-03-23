@@ -76,7 +76,9 @@
 ;; -----------------------------------------------------------------------------
 
 ;; load my favourite theme of the day
-(load-theme 'whiteboard t)
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'my-eink-theme)
+(load-theme 'my-eink t)
 
 ;; set a nice looking font
 (setq my-font-height (cond ((eq system-type 'darwin) 130)
@@ -519,7 +521,6 @@
 		  t)
 
 (setq org-startup-indented t)
-(setq org-pretty-entities t)
 (setq org-export-allow-bind-keywords t)
 
 ;; start up latex mode with visual-line-mode
@@ -761,7 +762,8 @@
  '(TeX-PDF-mode nil t)
  '(custom-safe-themes
    (quote
-    ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+    ("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+ '(delete-selection-mode nil)
  '(elpy-modules
    (quote
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults)))
