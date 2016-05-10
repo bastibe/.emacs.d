@@ -101,6 +101,7 @@
    `(org-done ((t (:foreground ,fg-light))))
    `(org-hide ((t (:foreground ,bg))))
    ;; use :overline to give headings more top margin
+   `(org-document-title ((t (:foreground ,fg :weight semi-bold :height 1.5 :underline ,fg))))
    `(org-level-1 ((t (:foreground ,fg :weight semi-bold :height 1.3))))
    `(org-level-2 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
    `(org-level-3 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))

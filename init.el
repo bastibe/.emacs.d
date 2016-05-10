@@ -9,9 +9,9 @@
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
-  (add-to-list 'exec-path "/usr/texbin/")    ; tex bin path
+  (add-to-list 'exec-path "/Library/TeX/texbin/")    ; tex bin path
   (add-to-list 'exec-path "/Users/bb/miniconda3/bin/") ; python path
-  (setenv "PATH" (concat "/usr/local/bin:/usr/texbin:" (getenv "PATH")))
+  (setenv "PATH" (concat "/usr/local/bin:/Library/TeX/texbin/:" (getenv "PATH")))
   (setq eshell-path-env
         (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
@@ -32,7 +32,8 @@
                    "/jediepcserver.py")))
   (setq mac-option-modifier 'meta)
   (setq mac-command-modifier 'super)
-  (setq default-directory "~"))
+  (setq default-directory "~")
+  (global-set-key (kbd "H-f") isearch-forward))
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
@@ -759,7 +760,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "xelatex -shell-escape")
- '(TeX-PDF-mode nil t)
+ '(TeX-PDF-mode t)
+ '(TeX-engine (quote xetex))
  '(custom-safe-themes
    (quote
     ("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
