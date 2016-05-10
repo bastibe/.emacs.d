@@ -628,7 +628,7 @@
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
             (add-to-list 'org-latex-packages-alist '("" "minted"))
             (set-face-attribute 'variable-pitch nil
-                                :family "Cambria"
+                                :family "Calibri"
                                 :height (+ my-font-height 20))
             (set-face-attribute 'fixed-pitch nil
                                 :family "PragmataPro"

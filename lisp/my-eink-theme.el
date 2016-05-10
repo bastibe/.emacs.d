@@ -60,6 +60,7 @@
    `(font-latex-match-reference-keywords ((t (:foreground ,fg))))
    `(font-latex-match-variable-keywords ((t (:foreground ,fg))))
    `(font-latex-string-face ((t (:foreground "#a9a9a9"))))
+   `(font-latex-sectioning-5-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-builtin-face ((t (:background ,bg :foreground ,fg))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,fg :slant italic))))
    `(font-lock-comment-face ((t (:foreground ,fg :slant italic))))
