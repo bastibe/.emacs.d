@@ -4,8 +4,7 @@
 
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
-        conda-env-path "/home/bb/.miniconda3/envs/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"))
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
@@ -63,7 +62,7 @@
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow
     concurrent dash elpy ess expand-region flyspell-popup htmlize
-    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char jedi
+    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char
     magit markdown-mode multiple-cursors org-journal popup s
     smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
@@ -173,19 +172,9 @@
 
 (setq org-journal-file-pattern "%Y%m%d.org")
 
-;; (evil-mode t)
-;; (defalias 'evil-insert-state 'evil-emacs-state)
-;; (define-key evil-emacs-state-map [escape] 'evil-normal-state)
-;; (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
-;; (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-;; (dolist (source '(python-mode org-mode git-commit-mode help-mode
-;;                               compilation-mode emacs-lisp-mode
-;;                               lisp-interaction-mode julia-mode
-;;                               fundamental-mode calendar-mode
-;;                               org-journal-mode markdown-mode
-;;                               octave-mode text-mode latex-mode))
-;;   (add-to-list 'evil-emacs-state-modes source))
-;; (add-hook 'evil-mode-hook 'evil-emacs-state)
+(add-hook 'python-mode-hook '(lambda ()
+                               (company-mode t)
+                               (add-to-list 'company-backends 'company-jedi)))
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -429,23 +418,6 @@
 
 (autoload 's-trim "s")
 
-(defun select-python ()
-  "Select ipython from a conda env that matches the current git repo"
-  (interactive)
-  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel")))
-        (env-path conda-env-path)
-        (env-ipython "/bin/ipython")
-        (env-python "/bin/python"))
-    (when (and (> (length git-path) 0)
-               (file-directory-p git-path)
-               (file-directory-p (concat env-path (file-name-base git-path))))
-      (make-local-variable 'python-shell-interpreter)
-      (setq python-shell-interpreter (concat env-path (file-name-base git-path) env-ipython))
-      (make-local-variable 'org-babel-python-command)
-      (setq org-babel-python-command (concat env-path (file-name-base git-path) env-python)))))
-
-(add-hook 'find-file-hook 'select-python)
-
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
@@ -511,9 +483,21 @@
 (add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode))
 
 ;; open *.py files as python
-;; (autoload 'elpy-enable "elpy")
-;; (elpy-enable)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . (lambda () (elpy-enable) (python-mode))))
+
+(defun select-python ()
+  "Select appropriate venv"
+  (interactive)
+  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel"))))
+    (when (and (> (length git-path) 0)
+               (file-directory-p git-path)
+               (file-directory-p (concat git-path "/.env/bin/" )))
+      (make-local-variable 'python-shell-interpreter)
+      (make-local-variable 'python-shell-interpreter-args)
+      (setq elpy-rpc-python-command (concat git-path "/.env/bin/python")
+            python-shell-interpreter (concat git-path "/.env/bin/ipython")
+            python-shell-interpreter-args "-i --simple-prompt"))))
+(add-hook 'python-mode-hook 'select-python)
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
