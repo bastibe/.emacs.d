@@ -173,9 +173,9 @@
    '(parenthesis ((t (:foreground "gray70"))))
 
    ;; parens - other
-   `(sp-show-pair-match-face ((t (:foreground "black" :weight bold))))
+   `(sp-show-pair-match-face ((t (:foreground "black" :weight bold :underline t))))
    `(sp-show-pair-mismatch-face ((t (:background "red" :foreground "black" :weight bold))))
-   `(show-paren-match ((t (:foreground "black" :weight bold))))
+   `(show-paren-match ((t (:foreground "black" :weight bold :underline t))))
    `(show-paren-mismatch ((t (:background "red" :foreground "black" :weight bold))))
 
    ;; js2
