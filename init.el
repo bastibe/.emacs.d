@@ -4,7 +4,8 @@
 
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
+  (setenv "EDITOR" "/usr/bin/emacsclient"))
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
   (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
@@ -52,9 +53,18 @@
 				  ("elpa" . "http://tromey.com/elpa/")
 				  ("gnu" . "http://elpa.gnu.org/packages/")
                   ("org" . "http://orgmode.org/elpa/")
-                  ("melpa-stable" . "http://stable.melpa.org/packages/")))
+                  ("melpa" . "https://melpa.org/packages/")
+                  ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
+
+(setq package-archive-priorities
+      '(("melpa-stable" . 10)
+        ("marmalade" . 9)
+        ("org" . 9)
+        ("elpa" . 8)
+        ("gnu" . 8)
+        ("melpa" . 0)))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -110,6 +120,8 @@
 
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
+(setq org-src-preserve-indentation t)
 
 ;; highlight matching parenthesis
 (show-smartparens-mode)
@@ -590,7 +602,9 @@
                            (format "\\cite{%s}" path)
                          (format "\\cite[%s]{%s}" desc path)))))
             ;; set up org-babel so it uses the correct python version
-            (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
+            (org-babel-do-load-languages 'org-babel-load-languages
+                                         '((python . t)
+                                           (ipython . t)))
             (make-variable-buffer-local 'yas/trigger-key)
             (setq yas/trigger-key [tab])
             (add-to-list 'org-tab-first-hook
@@ -696,7 +710,7 @@
 "<div class=\"header\">
   <a href=\"http://bastibe.de\">Basti's Scratchpad on the Internet</a>
   <div class=\"sitelinks\">
-    <a href=\"http://alpha.app.net/bastibe\">alpha.app.net</a> | <a href=\"http://github.com/bastibe\">Github</a>
+    <a href=\"https://twitter.com/paperflyer\">Twitter</a> | <a href=\"http://github.com/bastibe\">Github</a>
   </div>
 </div>")
 
@@ -744,7 +758,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "xelatex -shell-escape")
- '(TeX-PDF-mode t)
+ '(TeX-PDF-mode t t)
  '(TeX-engine (quote xetex))
  '(custom-safe-themes
    (quote
@@ -811,6 +825,9 @@
  '(org-latex-default-table-environment "longtable")
  '(org-latex-listings (quote minted) t)
  '(org-latex-tables-centered nil)
+ '(package-selected-packages
+   (quote
+    (web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
