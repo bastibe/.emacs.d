@@ -85,11 +85,6 @@
 ;; Make Emacs look good
 ;; -----------------------------------------------------------------------------
 
-;; load my favourite theme of the day
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-(require 'my-eink-theme)
-(load-theme 'my-eink t)
-
 ;; set a nice looking font
 (setq my-font-height (cond ((eq system-type 'darwin) 130)
                            ((eq system-type 'windows-nt) 100)
@@ -112,6 +107,11 @@
                                :height my-font-height
                                :weight 'normal)))
 ;; For testing purposes: →„Σ“←
+
+;; load my favourite theme of the day
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'my-eink-theme)
+(load-theme 'my-eink t)
 
 ;; don't show hat pesky toolbar
 (if window-system
@@ -431,6 +431,15 @@
 (autoload 's-trim "s")
 
 ;; -----------------------------------------------------------------------------
+;; Configure evil
+;; -----------------------------------------------------------------------------
+
+(add-hook 'evil-mode-hook
+          (lambda ()
+            (define-key evil-motion-state-map "j" 'evil-next-visual-line)
+            (define-key evil-motion-state-map "k" 'evil-previous-visual-line)))
+
+;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
 
@@ -625,28 +634,6 @@
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
             (add-to-list 'org-latex-packages-alist '("" "minted"))
-            (set-face-attribute 'variable-pitch nil
-                                :family "Calibri"
-                                :height (+ my-font-height 20))
-            (set-face-attribute 'fixed-pitch nil
-                                :family "PragmataPro"
-                                :height my-font-height)
-            (mapc (lambda (face)
-                    (set-face-attribute face nil
-                                        :family (face-attribute 'fixed-pitch :family)
-                                        :height (face-attribute 'fixed-pitch :height)))
-                  '(org-block-begin-line
-                    org-code org-link org-meta-line
-                    ;;org-block-background
-                    org-document-info-keyword
-                    font-lock-comment-face
-                    org-table
-                    org-special-keyword
-                    org-property-value))
-            (set-face-attribute 'org-level-1 nil :height (+ my-font-height 40))
-            (set-face-attribute 'org-level-2 nil :height (+ my-font-height 30))
-            (set-face-attribute 'org-level-3 nil :weight 'bold)
-
             (setq org-confirm-babel-evaluate nil)))
 
 
@@ -758,7 +745,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "xelatex -shell-escape")
- '(TeX-PDF-mode t t)
+ '(TeX-PDF-mode t)
  '(TeX-engine (quote xetex))
  '(custom-safe-themes
    (quote
@@ -823,11 +810,11 @@
      ("" "hyperref" nil)
      "\\tolerance=1000")))
  '(org-latex-default-table-environment "longtable")
- '(org-latex-listings (quote minted) t)
+ '(org-latex-listings (quote minted))
  '(org-latex-tables-centered nil)
  '(package-selected-packages
    (quote
-    (web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+    (evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
