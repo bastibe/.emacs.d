@@ -186,7 +186,8 @@
 
 (add-hook 'python-mode-hook '(lambda ()
                                (company-mode t)
-                               (add-to-list 'company-backends 'company-jedi)))
+                               (add-to-list 'company-backends 'company-jedi)
+                               (local-set-key (kbd "C-c d") 'elpy-goto-definition)))
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -276,9 +277,8 @@
 ;; enable mark-multiple
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-*") 'mc/mark-all-like-this)
-(global-set-key (kbd "M-C-*") 'mc/mark-all-like-this-in-defun)
-(global-set-key (kbd "C-'") 'mc/edit-lines)
+(global-set-key (kbd "C-c a") 'mc/mark-all-like-this-dwim)
+(global-set-key (kbd "C-c e") 'mc/edit-lines)
 
 ;; enable sensible undo
 (global-undo-tree-mode)
@@ -324,7 +324,7 @@
 
 ;; mark stuff semantically
 (global-set-key (kbd "C-j") 'er/expand-region)
-(global-set-key (kbd "C-M-j") 'bb/mark-line)
+(global-set-key (kbd "C-c l") 'bb/mark-line)
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
 ;; quick access to org-agenda and org-todo
