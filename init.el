@@ -129,6 +129,27 @@
 ;; enable column number in info area
 (column-number-mode t)
 
+;; set up a pretty mode line
+(setq-default mode-line-format
+              '(((:eval (let* ((buffer-name (concat
+                                             (propertize (buffer-name) 'face '(:weight bold))
+                                             ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
+                               (left (concat (format-mode-line mode-line-front-space)
+                                             "(" (if (buffer-modified-p) "⋯" "✓") ")"
+                                             " "
+                                             (format "%-30s" buffer-name)
+                                             "    "
+                                             (if vc-mode (concat "" vc-mode) "")
+                                             "  "
+                                             (format-mode-line mode-line-misc-info)))
+                               (right (concat "("
+                                              (propertize (format-mode-line mode-name) 'face '(:weight bold))
+                                              (format-mode-line minor-mode-alist)
+                                              ")"
+                                              (format-mode-line mode-line-end-spaces)))
+                               (padding (make-string (- (window-width) 4 (length left) (length right)) ? )))
+                          (format "%s %s %s" left padding right))))))
+
 ;; in magit and diary mode, use word wrap
 (add-hook 'magit-mode-hook (lambda () (visual-line-mode t)) t)
 (add-hook 'magit-log-edit-mode-hook (lambda () (visual-line-mode t)) t)
