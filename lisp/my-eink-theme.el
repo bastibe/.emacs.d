@@ -147,6 +147,16 @@
    `(magit-branch-local ((t (:weight bold))))
    `(magit-branch-remote ((t (:weight bold))))
 
+   ;; markdown
+   `(markdown-header-face-1 ((t (:foreground ,fg :height 1.4 :weight semi-bold :family "InputSerifCompressed"))))
+   `(markdown-header-face-2 ((t (:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg, :family "Iosevka Slab"))))
+   `(markdown-header-face-3 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(markdown-header-face-4 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(markdown-header-face-5 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(markdown-header-face-6 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(markdown-pre-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
+   `(markdown-inline-code-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
+
    ;; compile
    `(compilation-error ((t (:inherit error))))
 
