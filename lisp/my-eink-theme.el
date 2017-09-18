@@ -58,6 +58,7 @@
    `(cursor ((t (:background ,fg :foreground "white smoke"))))
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
    `(default-italic ((t (:italic t))))
+
    `(font-latex-bold-face ((t (:foreground ,fg))))
    `(font-latex-italic-face ((t (:foreground ,fg :slant italic))))
    `(font-latex-match-reference-keywords ((t (:foreground ,fg))))
@@ -67,6 +68,12 @@
    `(font-latex-math-face ((t (:foreground ,fg))))
    `(font-latex-warning-face ((t (:foreground ,fg :weight bold))))
    `(font-latex-sedate-face ((t (:foreground ,fg :weight bold))))
+   `(font-latex-sectioning-1-face ((t (:foreground ,fg :weight semi-bold :height 1.4 :underline ,bg :overline ,bg :family "InputSerifCompressed"))))
+   `(font-latex-sectioning-2-face ((t (:foreground ,fg :height 1.4 :weight semi-bold :family "InputSerifCompressed"))))
+   `(font-latex-sectioning-3-face ((t (:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg, :family "Iosevka Slab"))))
+   `(font-latex-sectioning-4-face ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(font-latex-sectioning-5-face ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+
    `(font-lock-builtin-face ((t (:foreground ,fg))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
    `(font-lock-comment-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
