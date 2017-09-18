@@ -139,7 +139,7 @@
                                              " "
                                              (format "%-30s" buffer-name)
                                              "    "
-                                             (if vc-mode (concat "" vc-mode) "")
+                                             (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
                                              "  "
                                              (format-mode-line mode-line-misc-info)))
                                (right (concat "("
