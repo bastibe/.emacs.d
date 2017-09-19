@@ -367,7 +367,8 @@
 (global-set-key (kbd "C-c m") 'magit-status)
 
 ;; quick access to list-packages
-(global-set-key (kbd "C-c p") 'list-packages)
+(setq paradox-github-token "7df093f60968600ae8bfd0d41959653dad25d19e")
+(global-set-key (kbd "C-c p") 'paradox-list-packages)
 
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
