@@ -38,7 +38,7 @@
 (deftheme my-eink
   "Theme emulating reading on an E Ink device.")
 
-(let ((fg "#111111")
+(let* ((fg "#111111")
       (bg "#fffff8")
       (bg-light "#ddddd8")
       (fg-medium "#303030")
@@ -47,7 +47,12 @@
       (bg-white "#fcfcf8")
       (bg-highlight "#FFF1AA")
       (bg-highlight-2 "LightCyan")
-      (bg-highlight-3 "LightGreen"))
+      (bg-highlight-3 "LightGreen")
+      (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
+      (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
+      (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg :family "Iosevka Slab"))
+      (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg)))
+
 
   (custom-theme-set-faces
    'my-eink
@@ -101,11 +106,11 @@
    `(font-latex-math-face ((t (:foreground ,fg))))
    `(font-latex-warning-face ((t (:foreground ,fg :weight bold))))
    `(font-latex-sedate-face ((t (:foreground ,fg :weight bold))))
-   `(font-latex-sectioning-1-face ((t (:foreground ,fg :weight semi-bold :height 1.4 :underline ,bg :overline ,bg :family "InputSerifCompressed"))))
-   `(font-latex-sectioning-2-face ((t (:foreground ,fg :height 1.4 :weight semi-bold :family "InputSerifCompressed"))))
-   `(font-latex-sectioning-3-face ((t (:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg, :family "Iosevka Slab"))))
-   `(font-latex-sectioning-4-face ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(font-latex-sectioning-5-face ((t (:inherit font-latex-sectioning-4-face))))
+   `(font-latex-sectioning-1-face ((t ,headline-1)))
+   `(font-latex-sectioning-2-face ((t ,headline-2)))
+   `(font-latex-sectioning-3-face ((t ,headline-3)))
+   `(font-latex-sectioning-4-face ((t ,headline-4)))
+   `(font-latex-sectioning-5-face ((t ,headline-4)))
 
    ;; org
    `(org-agenda-date ((t (:foreground ,fg :height 1.2))))
@@ -121,15 +126,15 @@
    `(org-date ((t (:foreground ,fg) :underline)))
    `(org-hide ((t (:foreground ,bg))))
    ;; use :overline and :overline to give headings more top margin
-   `(org-document-title ((t (:inherit font-latex-sectioning-1-face))))
+   `(org-document-title ((t ,headline-1)))
    `(org-document-info ((t (:foreground ,fg))))
    `(org-document-info-keyword ((t (:foreground ,fg-light :family "Iosevka Slab"))))
-   `(org-level-1 ((t (:inherit font-latex-sectioning-2-face))))
-   `(org-level-2 ((t (:inherit font-latex-sectioning-3-face))))
-   `(org-level-3 ((t (:inherit font-latex-sectioning-4-face))))
-   `(org-level-4 ((t (:inherit font-latex-sectioning-4-face))))
-   `(org-level-5 ((t (:inherit font-latex-sectioning-4-face))))
-   `(org-level-6 ((t (:inherit font-latex-sectioning-4-face))))
+   `(org-level-1 ((t ,headline-2)))
+   `(org-level-2 ((t ,headline-3)))
+   `(org-level-3 ((t ,headline-4)))
+   `(org-level-4 ((t ,headline-4)))
+   `(org-level-5 ((t ,headline-4)))
+   `(org-level-6 ((t ,headline-4)))
    `(org-link ((t (:foreground ,fg :underline t))))
    `(org-quote ((t (:foreground ,fg :slant italic :inherit org-block))))
    `(org-scheduled ((t (:foreground ,fg))))
@@ -155,12 +160,12 @@
    `(magit-branch-remote ((t (:weight bold))))
 
    ;; markdown
-   `(markdown-header-face-1 ((t (:inherit font-latex-sectioning-2-face))))
-   `(markdown-header-face-2 ((t (:inherit font-latex-sectioning-3-face))))
-   `(markdown-header-face-3 ((t (:inherit font-latex-sectioning-4-face))))
-   `(markdown-header-face-4 ((t (:inherit font-latex-sectioning-4-face))))
-   `(markdown-header-face-5 ((t (:inherit font-latex-sectioning-4-face))))
-   `(markdown-header-face-6 ((t (:inherit font-latex-sectioning-4-face))))
+   `(markdown-header-face-1 ((t ,headline-2)))
+   `(markdown-header-face-2 ((t ,headline-3)))
+   `(markdown-header-face-3 ((t ,headline-4)))
+   `(markdown-header-face-4 ((t ,headline-4)))
+   `(markdown-header-face-5 ((t ,headline-4)))
+   `(markdown-header-face-6 ((t ,headline-4)))
    `(markdown-pre-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
    `(markdown-inline-code-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
 
