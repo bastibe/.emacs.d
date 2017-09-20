@@ -1,11 +1,9 @@
-;;; my-eink-theme.el --- E Ink color theme
+;;; typo-theme.el --- Typographic (not color) Theme
 
-;; Copyright (C) 2013-2016 Marian Schubert
+;; Copyright (C) 2017 Bastian Bechtold
 
-;; Author: Marian Schubert <marian.schubert@gmail.com>
-;; URL: http://github.com/maio/eink-emacs
-;; Package-Version: 1.0.0
-;; Version: 1.0
+;; Author: Bastian Bechtold
+;; URL: https://github.com/bastibe/.emacs.d/tree/master/lisp
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,10 +20,27 @@
 
 ;;; Commentary:
 
-;; Low distraction, minimalistic color theme emulating reading
-;; on E Ink devices.
+;; A color theme without color. Like all text documents *except* source
+;; code, this theme uses typography to distinguish between different
+;; parts of text.
+;;
+;; Color-based highlighting is an anachronism borne from terminals'
+;; inability to switch fonts. All we had was colors, so colors is what
+;; we used. But in todays graphical world, this is no longer necessary,
+;; and Emacs can use any font we like.
+;;
+;; I like PragmataPro. This theme is based on PragmataPro, and adds a
+;; few other fonts for good measure. Strings are Iosevka Slab. Comments
+;; are oblique Iosevka. Documentation is regular Iosevka. Headlines are
+;; InputSerifCompressed. Ubuntu Mono works well, too.
 
 ;;; Credits:
+
+;; Forked From:
+;;
+;; eink-emacs - Eink color theme for Emacs
+;; Marian Schubert <marian.schubert@gmail.com>
+;; http://github.com/maio/eink-emacs
 
 ;; Inspired by:
 ;;
@@ -35,27 +50,27 @@
 
 ;;; Code:
 
-(deftheme my-eink
+(deftheme typo
   "Theme emulating reading on an E Ink device.")
 
 (let* ((fg "#111111")
-      (bg "#fffff8")
-      (bg-light "#ddddd8")
-      (fg-medium "#303030")
-      (fg-light "#aaaaa8")
-      (bg-lighter "#f4f4f0")
-      (bg-white "#fcfcf8")
-      (bg-highlight "#FFF1AA")
-      (bg-highlight-2 "LightCyan")
-      (bg-highlight-3 "LightGreen")
-      (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
-      (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
-      (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg :family "Iosevka Slab"))
-      (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg)))
+       (bg "#fffff8")
+       (bg-light "#ddddd8")
+       (fg-medium "#303030")
+       (fg-light "#aaaaa8")
+       (bg-lighter "#f4f4f0")
+       (bg-white "#fcfcf8")
+       (bg-highlight "#FFF1AA")
+       (bg-highlight-2 "LightCyan")
+       (bg-highlight-3 "LightGreen")
+       (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
+       (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
+       (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg :family "Iosevka Slab"))
+       (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg)))
 
 
   (custom-theme-set-faces
-   'my-eink
+   'typo
 
    ;; generic stuff
    `(default ((t (:background ,bg :foreground ,fg))))
@@ -240,5 +255,5 @@
    'custom-theme-load-path
    (file-name-as-directory (file-name-directory load-file-name))))
 
-(provide-theme 'my-eink)
-;;; my-eink-theme.el ends here
+(provide-theme 'typo)
+;;; typo-theme.el ends here

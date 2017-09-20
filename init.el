@@ -110,8 +110,8 @@
 
 ;; load my favourite theme of the day
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-(require 'my-eink-theme)
-(load-theme 'my-eink t)
+(require 'typo-theme)
+(load-theme 'typo t)
 
 ;; don't show hat pesky toolbar
 (if window-system
