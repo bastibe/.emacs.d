@@ -147,7 +147,7 @@
                                               (format-mode-line minor-mode-alist)
                                               ")"
                                               (format-mode-line mode-line-end-spaces)))
-                               (padding (make-string (- (window-width) 4 (length left) (length right)) ? )))
+                               (padding (make-string (max 0 (- (window-width) 4 (length left) (length right))) ? )))
                           (format "%s %s %s" left padding right))))))
 
 ;; in magit and diary mode, use word wrap
@@ -231,7 +231,7 @@
 (global-set-key (kbd "M-8") "{")
 (global-set-key (kbd "M-9") "}")
 (global-set-key (kbd "M-2") "„")
-(global-set-key (kbd "C-M-\"") "“")
+(global-set-key (kbd "C-M-\"") "”")
 (global-set-key (kbd "M-|") "”")
 ;; Make backward-paragraph and forward-paragraph work the same on EN and DE key maps
 (global-set-key (kbd "M-Ü") 'backward-paragraph)
@@ -550,6 +550,7 @@
 
 (setq org-startup-indented t)
 (setq org-export-allow-bind-keywords t)
+(setq org-ref-ref-html "[<a class='org-ref-reference' href=\"#%s\">%s</a>]")
 
 ;; start up latex mode with visual-line-mode
 (add-hook 'latex-mode-hook
@@ -649,13 +650,11 @@
             (set-face-attribute 'org-headline-done nil :strike-through t)
             ;; overload C-j in org-mode, too
             (define-key org-mode-map (kbd "C-j") 'er/expand-region)
-            (setq org-latex-listings 'minted
-                  org-latex-pdf-process
+            (setq org-latex-pdf-process
                   '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "bibtex %b"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-            (add-to-list 'org-latex-packages-alist '("" "minted"))
             (setq org-confirm-babel-evaluate nil)))
 
 
@@ -814,9 +813,9 @@
    (quote
     (("" "microtype" nil)
      ("" "polyglossia" nil)
-     "\\setdefaultlanguage{german}" "\\setotherlanguage{english}"
+     "\\setdefaultlanguage{english}" "\\setotherlanguage{german}"
      ("" "fontspec" nil)
-     "\\setmainfont{Calibri}"
+     "\\setmainfont{Latin Modern Roman}"
      ("" "fixltx2e" nil)
      ("" "graphicx" t)
      ("" "longtable" nil)
@@ -829,14 +828,16 @@
      ("" "marvosym" t)
      ("" "wasysym" t)
      ("" "amssymb" t)
-     ("" "hyperref" nil)
+     ("" "unicode-math" t)
+     ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
  '(org-latex-default-table-environment "longtable")
- '(org-latex-listings (quote minted))
+ '(org-latex-listings nil)
  '(org-latex-tables-centered nil)
  '(package-selected-packages
    (quote
-    (evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+    (org-ref evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+ '(paradox-automatically-star nil)
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
