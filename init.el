@@ -74,11 +74,11 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(auto-complete auctex color-theme-sanityinc-tomorrow
-    concurrent dash elpy ess expand-region flyspell-popup htmlize
-    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char
-    magit markdown-mode multiple-cursors org-journal popup s
-    smartparens undo-tree wrap-region yaml-mode yasnippet)
+  '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
+    dash elpy ess expand-region evil flyspell-popup htmlize idomenu
+    ido-ubiquitous ido-vertical-mode iy-go-to-char magit markdown-mode
+    multiple-cursors org-journal popup s smartparens undo-tree
+    wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -139,6 +139,7 @@
                                              (propertize (buffer-name) 'face '(:weight bold))
                                              ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
                                (left (concat (format-mode-line mode-line-front-space)
+                                             (if evil-mode evil-mode-line-tag)
                                              "(" (if (buffer-modified-p) "⋯" "✓") ")"
                                              " "
                                              (format "%-30s" buffer-name)
@@ -473,8 +474,22 @@
 ;; Configure evil
 ;; -----------------------------------------------------------------------------
 
+(require 'evil)
+(defalias 'evil-insert-state 'evil-emacs-state)
+(global-evil-leader-mode)
+(global-set-key (kbd "<escape>") 'evil-normal-state)
 (add-hook 'evil-mode-hook
           (lambda ()
+            (evil-leader/set-leader "<SPC>")
+            (evil-leader/set-key "e" 'ido-find-file
+                                 "b" 'ido-switch-buffer
+                                 "w" 'ido-switch-buffer-other-window
+                                 "p" 'paradox-list-packages
+                                 "m" 'magit-status
+                                 "i" 'idomenu
+                                 "x" 'execute-extended-command)
+            (define-key evil-ex-map "b" 'ido-switch-buffer)
+            (define-key evil-ex-map "e" 'ido-find-file)
             (define-key evil-motion-state-map "j" 'evil-next-visual-line)
             (define-key evil-motion-state-map "k" 'evil-previous-visual-line)))
 
@@ -486,6 +501,7 @@
 
 ;; always indent automatically
 (global-set-key (kbd "RET") 'newline-and-indent)
+(global-set-key (kbd "C-x w") 'ido-switch-buffer-other-window)
 
 ;; C/C++
 (setq c-default-style "linux"
