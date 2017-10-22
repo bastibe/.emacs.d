@@ -348,8 +348,21 @@
   (beginning-of-line))
 
 ;; mark stuff semantically
-(global-set-key (kbd "C-j") 'er/expand-region)
-(global-set-key (kbd "C-c l") 'bb/mark-line)
+(require 'expand-region)
+(define-prefix-command 'mark-semantically)
+(global-set-key (kbd "C-j") 'mark-semantically)
+(define-key mark-semantically (kbd "w") 'er/mark-word)
+(define-key mark-semantically (kbd "s") 'er/mark-symbol)
+(define-key mark-semantically (kbd "f") 'er/mark-method-call)
+(define-key mark-semantically (kbd "d") 'er/mark-defun)
+(define-key mark-semantically (kbd "c") 'er/mark-comment)
+(define-key mark-semantically (kbd "p") 'mark-paragraph)
+(define-key mark-semantically (kbd "'") 'er/mark-inside-quotes)
+(define-key mark-semantically (kbd "\"") 'er/mark-outside-quotes)
+(define-key mark-semantically (kbd "(") 'er/mark-inside-pairs)
+(define-key mark-semantically (kbd ")") 'er/mark-outside-pairs)
+(define-key mark-semantically (kbd "l") 'bb/mark-line)
+
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
 ;; quick access to org-agenda and org-todo
@@ -580,7 +593,6 @@
 (add-hook 'LaTeX-mode-hook
 		  (lambda ()
 			(define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
-            (define-key LaTeX-mode-map (kbd "C-j") 'er/expand-region)
 			(visual-line-mode t)
 			(turn-on-reftex)
             (local-unset-key (kbd "\""))
@@ -634,8 +646,8 @@
             (set-face-attribute 'org-done nil :strike-through t)
             (set-face-attribute 'org-headline-done nil :strike-through t)
             ;; overload C-j in org-mode, too
-            (define-key org-mode-map (kbd "C-j") 'er/expand-region)
-            (setq org-latex-pdf-process
+            (setq org-latex-listings 'minted
+                  org-latex-pdf-process
                   '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "bibtex %b"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
