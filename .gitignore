@@ -12,3 +12,4 @@ tramp
 url/*
 themes/*
 .python-environments
+session.*
