@@ -199,6 +199,10 @@
 (set-display-table-slot standard-display-table 'truncation ?→) ; bol wrap char
 ;; TODO clicking the margin should position cursor at eol/bol
 
+(add-hook 'window-configuration-change-hook
+          (lambda ()
+            (set-window-margins nil 1 1)))
+
 ;; ----------------------------------------------------------------------------
 ;; Make Emacs behave nicely
 ;; ----------------------------------------------------------------------------
@@ -766,7 +770,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "xelatex -shell-escape")
- '(TeX-PDF-mode t)
+ '(TeX-PDF-mode t t)
  '(TeX-engine (quote xetex))
  '(custom-safe-themes
    (quote
@@ -835,7 +839,7 @@
  '(org-latex-tables-centered nil)
  '(package-selected-packages
    (quote
-    (evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+    (dumb-jump evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
