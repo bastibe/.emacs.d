@@ -394,7 +394,7 @@
 
 ;; quick access to list-packages
 (setq paradox-github-token "7df093f60968600ae8bfd0d41959653dad25d19e")
-(global-set-key (kbd "C-c p") 'paradox-list-packages)
+(global-set-key (kbd "C-c p") 'package-list-packages)
 
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
@@ -859,7 +859,6 @@
    (quote
     (org-ref dumb-jump evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
     (org-ref evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
- '(paradox-automatically-star nil)
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
