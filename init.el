@@ -34,10 +34,14 @@
   (setq mac-command-modifier 'super)
   (setq default-directory "~")
   (global-set-key (kbd "H-f") isearch-forward))
+
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
   (setq org-agenda-files (quote ("~/Documents/journal/"))
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
   (setq default-directory "~"))
+
+(when (and (eq system-type 'windows-nt) (string= (user-login-name) "Bastian"))
+  (setq conda-env-path "C:/Users/Bastian/Miniconda3/envs"))
 
 (require 'server)
 (unless (server-running-p)
@@ -70,11 +74,11 @@
   (package-refresh-contents))
 
 (defvar my-packages
-  '(auto-complete auctex color-theme-sanityinc-tomorrow
-    concurrent dash elpy ess expand-region flyspell-popup htmlize
-    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char
-    magit markdown-mode multiple-cursors org-journal popup s
-    smartparens undo-tree wrap-region yaml-mode yasnippet)
+  '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
+    dash elpy ess expand-region evil flyspell-popup htmlize idomenu
+    ido-ubiquitous ido-vertical-mode iy-go-to-char magit markdown-mode
+    multiple-cursors org-journal popup s smartparens undo-tree
+    wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -110,8 +114,8 @@
 
 ;; load my favourite theme of the day
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-(require 'my-eink-theme)
-(load-theme 'my-eink t)
+(require 'typo-theme)
+(load-theme 'typo t)
 
 ;; don't show hat pesky toolbar
 (if window-system
@@ -135,11 +139,12 @@
                                              (propertize (buffer-name) 'face '(:weight bold))
                                              ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
                                (left (concat (format-mode-line mode-line-front-space)
+                                             (if evil-mode evil-mode-line-tag)
                                              "(" (if (buffer-modified-p) "⋯" "✓") ")"
                                              " "
                                              (format "%-30s" buffer-name)
                                              "    "
-                                             (if vc-mode (concat "" vc-mode) "")
+                                             (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
                                              "  "
                                              (format-mode-line mode-line-misc-info)))
                                (right (concat "("
@@ -147,7 +152,7 @@
                                               (format-mode-line minor-mode-alist)
                                               ")"
                                               (format-mode-line mode-line-end-spaces)))
-                               (padding (make-string (- (window-width) 4 (length left) (length right)) ? )))
+                               (padding (make-string (max 0 (- (window-width) 4 (length left) (length right))) ? )))
                           (format "%s %s %s" left padding right))))))
 
 ;; in magit and diary mode, use word wrap
@@ -235,7 +240,7 @@
 (global-set-key (kbd "M-8") "{")
 (global-set-key (kbd "M-9") "}")
 (global-set-key (kbd "M-2") "„")
-(global-set-key (kbd "C-M-\"") "“")
+(global-set-key (kbd "C-M-\"") "”")
 (global-set-key (kbd "M-|") "”")
 ;; Make backward-paragraph and forward-paragraph work the same on EN and DE key maps
 (global-set-key (kbd "M-Ü") 'backward-paragraph)
@@ -348,8 +353,21 @@
   (beginning-of-line))
 
 ;; mark stuff semantically
-(global-set-key (kbd "C-j") 'er/expand-region)
-(global-set-key (kbd "C-c l") 'bb/mark-line)
+(require 'expand-region)
+(define-prefix-command 'mark-semantically)
+(global-set-key (kbd "C-j") 'mark-semantically)
+(define-key mark-semantically (kbd "w") 'er/mark-word)
+(define-key mark-semantically (kbd "s") 'er/mark-symbol)
+(define-key mark-semantically (kbd "f") 'er/mark-method-call)
+(define-key mark-semantically (kbd "d") 'er/mark-defun)
+(define-key mark-semantically (kbd "c") 'er/mark-comment)
+(define-key mark-semantically (kbd "p") 'mark-paragraph)
+(define-key mark-semantically (kbd "'") 'er/mark-inside-quotes)
+(define-key mark-semantically (kbd "\"") 'er/mark-outside-quotes)
+(define-key mark-semantically (kbd "(") 'er/mark-inside-pairs)
+(define-key mark-semantically (kbd ")") 'er/mark-outside-pairs)
+(define-key mark-semantically (kbd "l") 'bb/mark-line)
+
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
 ;; quick access to org-agenda and org-todo
@@ -371,7 +389,8 @@
 (global-set-key (kbd "C-c m") 'magit-status)
 
 ;; quick access to list-packages
-(global-set-key (kbd "C-c p") 'list-packages)
+(setq paradox-github-token "7df093f60968600ae8bfd0d41959653dad25d19e")
+(global-set-key (kbd "C-c p") 'paradox-list-packages)
 
 ;; quick access to the calendar
 (global-set-key (kbd "C-c c") 'calendar)
@@ -459,8 +478,22 @@
 ;; Configure evil
 ;; -----------------------------------------------------------------------------
 
+(require 'evil)
+(defalias 'evil-insert-state 'evil-emacs-state)
+(global-evil-leader-mode)
+(global-set-key (kbd "<escape>") 'evil-normal-state)
 (add-hook 'evil-mode-hook
           (lambda ()
+            (evil-leader/set-leader "<SPC>")
+            (evil-leader/set-key "e" 'ido-find-file
+                                 "b" 'ido-switch-buffer
+                                 "w" 'ido-switch-buffer-other-window
+                                 "p" 'paradox-list-packages
+                                 "m" 'magit-status
+                                 "i" 'idomenu
+                                 "x" 'execute-extended-command)
+            (define-key evil-ex-map "b" 'ido-switch-buffer)
+            (define-key evil-ex-map "e" 'ido-find-file)
             (define-key evil-motion-state-map "j" 'evil-next-visual-line)
             (define-key evil-motion-state-map "k" 'evil-previous-visual-line)))
 
@@ -472,6 +505,7 @@
 
 ;; always indent automatically
 (global-set-key (kbd "RET") 'newline-and-indent)
+(global-set-key (kbd "C-x w") 'ido-switch-buffer-other-window)
 
 ;; C/C++
 (setq c-default-style "linux"
@@ -553,6 +587,7 @@
 
 (setq org-startup-indented t)
 (setq org-export-allow-bind-keywords t)
+(setq org-ref-ref-html "[<a class='org-ref-reference' href=\"#%s\">%s</a>]")
 
 ;; start up latex mode with visual-line-mode
 (add-hook 'latex-mode-hook
@@ -578,7 +613,6 @@
 (add-hook 'LaTeX-mode-hook
 		  (lambda ()
 			(define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
-            (define-key LaTeX-mode-map (kbd "C-j") 'er/expand-region)
 			(visual-line-mode t)
 			(turn-on-reftex)
             (local-unset-key (kbd "\""))
@@ -615,26 +649,7 @@
 (add-hook 'org-mode-hook
           (lambda ()            ;; yasnippet
             (yas-minor-mode t)
-            ;; convert cite: links to \cite{...}
-            (org-add-link-type "cite"
-                 (defun follow-cite (name)
-                   "Open bibliography and jump to appropriate entry.
-                    The document must contain \bibliography{filename}
-                    somewhere for this to work"
-                   (find-file-other-window
-                    (save-excursion
-                      (beginning-of-buffer)
-                      (save-match-data
-                        (re-search-forward "\\\\bibliography{\\([^}]+\\)}")
-                        (concat (match-string 1) ".bib"))))
-                   (beginning-of-buffer)
-                   (search-forward name))
-                 (defun export-cite (path desc format)
-                   "Export [[cite:cohen93]] as \cite{cohen93} in LaTeX."
-                   (if (eq format 'latex)
-                       (if (or (not desc) (equal 0 (search "cite:" desc)))
-                           (format "\\cite{%s}" path)
-                         (format "\\cite[%s]{%s}" desc path)))))
+            (require 'org-ref)
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages
                                          '((python . t)
@@ -651,14 +666,12 @@
             (set-face-attribute 'org-done nil :strike-through t)
             (set-face-attribute 'org-headline-done nil :strike-through t)
             ;; overload C-j in org-mode, too
-            (define-key org-mode-map (kbd "C-j") 'er/expand-region)
             (setq org-latex-listings 'minted
                   org-latex-pdf-process
                   '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "bibtex %b"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
                     "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-            (add-to-list 'org-latex-packages-alist '("" "minted"))
             (setq org-confirm-babel-evaluate nil)))
 
 
@@ -817,9 +830,9 @@
    (quote
     (("" "microtype" nil)
      ("" "polyglossia" nil)
-     "\\setdefaultlanguage{german}" "\\setotherlanguage{english}"
+     "\\setdefaultlanguage{english}" "\\setotherlanguage{german}"
      ("" "fontspec" nil)
-     "\\setmainfont{Calibri}"
+     "\\setmainfont{Latin Modern Roman}"
      ("" "fixltx2e" nil)
      ("" "graphicx" t)
      ("" "longtable" nil)
@@ -832,14 +845,17 @@
      ("" "marvosym" t)
      ("" "wasysym" t)
      ("" "amssymb" t)
-     ("" "hyperref" nil)
+     ("" "unicode-math" t)
+     ("hidelinks" "hyperref" nil)
      "\\tolerance=1000")))
  '(org-latex-default-table-environment "longtable")
- '(org-latex-listings (quote minted))
+ '(org-latex-listings nil)
  '(org-latex-tables-centered nil)
  '(package-selected-packages
    (quote
-    (dumb-jump evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+    (org-ref dumb-jump evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+    (org-ref evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+ '(paradox-automatically-star nil)
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote

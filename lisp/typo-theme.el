@@ -1,11 +1,9 @@
-;;; my-eink-theme.el --- E Ink color theme
+;;; typo-theme.el --- Typographic (not color) Theme
 
-;; Copyright (C) 2013-2016 Marian Schubert
+;; Copyright (C) 2017 Bastian Bechtold
 
-;; Author: Marian Schubert <marian.schubert@gmail.com>
-;; URL: http://github.com/maio/eink-emacs
-;; Package-Version: 1.0.0
-;; Version: 1.0
+;; Author: Bastian Bechtold
+;; URL: https://github.com/bastibe/.emacs.d/tree/master/lisp
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,10 +20,27 @@
 
 ;;; Commentary:
 
-;; Low distraction, minimalistic color theme emulating reading
-;; on E Ink devices.
+;; A color theme without color. Like all text documents *except* source
+;; code, this theme uses typography to distinguish between different
+;; parts of text.
+;;
+;; Color-based highlighting is an anachronism borne from terminals'
+;; inability to switch fonts. All we had was colors, so colors is what
+;; we used. But in todays graphical world, this is no longer necessary,
+;; and Emacs can use any font we like.
+;;
+;; I like PragmataPro. This theme is based on PragmataPro, and adds a
+;; few other fonts for good measure. Strings are Iosevka Slab. Comments
+;; are oblique Iosevka. Documentation is regular Iosevka. Headlines are
+;; InputSerifCompressed. Ubuntu Mono works well, too.
 
 ;;; Credits:
+
+;; Forked From:
+;;
+;; eink-emacs - Eink color theme for Emacs
+;; Marian Schubert <marian.schubert@gmail.com>
+;; http://github.com/maio/eink-emacs
 
 ;; Inspired by:
 ;;
@@ -35,22 +50,27 @@
 
 ;;; Code:
 
-(deftheme my-eink
+(deftheme typo
   "Theme emulating reading on an E Ink device.")
 
-(let ((fg "#111111")
-      (bg "#fffff8")
-      (bg-light "#ddddd8")
-      (fg-medium "#303030")
-      (fg-light "#aaaaa8")
-      (bg-lighter "#f4f4f0")
-      (bg-white "#fcfcf8")
-      (bg-highlight "#FFF1AA")
-      (bg-highlight-2 "LightCyan")
-      (bg-highlight-3 "LightGreen"))
+(let* ((fg "#111111")
+       (bg "#fffff8")
+       (bg-light "#ddddd8")
+       (fg-medium "#303030")
+       (fg-light "#aaaaa8")
+       (bg-lighter "#f4f4f0")
+       (bg-white "#fcfcf8")
+       (bg-highlight "#FFF1AA")
+       (bg-highlight-2 "LightCyan")
+       (bg-highlight-3 "LightGreen")
+       (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
+       (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
+       (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg :family "Iosevka Slab"))
+       (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg)))
+
 
   (custom-theme-set-faces
-   'my-eink
+   'typo
 
    ;; generic stuff
    `(default ((t (:background ,bg :foreground ,fg))))
@@ -58,15 +78,6 @@
    `(cursor ((t (:background ,fg :foreground "white smoke"))))
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
    `(default-italic ((t (:italic t))))
-   `(font-latex-bold-face ((t (:foreground ,fg))))
-   `(font-latex-italic-face ((t (:foreground ,fg :slant italic))))
-   `(font-latex-match-reference-keywords ((t (:foreground ,fg))))
-   `(font-latex-match-variable-keywords ((t (:foreground ,fg))))
-   `(font-latex-string-face ((t (:foreground "#a9a9a9"))))
-   `(font-latex-sectioning-5-face ((t (:foreground ,fg :weight bold))))
-   `(font-latex-math-face ((t (:foreground ,fg))))
-   `(font-latex-warning-face ((t (:foreground ,fg :weight bold))))
-   `(font-latex-sedate-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-builtin-face ((t (:foreground ,fg))))
    `(font-lock-comment-delimiter-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
    `(font-lock-comment-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
@@ -100,6 +111,22 @@
    `(mode-line-minor-mode ((t (:weight ultra-light))))
    `(modeline ((t (:background ,bg :foreground ,fg :height 1.0))))
 
+   ;; latex
+   `(font-latex-bold-face ((t (:foreground ,fg))))
+   `(font-latex-italic-face ((t (:foreground ,fg :slant italic))))
+   `(font-latex-match-reference-keywords ((t (:foreground ,fg))))
+   `(font-latex-match-variable-keywords ((t (:foreground ,fg))))
+   `(font-latex-string-face ((t (:foreground "#a9a9a9"))))
+   `(font-latex-sectioning-5-face ((t (:foreground ,fg :weight bold))))
+   `(font-latex-math-face ((t (:foreground ,fg))))
+   `(font-latex-warning-face ((t (:foreground ,fg :weight bold))))
+   `(font-latex-sedate-face ((t (:foreground ,fg :weight bold))))
+   `(font-latex-sectioning-1-face ((t ,headline-1)))
+   `(font-latex-sectioning-2-face ((t ,headline-2)))
+   `(font-latex-sectioning-3-face ((t ,headline-3)))
+   `(font-latex-sectioning-4-face ((t ,headline-4)))
+   `(font-latex-sectioning-5-face ((t ,headline-4)))
+
    ;; org
    `(org-agenda-date ((t (:foreground ,fg :height 1.2))))
    `(org-agenda-date-today ((t (:foreground ,fg :weight bold :height 1.4))))
@@ -114,15 +141,15 @@
    `(org-date ((t (:foreground ,fg) :underline)))
    `(org-hide ((t (:foreground ,bg))))
    ;; use :overline and :overline to give headings more top margin
-   `(org-document-title ((t (:foreground ,fg :weight semi-bold :height 1.4 :underline ,bg :overline ,bg :family "InputSerifCompressed"))))
+   `(org-document-title ((t ,headline-1)))
    `(org-document-info ((t (:foreground ,fg))))
    `(org-document-info-keyword ((t (:foreground ,fg-light :family "Iosevka Slab"))))
-   `(org-level-1 ((t (:foreground ,fg :height 1.4 :weight semi-bold :family "InputSerifCompressed"))))
-   `(org-level-2 ((t (:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg, :family "Iosevka Slab"))))
-   `(org-level-3 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(org-level-4 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(org-level-5 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(org-level-6 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(org-level-1 ((t ,headline-2)))
+   `(org-level-2 ((t ,headline-3)))
+   `(org-level-3 ((t ,headline-4)))
+   `(org-level-4 ((t ,headline-4)))
+   `(org-level-5 ((t ,headline-4)))
+   `(org-level-6 ((t ,headline-4)))
    `(org-link ((t (:foreground ,fg :underline t))))
    `(org-quote ((t (:foreground ,fg :slant italic :inherit org-block))))
    `(org-scheduled ((t (:foreground ,fg))))
@@ -148,12 +175,12 @@
    `(magit-branch-remote ((t (:weight bold))))
 
    ;; markdown
-   `(markdown-header-face-1 ((t (:foreground ,fg :height 1.4 :weight semi-bold :family "InputSerifCompressed"))))
-   `(markdown-header-face-2 ((t (:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg, :family "Iosevka Slab"))))
-   `(markdown-header-face-3 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(markdown-header-face-4 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(markdown-header-face-5 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
-   `(markdown-header-face-6 ((t (:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg))))
+   `(markdown-header-face-1 ((t ,headline-2)))
+   `(markdown-header-face-2 ((t ,headline-3)))
+   `(markdown-header-face-3 ((t ,headline-4)))
+   `(markdown-header-face-4 ((t ,headline-4)))
+   `(markdown-header-face-5 ((t ,headline-4)))
+   `(markdown-header-face-6 ((t ,headline-4)))
    `(markdown-pre-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
    `(markdown-inline-code-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
 
@@ -228,5 +255,5 @@
    'custom-theme-load-path
    (file-name-as-directory (file-name-directory load-file-name))))
 
-(provide-theme 'my-eink)
-;;; my-eink-theme.el ends here
+(provide-theme 'typo)
+;;; typo-theme.el ends here
