@@ -75,10 +75,10 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
-    dash elpy ess expand-region evil flyspell-popup htmlize idomenu
-    ido-ubiquitous ido-vertical-mode iy-go-to-char magit markdown-mode
-    multiple-cursors org-journal popup s smartparens undo-tree
-    wrap-region yaml-mode yasnippet)
+    dash dumb-jump elpy ess expand-region evil flyspell-popup htmlize
+    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char magit
+    markdown-mode multiple-cursors org-journal popup s smartparens
+    undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -217,7 +217,8 @@
 (add-hook 'python-mode-hook '(lambda ()
                                (company-mode t)
                                (add-to-list 'company-backends 'company-jedi)
-                               (local-set-key (kbd "C-c d") 'elpy-goto-definition)))
+                               (define-key elpy-mode-map (kbd "M-.") 'dumb-jump-go)
+                               (define-key elpy-mode-map (kbd "M-,") 'dumb-jump-back)))
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -369,6 +370,9 @@
 (define-key mark-semantically (kbd "l") 'bb/mark-line)
 
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
+
+(global-set-key (kbd "M-.") 'dumb-jump-go)
+(global-set-key (kbd "M-,") 'dumb-jump-back)
 
 ;; quick access to org-agenda and org-todo
 (global-set-key (kbd "C-c a") 'org-agenda)
