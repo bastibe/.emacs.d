@@ -75,10 +75,10 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
-    dash dumb-jump elpy ess expand-region evil flyspell-popup htmlize
+    dash dumb-jump elpy ess expand-region flyspell-popup htmlize
     idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char magit
-    markdown-mode multiple-cursors org-journal popup s smartparens
-    undo-tree wrap-region yaml-mode yasnippet)
+    markdown-mode multiple-cursors org-journal org-ref popup s
+    smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -139,7 +139,6 @@
                                              (propertize (buffer-name) 'face '(:weight bold))
                                              ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
                                (left (concat (format-mode-line mode-line-front-space)
-                                             (if evil-mode evil-mode-line-tag)
                                              "(" (if (buffer-modified-p) "⋯" "✓") ")"
                                              " "
                                              (format "%-30s" buffer-name)
@@ -477,29 +476,6 @@
         (make-directory dir)))))
 
 (autoload 's-trim "s")
-
-;; -----------------------------------------------------------------------------
-;; Configure evil
-;; -----------------------------------------------------------------------------
-
-(require 'evil)
-(defalias 'evil-insert-state 'evil-emacs-state)
-(global-evil-leader-mode)
-(global-set-key (kbd "<escape>") 'evil-normal-state)
-(add-hook 'evil-mode-hook
-          (lambda ()
-            (evil-leader/set-leader "<SPC>")
-            (evil-leader/set-key "e" 'ido-find-file
-                                 "b" 'ido-switch-buffer
-                                 "w" 'ido-switch-buffer-other-window
-                                 "p" 'paradox-list-packages
-                                 "m" 'magit-status
-                                 "i" 'idomenu
-                                 "x" 'execute-extended-command)
-            (define-key evil-ex-map "b" 'ido-switch-buffer)
-            (define-key evil-ex-map "e" 'ido-find-file)
-            (define-key evil-motion-state-map "j" 'evil-next-visual-line)
-            (define-key evil-motion-state-map "k" 'evil-previous-visual-line)))
 
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
@@ -855,10 +831,6 @@
  '(org-latex-default-table-environment "longtable")
  '(org-latex-listings nil)
  '(org-latex-tables-centered nil)
- '(package-selected-packages
-   (quote
-    (org-ref dumb-jump evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
-    (org-ref evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
