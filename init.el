@@ -116,6 +116,7 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (require 'typo-theme)
 (load-theme 'typo t)
+(require 'sleep-table)
 
 ;; don't show hat pesky toolbar
 (if window-system
