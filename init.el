@@ -77,8 +77,8 @@
   '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
     dash dumb-jump elpy ess expand-region flyspell-popup htmlize
     idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char magit
-    markdown-mode multiple-cursors org-journal popup s smartparens
-    undo-tree wrap-region yaml-mode yasnippet)
+    markdown-mode multiple-cursors org-journal org-ref popup s
+    smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -828,9 +828,6 @@
  '(org-latex-default-table-environment "longtable")
  '(org-latex-listings nil)
  '(org-latex-tables-centered nil)
- '(package-selected-packages
-   (quote
-    (minibuffer-line org-ref dumb-jump web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
