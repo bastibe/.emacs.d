@@ -75,7 +75,7 @@
 
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
-    dash dumb-jump elpy ess expand-region evil flyspell-popup htmlize
+    dash dumb-jump elpy ess expand-region flyspell-popup htmlize
     idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char magit
     markdown-mode multiple-cursors org-journal popup s smartparens
     undo-tree wrap-region yaml-mode yasnippet)
@@ -139,7 +139,6 @@
                                              (propertize (buffer-name) 'face '(:weight bold))
                                              ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
                                (left (concat (format-mode-line mode-line-front-space)
-                                             (if evil-mode evil-mode-line-tag)
                                              "(" (if (buffer-modified-p) "⋯" "✓") ")"
                                              " "
                                              (format "%-30s" buffer-name)
@@ -479,29 +478,6 @@
 (autoload 's-trim "s")
 
 ;; -----------------------------------------------------------------------------
-;; Configure evil
-;; -----------------------------------------------------------------------------
-
-(require 'evil)
-(defalias 'evil-insert-state 'evil-emacs-state)
-(global-evil-leader-mode)
-(global-set-key (kbd "<escape>") 'evil-normal-state)
-(add-hook 'evil-mode-hook
-          (lambda ()
-            (evil-leader/set-leader "<SPC>")
-            (evil-leader/set-key "e" 'ido-find-file
-                                 "b" 'ido-switch-buffer
-                                 "w" 'ido-switch-buffer-other-window
-                                 "p" 'paradox-list-packages
-                                 "m" 'magit-status
-                                 "i" 'idomenu
-                                 "x" 'execute-extended-command)
-            (define-key evil-ex-map "b" 'ido-switch-buffer)
-            (define-key evil-ex-map "e" 'ido-find-file)
-            (define-key evil-motion-state-map "j" 'evil-next-visual-line)
-            (define-key evil-motion-state-map "k" 'evil-previous-visual-line)))
-
-;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
 ;; -----------------------------------------------------------------------------
 
@@ -800,9 +776,6 @@
  '(magit-push-always-verify nil)
  '(ns-alternate-modifier (quote meta))
  '(ns-command-modifier (quote hyper))
- '(org-agenda-files
-   (quote
-    ("~/Documents/journal/20150917" "/Users/bb/Documents/journal/20140508" "/Users/bb/Documents/journal/20121227" "/Users/bb/Documents/journal/20121228" "/Users/bb/Documents/journal/20121229" "/Users/bb/Documents/journal/20121230" "/Users/bb/Documents/journal/20121231" "/Users/bb/Documents/journal/20130101" "/Users/bb/Documents/journal/20130102" "/Users/bb/Documents/journal/20130103" "/Users/bb/Documents/journal/20130104" "/Users/bb/Documents/journal/20130105" "/Users/bb/Documents/journal/20130106" "/Users/bb/Documents/journal/20130604" "/Users/bb/Documents/journal/20130605" "/Users/bb/Documents/journal/20130606" "/Users/bb/Documents/journal/20130607" "/Users/bb/Documents/journal/20130608" "/Users/bb/Documents/journal/20130611" "/Users/bb/Documents/journal/20130612" "/Users/bb/Documents/journal/20130623" "/Users/bb/Documents/journal/20130625" "/Users/bb/Documents/journal/20130627" "/Users/bb/Documents/journal/20130629" "/Users/bb/Documents/journal/20130705" "/Users/bb/Documents/journal/20130707" "/Users/bb/Documents/journal/20130711" "/Users/bb/Documents/journal/20130722" "/Users/bb/Documents/journal/20130724" "/Users/bb/Documents/journal/20130729" "/Users/bb/Documents/journal/20130809" "/Users/bb/Documents/journal/20130811" "/Users/bb/Documents/journal/20130812" "/Users/bb/Documents/journal/20130813" "/Users/bb/Documents/journal/20130814" "/Users/bb/Documents/journal/20130815" "/Users/bb/Documents/journal/20130816" "/Users/bb/Documents/journal/20130817" "/Users/bb/Documents/journal/20130818" "/Users/bb/Documents/journal/20130820" "/Users/bb/Documents/journal/20130821" "/Users/bb/Documents/journal/20130822" "/Users/bb/Documents/journal/20130823" "/Users/bb/Documents/journal/20130825" "/Users/bb/Documents/journal/20130826" "/Users/bb/Documents/journal/20130827" "/Users/bb/Documents/journal/20130828" "/Users/bb/Documents/journal/20130829" "/Users/bb/Documents/journal/20130830" "/Users/bb/Documents/journal/20130831" "/Users/bb/Documents/journal/20130901" "/Users/bb/Documents/journal/20130902" "/Users/bb/Documents/journal/20130903" "/Users/bb/Documents/journal/20130904" "/Users/bb/Documents/journal/20130909" "/Users/bb/Documents/journal/20130910" "/Users/bb/Documents/journal/20130911" "/Users/bb/Documents/journal/20130912" "/Users/bb/Documents/journal/20130914" "/Users/bb/Documents/journal/20130916" "/Users/bb/Documents/journal/20130917" "/Users/bb/Documents/journal/20130918" "/Users/bb/Documents/journal/20130919" "/Users/bb/Documents/journal/20130927" "/Users/bb/Documents/journal/20130929" "/Users/bb/Documents/journal/20131001" "/Users/bb/Documents/journal/20131002" "/Users/bb/Documents/journal/20131008" "/Users/bb/Documents/journal/20131009" "/Users/bb/Documents/journal/20131011" "/Users/bb/Documents/journal/20131015" "/Users/bb/Documents/journal/20131016" "/Users/bb/Documents/journal/20131020" "/Users/bb/Documents/journal/20131021" "/Users/bb/Documents/journal/20131023" "/Users/bb/Documents/journal/20131024" "/Users/bb/Documents/journal/20131025" "/Users/bb/Documents/journal/20131027" "/Users/bb/Documents/journal/20131030" "/Users/bb/Documents/journal/20131031" "/Users/bb/Documents/journal/20131103" "/Users/bb/Documents/journal/20131105" "/Users/bb/Documents/journal/20131106" "/Users/bb/Documents/journal/20131109" "/Users/bb/Documents/journal/20131111" "/Users/bb/Documents/journal/20131112" "/Users/bb/Documents/journal/20131117" "/Users/bb/Documents/journal/20131118" "/Users/bb/Documents/journal/20131120" "/Users/bb/Documents/journal/20131202" "/Users/bb/Documents/journal/20131208" "/Users/bb/Documents/journal/20140107" "/Users/bb/Documents/journal/20140112" "/Users/bb/Documents/journal/20140113" "/Users/bb/Documents/journal/20140119" "/Users/bb/Documents/journal/20140121" "/Users/bb/Documents/journal/20140123" "/Users/bb/Documents/journal/20140126" "/Users/bb/Documents/journal/20140128" "/Users/bb/Documents/journal/20140203" "/Users/bb/Documents/journal/20140210" "/Users/bb/Documents/journal/20140212" "/Users/bb/Documents/journal/20140221" "/Users/bb/Documents/journal/20140304" "/Users/bb/Documents/journal/20140305" "/Users/bb/Documents/journal/20140306" "/Users/bb/Documents/journal/20140307" "/Users/bb/Documents/journal/20140310" "/Users/bb/Documents/journal/20140311" "/Users/bb/Documents/journal/20140312" "/Users/bb/Documents/journal/20140313" "/Users/bb/Documents/journal/20140314" "/Users/bb/Documents/journal/20140318" "/Users/bb/Documents/journal/20140319" "/Users/bb/Documents/journal/20140321" "/Users/bb/Documents/journal/20140324" "/Users/bb/Documents/journal/20140326" "/Users/bb/Documents/journal/20140327" "/Users/bb/Documents/journal/20140328" "/Users/bb/Documents/journal/20140331" "/Users/bb/Documents/journal/20140401" "/Users/bb/Documents/journal/20140403" "/Users/bb/Documents/journal/20140408" "/Users/bb/Documents/journal/20140421" "/Users/bb/Documents/journal/20140424" "/Users/bb/Documents/journal/20140425" "/Users/bb/Documents/journal/20140509" "/Users/bb/Documents/journal/20140512" "/Users/bb/Documents/journal/20140513")))
  '(org-export-babel-evaluate nil)
  '(org-export-latex-classes
    (quote
@@ -857,8 +830,7 @@
  '(org-latex-tables-centered nil)
  '(package-selected-packages
    (quote
-    (org-ref dumb-jump evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
-    (org-ref evil web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
+    (minibuffer-line org-ref dumb-jump web-mode ob-ipython package-lint org-static-blog marmalade-upload visual-fill-column yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char ido-vertical-mode ido-ubiquitous idomenu htmlize flyspell-popup expand-region ess elpy dash concurrent color-theme-sanityinc-tomorrow auctex auto-complete)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote
@@ -868,24 +840,10 @@
       (quote content))
      (backup-inhibited . t))))
  '(send-mail-function (quote mailclient-send-it))
- '(sentence-end-double-space nil)
- '(writeroom-disable-fringe nil)
- '(writeroom-disable-mode-line nil)
- '(writeroom-fullscreen-effect (quote maximized))
- '(writeroom-global-effects nil)
- '(writeroom-maximize-window nil)
- '(writeroom-width 120))
-
+ '(sentence-end-double-space nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(markdown-header-delimiter-face ((t (:inherit font-lock-function-name-face :underline t :weight bold))))
- '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 1.5))))
- '(markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.3))))
- '(markdown-header-face-3 ((t (:inherit markdown-header-face :underline t :height 1.2))))
- '(markdown-header-face-4 ((t (:inherit markdown-header-face :underline t :height 1.1))))
- '(markdown-header-face-5 ((t (:inherit markdown-header-face :underline t))))
- '(markdown-header-face-6 ((t (:inherit markdown-header-face :underline t))))
- '(markdown-header-rule-face ((t (:inherit markdown-header-face :height 1.5)))))
+ )
