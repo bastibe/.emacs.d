@@ -34,6 +34,16 @@
     (beginning-of-line)
     (forward-char col)))
 
+(defun sleep-table-print-current-time ()
+  (interactive)
+  (let ((hour (/ (float (- (current-column) 13))
+                 2.0)))
+    (when (and (>= hour 0) (< hour 24))
+      (message "%i:%s"
+               (- hour (mod hour 1))
+               (if (= (mod hour 1) 0.5)
+                   "30"
+                 "00")))))
 (defvar sleep-table-map
   (let ((map (make-keymap)))
     (define-key map (kbd "RET") 'sleep-table-mode-newline)
@@ -52,7 +62,10 @@
     ("^[0-9]+[\-/][0-9]+[\-/][0-9]+ | .\\{36\\}\\(.\\)" 1 'sleep-table-time-highlight-face))
   '("\\.slp\\'")
   '(overwrite-mode
-    (lambda () (use-local-map sleep-table-map)))
+    (lambda () (use-local-map sleep-table-map))
+    (lambda ()
+      (make-variable-buffer-local 'post-self-insert-hook)
+      (add-hook 'post-self-insert-hook 'sleep-table-print-current-time)))
   "A mode for keeping track of when a baby sleeps or feeds")
 
 ;; DONE: override RET to run next-line or auto-create a new line
