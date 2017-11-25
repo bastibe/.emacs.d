@@ -44,9 +44,52 @@
                (if (= (mod hour 1) 0.5)
                    "30"
                  "00")))))
+
+(defun sleep-table-forward-char (&optional arg)
+  (interactive "^p")
+  (sleep-table-print-current-time)
+  (forward-char arg))
+
+(defun sleep-table-backward-char (&optional arg)
+  (interactive "^p")
+  (sleep-table-print-current-time)
+  (backward-char arg))
+
+(defun sleep-table-previous-line (&optional arg try-vscroll)
+  (interactive "^p\np")
+  (sleep-table-print-current-time)
+  (previous-line arg try-vscroll))
+
+(defun sleep-table-next-line (&optional arg try-vscroll)
+  (interactive "^p\np")
+  (sleep-table-print-current-time)
+  (next-line arg try-vscroll))
+
+(defun sleep-table-forward-word (&optional arg)
+  (interactive "^p")
+  (sleep-table-print-current-time)
+  (forward-word arg))
+
+(defun sleep-table-backward-word (&optional arg)
+  (interactive "^p")
+  (sleep-table-print-current-time)
+  (backward-word arg))
+
 (defvar sleep-table-map
   (let ((map (make-keymap)))
     (define-key map (kbd "RET") 'sleep-table-mode-newline)
+    (define-key map (kbd "C-f") 'sleep-table-forward-char)
+    (define-key map (kbd "<right>") 'sleep-table-forward-char)
+    (define-key map (kbd "C-b") 'sleep-table-backward-char)
+    (define-key map (kbd "<left>") 'sleep-table-backward-char)
+    (define-key map (kbd "C-n") 'sleep-table-next-line)
+    (define-key map (kbd "<down>") 'sleep-table-next-line)
+    (define-key map (kbd "C-p") 'sleep-table-previous-line)
+    (define-key map (kbd "<up>") 'sleep-table-previous-line)
+    (define-key map (kbd "M-f") 'sleep-table-forward-word)
+    (define-key map (kbd "<M-right>") 'sleep-table-forward-word)
+    (define-key map (kbd "M-b") 'sleep-table-backward-word)
+    (define-key map (kbd "<M-left>") 'sleep-table-backward-word)
     map)
   "Keymap for Sleep Table Mode")
 
