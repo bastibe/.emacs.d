@@ -75,6 +75,16 @@
   (sleep-table-print-current-time)
   (backward-word arg))
 
+(defun sleep-table-beginning-of-table ()
+  (interactive)
+  (beginning-of-line)
+  (forward-char 13))
+
+(defun sleep-table-end-of-table ()
+  (interactive)
+  (beginning-of-line)
+  (forward-char 60))
+
 (defvar sleep-table-map
   (let ((map (make-keymap)))
     (define-key map (kbd "RET") 'sleep-table-mode-newline)
@@ -90,6 +100,8 @@
     (define-key map (kbd "<M-right>") 'sleep-table-forward-word)
     (define-key map (kbd "M-b") 'sleep-table-backward-word)
     (define-key map (kbd "<M-left>") 'sleep-table-backward-word)
+    (define-key map (kbd "M-a") 'sleep-table-beginning-of-table)
+    (define-key map (kbd "M-e") 'sleep-table-end-of-table)
     map)
   "Keymap for Sleep Table Mode")
 
