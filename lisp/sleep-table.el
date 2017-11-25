@@ -13,8 +13,7 @@
     (next-line)))
 
 (defun sleep-table-mode-insert-new-line ()
-  (let* ((col (current-column))
-         (date (buffer-substring-no-properties
+  (let* ((date (buffer-substring-no-properties
                 (progn (beginning-of-line) (point)) ; start of date
                 (progn (forward-word 3) (point))))  ; end of date
          (day-month-year (mapcar 'string-to-number (split-string date "[-/\\.]")))
@@ -32,7 +31,7 @@
     (insert (format-time-string "%d-%m-%Y" new-time))
     (insert " |                                                  |")
     (beginning-of-line)
-    (forward-char col)))
+    (forward-char 13)))
 
 (defun sleep-table-print-current-time ()
   (interactive)
