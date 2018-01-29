@@ -193,6 +193,7 @@
 
    ;; dired
    `(dired-directory ((t (:weight bold))))
+   `(dired-subtree-depth-1-face ((t (:background "grey90"))))
 
    ;; helm
    `(helm-source-header ((t (:foreground ,fg :background "grey90" :weight bold))))

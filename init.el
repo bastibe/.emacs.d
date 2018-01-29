@@ -3,8 +3,39 @@
 ;; -----------------------------------------------------------------------------
 
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
-  (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
+  (setq org-agenda-files (quote ("~/Documents/Journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
+        org-journal-dir "~/Documents/Journal/"
+        dired-listing-switches "-ahl")
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+  (add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "TAB") 'dired-subtree-toggle)))
+  (defun prettyfy-dired ()
+    (let ((search-string
+           (concat "\\([dl-][r-][w-][x-][r-][w-][x-][r-][w-][x-] +\\)" ; 1: file mode
+                   "\\([0-9]+ +\\)"                                    ; 2: number of links
+                   "\\([a-z]+ +\\)"                                    ; 3: owner name
+                   "\\([a-z]+ +\\)"                                    ; 4: group name
+                   "\\([0-9.KMG ]\\{3\\}[0-9KMG] +\\)" ; always 4 chars  5: size
+                   "\\([a-zA-Z]+ +[0-9]+ +[0-9:]+\\)")))               ; 6: date and time
+      (condition-case error
+          (with-silent-modifications
+            (re-search-forward search-string)
+            (while t
+              (add-text-properties
+               (match-beginning 1) (match-end 2)
+               '(display "| "))
+              (add-text-properties
+               (match-beginning 4) (match-end 4)
+               '(display " | "))
+              (add-text-properties
+               (- (match-end 5) 1) (match-end 5)
+               '(display " | "))
+              (add-text-properties
+               (match-end 6) (1+ (match-end 6))
+               '(display " | "))
+              (re-search-forward search-string)))
+        (search-failed nil))))
+  (add-hook 'dired-after-readin-hook 'prettyfy-dired)
   (setenv "EDITOR" "/usr/bin/emacsclient"))
 
 (when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
@@ -117,6 +148,8 @@
 (require 'typo-theme)
 (load-theme 'typo t)
 (require 'sleep-table)
+
+(setq-default left-margin-width 1)
 
 ;; don't show hat pesky toolbar
 (if window-system
@@ -365,8 +398,8 @@
 (define-key mark-semantically (kbd "p") 'mark-paragraph)
 (define-key mark-semantically (kbd "'") 'er/mark-inside-quotes)
 (define-key mark-semantically (kbd "\"") 'er/mark-outside-quotes)
-(define-key mark-semantically (kbd "(") 'er/mark-inside-pairs)
-(define-key mark-semantically (kbd ")") 'er/mark-outside-pairs)
+(define-key mark-semantically (kbd "[") 'er/mark-inside-pairs)
+(define-key mark-semantically (kbd "]") 'er/mark-outside-pairs)
 (define-key mark-semantically (kbd "l") 'bb/mark-line)
 
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
