@@ -249,8 +249,7 @@
 (setq org-journal-file-pattern "%Y%m%d.org")
 
 (add-hook 'python-mode-hook '(lambda ()
-                               (company-mode t)
-                               (add-to-list 'company-backends 'company-jedi)
+                               (elpy-enable)
                                (define-key elpy-mode-map (kbd "M-.") 'dumb-jump-go)
                                (define-key elpy-mode-map (kbd "M-,") 'dumb-jump-back)))
 
@@ -592,8 +591,8 @@
       (make-local-variable 'python-shell-interpreter)
       (make-local-variable 'python-shell-interpreter-args)
       (setq elpy-rpc-python-command (concat git-path "/.env/bin/python")
-            python-shell-interpreter (concat git-path "/.env/bin/ipython")
-            python-shell-interpreter-args "-i --simple-prompt"))))
+            python-shell-interpreter (concat git-path "/.env/bin/python")
+            python-shell-interpreter-args "-i"))))
 (add-hook 'python-mode-hook 'select-python)
 
 ;; start up markdown-mode with visual-line-mode
@@ -669,8 +668,7 @@
             (require 'org-ref)
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages
-                                         '((python . t)
-                                           (ipython . t)))
+                                         '((python . t)))
             (make-variable-buffer-local 'yas/trigger-key)
             (setq yas/trigger-key [tab])
             (add-to-list 'org-tab-first-hook
