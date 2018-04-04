@@ -128,10 +128,7 @@
 
 
 (set-face-attribute 'default nil
-                    :family "PragmataPro"
-                    :width 'normal
-                    :height my-font-height
-                    :weight 'normal)
+                    :height my-font-height)
 
 
 ;; Use Pragmata for Unicode, too
@@ -139,9 +136,7 @@
   (set-fontset-font "fontset-default"
                     'unicode
                     (font-spec :family "PragmataPro"
-                               :width 'normal
-                               :height my-font-height
-                               :weight 'normal)))
+                               :height my-font-height)))
 ;; For testing purposes: →„Σ“←
 
 ;; load my favourite theme of the day
