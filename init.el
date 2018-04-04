@@ -3,9 +3,10 @@
 ;; -----------------------------------------------------------------------------
 
 (when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
-  (setq org-agenda-files (quote ("~/Documents/Journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
+  (setq org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
         org-journal-dir "~/Documents/Journal/"
+        org-journal-file-format "%Y-%m-%d.org"
+        org-journal-enable-agenda-integration t
         dired-listing-switches "-ahl")
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
   (add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "TAB") 'dired-subtree-toggle)))
@@ -410,6 +411,8 @@
 ;; quick access to org-agenda and org-todo
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c j") 'org-journal-new-entry)
+(global-set-key (kbd "C-c s") 'org-journal-new-scheduled-entry)
+(global-set-key (kbd "C-c S") 'org-journal-schedule-view)
 
 (defun term-other-window ()
   "Create or switch to a terminal in another window"
@@ -729,6 +732,7 @@
 (setq org-static-blog-publish-directory "~/projects/blog/")
 (setq org-static-blog-posts-directory "~/projects/blog/posts/")
 (setq org-static-blog-drafts-directory "~/projects/blog/drafts/")
+(setq org-static-blog-enable-tags t)
 (setq org-export-with-toc nil)
 (setq org-export-with-section-numbers nil)
 
