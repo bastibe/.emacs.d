@@ -8,6 +8,7 @@
         org-journal-file-format "%Y-%m-%d.org"
         org-journal-enable-agenda-integration t
         dired-listing-switches "-ahl")
+  (fringe-mode 16)
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
   (add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "TAB") 'dired-subtree-toggle)))
   (defun prettyfy-dired ()
@@ -86,8 +87,8 @@
 (require 'package)
 (setq package-archive-exclude-alist '(("melpa")))
 (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
-				  ("elpa" . "http://tromey.com/elpa/")
-				  ("gnu" . "http://elpa.gnu.org/packages/")
+                  ("elpa" . "http://tromey.com/elpa/")
+                  ("gnu" . "http://elpa.gnu.org/packages/")
                   ("org" . "http://orgmode.org/elpa/")
                   ("melpa" . "https://melpa.org/packages/")
                   ("melpa-stable" . "https://stable.melpa.org/packages/")))
@@ -115,7 +116,7 @@
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
-	(package-install p)))
+    (package-install p)))
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs look good
@@ -130,6 +131,9 @@
 (set-face-attribute 'default nil
                     :height my-font-height)
 
+;; force consistent font height by using the biggest font for spaces:
+(global-whitespace-mode t)
+(setq whitespace-style '(face tabs spaces trailing empty newline))
 
 ;; Use Pragmata for Unicode, too
 (when (functionp 'set-fontset-font)
@@ -145,11 +149,11 @@
 (load-theme 'typo t)
 (require 'sleep-table)
 
-(setq-default left-margin-width 1)
+;;(setq-default left-margin-width 0)
 
 ;; don't show hat pesky toolbar
 (if window-system
-	(tool-bar-mode -1)
+    (tool-bar-mode -1)
     (menu-bar-mode -1))
 
 ;; make org-mode fontify source code
@@ -225,17 +229,8 @@
         (set-window-margins nil left-margin
                             (- current-available visual-wrap-column))))))
 
-;; make fringes more beautiful
-(if window-system
-    (set-fringe-mode 0)) ; disable fringes
-;; ensure that the left margin is always 1
 (set-display-table-slot standard-display-table 'wrap ?→) ; eol wrap character
 (set-display-table-slot standard-display-table 'truncation ?→) ; bol wrap char
-;; TODO clicking the margin should position cursor at eol/bol
-
-(add-hook 'window-configuration-change-hook
-          (lambda ()
-            (set-window-margins nil 1 1)))
 
 ;; ----------------------------------------------------------------------------
 ;; Make Emacs behave nicely
@@ -324,7 +319,7 @@
 
 ;; delete trailing whitespace on save
 (add-hook 'before-save-hook (lambda () (when (not (eq major-mode 'markdown-mode))
-					 (delete-trailing-whitespace))))
+                                         (delete-trailing-whitespace))))
 
 ;; enable backwards delete
 (global-set-key [kp-delete] 'delete-char)
@@ -520,7 +515,7 @@
 
 ;; C/C++
 (setq c-default-style "linux"
-	  c-basic-offset 4)
+      c-basic-offset 4)
 
 ;; Ruby
 (setq-default ruby-indent-level 4)
@@ -592,9 +587,9 @@
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
-		  (lambda ()
-			(visual-line-mode t))
-		  t)
+          (lambda ()
+            (visual-line-mode t))
+          t)
 
 (setq org-startup-indented t)
 (setq org-export-allow-bind-keywords t)
@@ -602,33 +597,33 @@
 
 ;; start up latex mode with visual-line-mode
 (add-hook 'latex-mode-hook
-		  (lambda ()
-			(visual-line-mode t)
-			(turn-on-reftex)
+          (lambda ()
+            (visual-line-mode t)
+            (turn-on-reftex)
             (yas-minor-mode t))
-		  t)
+          t)
 
 ;; open/show pdf file within Emacs using doc-view-mode
 (defun open-show-pdf ()
   (interactive)
   (let ((tex-buffer-name (buffer-name))
-		(pdf-buffer-name (concat (TeX-master-file) ".pdf")))
-	(if (get-buffer pdf-buffer-name)
-		(switch-to-buffer-other-window pdf-buffer-name)
-	  (find-file-other-window pdf-buffer-name))
-	(if (not (eq major-mode 'doc-view-mode))
-		(doc-view-mode))
-	(doc-view-revert-buffer t t)
-	(switch-to-buffer-other-window tex-buffer-name)))
+        (pdf-buffer-name (concat (TeX-master-file) ".pdf")))
+    (if (get-buffer pdf-buffer-name)
+        (switch-to-buffer-other-window pdf-buffer-name)
+  (find-file-other-window pdf-buffer-name))
+    (if (not (eq major-mode 'doc-view-mode))
+        (doc-view-mode))
+    (doc-view-revert-buffer t t)
+    (switch-to-buffer-other-window tex-buffer-name)))
 
 (add-hook 'LaTeX-mode-hook
-		  (lambda ()
-			(define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
-			(visual-line-mode t)
-			(turn-on-reftex)
+          (lambda ()
+            (define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
+            (visual-line-mode t)
+            (turn-on-reftex)
             (local-unset-key (kbd "\""))
             (local-set-key (kbd "M-\"") "“"))
-		  t)
+          t)
 
 (setq TeX-PDF-mode t)
 (setq TeX-view-program-list '(("Preview" "open -a Skim.app %o")))
@@ -636,20 +631,20 @@
 
 ;; Make doc-view-mode scroll sanely with the mouse wheel
 (add-hook 'doc-view-mode-hook
-		  (lambda ()
-			(define-key doc-view-mode-map [wheel-down]
-			  'doc-view-next-line-or-next-page)
-			(define-key doc-view-mode-map [double-wheel-down]
-			  (lambda () (interactive) (doc-view-next-line-or-next-page 2)))
-			(define-key doc-view-mode-map [triple-wheel-down]
-			  (lambda () (interactive) (doc-view-next-line-or-next-page 3)))
-			(define-key doc-view-mode-map [wheel-up]
-			  'doc-view-previous-line-or-previous-page)
-			(define-key doc-view-mode-map [double-wheel-up]
-			  (lambda () (interactive) (doc-view-previous-line-or-previous-page 2)))
-			(define-key doc-view-mode-map [triple-wheel-up]
-			  (lambda () (interactive) (doc-view-previous-line-or-previous-page 3))))
-			t)
+          (lambda ()
+            (define-key doc-view-mode-map [wheel-down]
+              'doc-view-next-line-or-next-page)
+            (define-key doc-view-mode-map [double-wheel-down]
+              (lambda () (interactive) (doc-view-next-line-or-next-page 2)))
+            (define-key doc-view-mode-map [triple-wheel-down]
+              (lambda () (interactive) (doc-view-next-line-or-next-page 3)))
+            (define-key doc-view-mode-map [wheel-up]
+              'doc-view-previous-line-or-previous-page)
+            (define-key doc-view-mode-map [double-wheel-up]
+              (lambda () (interactive) (doc-view-previous-line-or-previous-page 2)))
+            (define-key doc-view-mode-map [triple-wheel-up]
+              (lambda () (interactive) (doc-view-previous-line-or-previous-page 3))))
+          t)
 
 (autoload 'ox-latex "org-mode" "Org Mode." t)
 (autoload 'ox-html "org-mode" "Org Mode." t)
@@ -713,7 +708,7 @@
   "Opens a browser and searches DuckDuckGo for the given string"
   (interactive "sSearch for: ")
   (browse-url (concat "http://www.duckduckgo.com/?q="
-					  (url-hexify-string url))))
+                      (url-hexify-string url))))
 (global-set-key (kbd "C-c C-s") 'search)
 
 ;; -----------------------------------------------------------------------------
