@@ -162,9 +162,9 @@
 
    `(region ((t (:background "#eeeee8" :foreground ,fg))))
    `(slime-repl-inputed-output-face ((t (:foreground ,fg))))
-   `(whitespace-line ((t (:background ,bg-highlight-2 :foreground ,fg))))
-   `(whitespace-space ((t (:background ,bg :foreground ,fg :family "Iosevka"))))
-   `(whitespace-newline ((t (:background ,bg :foreground ,fg :family "Iosevka"))))
+   `(whitespace-line ((t (:background ,bg-highlight-2))))
+   `(whitespace-space ((t (:background ,bg :family "Iosevka"))))
+   `(whitespace-newline ((t (:background ,bg :family "Iosevka"))))
 
    ;; magit
    `(magit-header ((t (:weight bold))))
