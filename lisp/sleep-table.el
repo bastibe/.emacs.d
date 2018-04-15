@@ -10,7 +10,9 @@
         (end-of-line)
         (eq (point) (point-max)))
       (sleep-table-mode-insert-new-line)
-    (next-line)))
+    (progn (next-line)
+           (beginning-of-line)
+           (forward-char 13))))
 
 (defun sleep-table-mode-insert-new-line ()
   (let* ((date (buffer-substring-no-properties
@@ -46,33 +48,33 @@
 
 (defun sleep-table-forward-char (&optional arg)
   (interactive "^p")
-  (sleep-table-print-current-time)
-  (forward-char arg))
+  (forward-char arg)
+  (sleep-table-print-current-time))
 
 (defun sleep-table-backward-char (&optional arg)
   (interactive "^p")
-  (sleep-table-print-current-time)
-  (backward-char arg))
+  (backward-char arg)
+  (sleep-table-print-current-time))
 
 (defun sleep-table-previous-line (&optional arg try-vscroll)
   (interactive "^p\np")
-  (sleep-table-print-current-time)
-  (previous-line arg try-vscroll))
+  (previous-line arg try-vscroll)
+  (sleep-table-print-current-time))
 
 (defun sleep-table-next-line (&optional arg try-vscroll)
   (interactive "^p\np")
-  (sleep-table-print-current-time)
-  (next-line arg try-vscroll))
+  (next-line arg try-vscroll)
+  (sleep-table-print-current-time))
 
 (defun sleep-table-forward-word (&optional arg)
   (interactive "^p")
-  (sleep-table-print-current-time)
-  (forward-word arg))
+  (forward-word arg)
+  (sleep-table-print-current-time))
 
 (defun sleep-table-backward-word (&optional arg)
   (interactive "^p")
-  (sleep-table-print-current-time)
-  (backward-word arg))
+  (backward-word arg)
+  (sleep-table-print-current-time))
 
 (defun sleep-table-beginning-of-table ()
   (interactive)
