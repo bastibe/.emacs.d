@@ -716,7 +716,7 @@
 ;; -----------------------------------------------------------------------------
 
 (setq org-static-blog-publish-title "Bastibe.de")
-(setq org-static-blog-publish-url "http://bastibe.de/")
+(setq org-static-blog-publish-url "https://bastibe.de/")
 (setq org-static-blog-publish-directory "~/projects/blog/")
 (setq org-static-blog-posts-directory "~/projects/blog/posts/")
 (setq org-static-blog-drafts-directory "~/projects/blog/drafts/")
@@ -726,44 +726,42 @@
 
 (setq org-static-blog-page-header
 "<meta  name=\"author\" content=\"Bastian Bechtold\" />
-<link href='http://fonts.googleapis.com/css?family=Roboto&subset=latin' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto&subset=latin' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
 <link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
 <link rel=\"icon\" href=\"static/favicon.ico\">
 <link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
 <link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
 <link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
-<script type=\"text/javascript\" src=\"https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML\"> </script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-AMS_HTML' async></script>
 <meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\" />
 <meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">")
 
 (setq org-static-blog-page-preamble
 "<div class=\"header\">
-  <a href=\"http://bastibe.de\">Basti's Scratchpad on the Internet</a>
+  <a href=\"https://bastibe.de\">Basti's Scratchpad on the Internet</a>
   <div class=\"sitelinks\">
-    <a href=\"https://twitter.com/paperflyer\">Twitter</a> | <a href=\"http://github.com/bastibe\">Github</a>
+    <a href=\"https://twitter.com/paperflyer\">Twitter</a> | <a href=\"https://github.com/bastibe\">Github</a>
   </div>
 </div>")
 
 (setq org-static-blog-page-postamble
 "<div id=\"archive\">
-  <a href=\"archive.html\">Other posts</a>
+  <a href=\"https://bastibe.de/archive.html\">Other posts</a>
 </div>
+<center><button id=\"disqus_button\" onclick=\"load_disqus()\">Load Disqus Comments</button></center>
 <div id=\"disqus_thread\"></div>
 <script type=\"text/javascript\">
-  var disqus_shortname = 'bastibe';
-  (function() {
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
+    function load_disqus() {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = 'https://bastibe.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        document.getElementById('disqus_button').style.visibility = 'hidden';
+    };
 </script>
-<noscript>Please enable JavaScript to view the
-<a href=\"http://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript>
-<a href=\"http://disqus.com\" class=\"dsq-brlink\">comments powered by <span class=\"logo-disqus\">Disqus</span></a>
-<center><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" href=\"http://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"http://creativecommons.org/ns#\" href=\"http://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
+<center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
 
 (defadvice org-preview-latex-fragment (around non-xelatex-org-preview-latex-fragment)
   "Strip down the LaTeX process to the bare minimum when compiling fragments"
