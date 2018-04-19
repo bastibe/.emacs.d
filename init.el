@@ -50,8 +50,10 @@
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8")
-  (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
+  (setq org-agenda-files (quote ("~/Journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
+        org-journal-file-format "%Y-%m-%d.org"
+        org-journal-dir "~/Journal")
   (setq org-babel-python-command "/Users/bb/miniconda3/envs/emacs/bin/python")
   (setq python-shell-interpreter "/Users/bb/miniconda3/envs/emacs/bin/ipython"
         conda-env-path "/Users/bb/miniconda3/envs/"
@@ -717,9 +719,9 @@
 
 (setq org-static-blog-publish-title "Bastibe.de")
 (setq org-static-blog-publish-url "https://bastibe.de/")
-(setq org-static-blog-publish-directory "~/projects/blog/")
-(setq org-static-blog-posts-directory "~/projects/blog/posts/")
-(setq org-static-blog-drafts-directory "~/projects/blog/drafts/")
+(setq org-static-blog-publish-directory "~/Projects/blog/")
+(setq org-static-blog-posts-directory "~/Projects/blog/posts/")
+(setq org-static-blog-drafts-directory "~/Projects/blog/drafts/")
 (setq org-static-blog-enable-tags t)
 (setq org-export-with-toc nil)
 (setq org-export-with-section-numbers nil)
