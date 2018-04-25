@@ -78,6 +78,9 @@
 (when (and (eq system-type 'windows-nt) (string= (user-login-name) "Bastian"))
   (setq conda-env-path "C:/Users/Bastian/Miniconda3/envs"))
 
+(when (>= emacs-major-version 26)
+  (pixel-scroll-mode t))
+
 (require 'server)
 (unless (server-running-p)
   (server-start))

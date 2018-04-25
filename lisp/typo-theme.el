@@ -73,7 +73,7 @@
    'typo
 
    ;; generic stuff
-   `(default ((t (:background ,bg :foreground ,fg :family "Pragmata Pro"))))
+   `(default ((t (:background ,bg :foreground ,fg :family "PragmataPro"))))
    `(button ((t (:foreground ,fg :underline t))))
    `(cursor ((t (:background ,fg :foreground "white smoke"))))
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
@@ -165,6 +165,7 @@
    `(whitespace-line ((t (:background ,bg-highlight-2))))
    `(whitespace-space ((t (:background ,bg :family "Iosevka"))))
    `(whitespace-newline ((t (:background ,bg :family "Iosevka"))))
+   `(whitespace-empty ((t (:background ,bg :family "Iosevka"))))
 
    ;; magit
    `(magit-header ((t (:weight bold))))
