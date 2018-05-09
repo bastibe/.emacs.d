@@ -63,10 +63,10 @@
        (bg-highlight "#FFF1AA")
        (bg-highlight-2 "LightCyan")
        (bg-highlight-3 "LightGreen")
-       (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
-       (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :overline ,bg :family "InputSerifCompressed"))
-       (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :overline ,bg :family "Iosevka Slab"))
-       (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1 :overline ,bg)))
+       (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
+       (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
+       (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :family "Iosevka Slab"))
+       (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1)))
 
 
   (custom-theme-set-faces
@@ -101,8 +101,8 @@
    `(ido-vertical-first-match ((t (:foreground ,fg :weight bold))))
    `(ido-only-match ((t (:foreground ,fg))))
    `(ido-subdir ((t (:foreground ,fg))))
-   `(isearch ((t (:background ,bg-highlight :foreground ,fg))))
-   `(isearch-lazy-highlight-face ((t (:background ,bg-highlight :foreground ,fg))))
+   `(isearch ((t (:foreground ,fg :box (:line-width -1)))))
+   `(isearch-lazy-highlight-face ((t (:foreground ,fg :box (:line-width -1)))))
    `(link ((t (:foreground ,fg))))
    `(minibuffer-prompt ((t (:foreground ,fg-medium :weight bold))))
    `(mode-line ((t (:background ,bg-light :foreground ,fg :height 1.0))))
@@ -140,7 +140,6 @@
    `(org-code ((t (:foreground ,fg-medium :background ,bg-white :family "Iosevka Slab"))))
    `(org-date ((t (:foreground ,fg) :underline)))
    `(org-hide ((t (:foreground ,bg))))
-   ;; use :overline and :overline to give headings more top margin
    `(org-document-title ((t ,headline-1)))
    `(org-document-info ((t (:foreground ,fg))))
    `(org-document-info-keyword ((t (:foreground ,fg-light :family "Iosevka Slab"))))

@@ -340,6 +340,7 @@
 (global-set-key (kbd "C-c e") 'mc/edit-lines)
 
 ;; enable sensible undo
+(require 'undo-tree)
 (global-undo-tree-mode)
 ;; make undo work the same way on the EN and DE keymap
 (define-key undo-tree-map (kbd "C--") 'undo-tree-undo)
