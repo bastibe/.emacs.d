@@ -50,10 +50,10 @@
                 "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
   (setenv "LANG" "en_US.UTF-8")
   (setenv "LC_ALL" "en_US.UTF-8")
-  (setq org-agenda-files (quote ("~/Journal/"))
+  (setq org-agenda-files (quote ("~/Documents/journal/"))
         org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
         org-journal-file-format "%Y-%m-%d.org"
-        org-journal-dir "~/Journal")
+        org-journal-dir "~/Documents/journal")
   (setq org-babel-python-command "/Users/bb/miniconda3/envs/emacs/bin/python")
   (setq python-shell-interpreter "/Users/bb/miniconda3/envs/emacs/bin/ipython"
         conda-env-path "/Users/bb/miniconda3/envs/"
