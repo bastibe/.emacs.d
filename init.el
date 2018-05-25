@@ -828,6 +828,7 @@
       ("\\subsection{%s}" . "\\subsection*{%s}")
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
      ("beamer" "\\documentclass{beamer}" org-beamer-sectioning))))
+ '(org-export-use-babel nil)
  '(org-format-latex-options
    (quote
     (:foreground default :background default :scale 0.9 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
