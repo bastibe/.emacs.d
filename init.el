@@ -731,16 +731,18 @@
 (setq org-export-with-section-numbers nil)
 
 (setq org-static-blog-page-header
-"<meta  name=\"author\" content=\"Bastian Bechtold\" />
-<link href='https://fonts.googleapis.com/css?family=Roboto&subset=latin' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+"<meta name=\"author\" content=\"Bastian Bechtold\">
+<meta name=\"referrer\" content=\"no-referrer\">
 <link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
 <link rel=\"icon\" href=\"static/favicon.ico\">
 <link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
 <link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
 <link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
-<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-AMS_HTML' async></script>
-<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\" />
+<script src=\"static/katex.min.js\"></script>
+<script src=\"static/auto-render.min.js\"></script>
+<link rel=\"stylesheet\" href=\"static/katex.min.css\">
+<script>document.addEventListener(\"DOMContentLoaded\", function() { renderMathInElement(document.body); });</script>
+<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\">
 <meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">")
 
 (setq org-static-blog-page-preamble
