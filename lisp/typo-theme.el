@@ -167,14 +167,10 @@
    `(whitespace-empty ((t (:background ,bg :family "Iosevka"))))
 
    ;; magit
-   `(magit-header ((t (:weight bold))))
-   `(magit-item-mark ((t (:background ,bg-highlight))))
-   `(magit-item-highlight ((t (:weight bold))))
    `(magit-section-heading ((t (:weight bold :height 1.2))))
-   `(magit-section-highlight ((t (:inherit default))))
-   `(magit-diff-context-highlight ((t (:weight bold))))
    `(magit-branch-local ((t (:weight bold))))
    `(magit-branch-remote ((t (:weight bold))))
+   `(magit-branch-current ((t (:weight bold :box (:line-width -1)))))
 
    ;; markdown
    `(markdown-header-face-1 ((t ,headline-2)))
