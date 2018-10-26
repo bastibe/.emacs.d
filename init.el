@@ -78,9 +78,6 @@
 (when (and (eq system-type 'windows-nt) (string= (user-login-name) "Bastian"))
   (setq conda-env-path "C:/Users/Bastian/Miniconda3/envs"))
 
-(when (>= emacs-major-version 26)
-  (pixel-scroll-mode t))
-
 (require 'server)
 (unless (server-running-p)
   (server-start))
@@ -564,7 +561,11 @@
                  )))))
 
 ;; open *.pdf files as images
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . (lambda ()
+                                                (require 'pdf-tools)
+                                                (pdf-tools-install)
+                                                (pdf-view-mode))))
+
 
 ;; open *.yaml files as yaml
 (autoload 'yaml-mode "yaml-mode")
@@ -583,11 +584,11 @@
   (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel"))))
     (when (and (> (length git-path) 0)
                (file-directory-p git-path)
-               (file-directory-p (concat git-path "/.env/bin/" )))
+               (file-directory-p (concat git-path "/.venv/bin/" )))
       (make-local-variable 'python-shell-interpreter)
       (make-local-variable 'python-shell-interpreter-args)
-      (setq elpy-rpc-python-command (concat git-path "/.env/bin/python")
-            python-shell-interpreter (concat git-path "/.env/bin/python")
+      (setq elpy-rpc-python-command (concat git-path "/.venv/bin/python")
+            python-shell-interpreter (concat git-path "/.venv/bin/python")
             python-shell-interpreter-args "-i"))))
 (add-hook 'python-mode-hook 'select-python)
 
@@ -723,9 +724,9 @@
 
 (setq org-static-blog-publish-title "Bastibe.de")
 (setq org-static-blog-publish-url "https://bastibe.de/")
-(setq org-static-blog-publish-directory "~/Projects/blog/")
-(setq org-static-blog-posts-directory "~/Projects/blog/posts/")
-(setq org-static-blog-drafts-directory "~/Projects/blog/drafts/")
+(setq org-static-blog-publish-directory "~/projects/blog/")
+(setq org-static-blog-posts-directory "~/projects/blog/posts/")
+(setq org-static-blog-drafts-directory "~/projects/blog/drafts/")
 (setq org-static-blog-enable-tags t)
 (setq org-export-with-toc nil)
 (setq org-export-with-section-numbers nil)
@@ -861,6 +862,10 @@
  '(org-latex-default-table-environment "longtable")
  '(org-latex-listings nil)
  '(org-latex-tables-centered nil)
+ '(org-preview-latex-default-process (quote imagemagick))
+ '(package-selected-packages
+   (quote
+    (org-static-blog virtualenvwrapper traad evil yaml-mode wrap-region undo-tree smartparens org-ref org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous htmlize flyspell-popup fish-mode expand-region ess elpy dumb-jump concurrent color-theme-sanityinc-tomorrow auto-complete auctex all-the-icons-dired)))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    (quote

@@ -165,6 +165,7 @@
    `(whitespace-space ((t (:background ,bg :family "Iosevka"))))
    `(whitespace-newline ((t (:background ,bg :family "Iosevka"))))
    `(whitespace-empty ((t (:background ,bg :family "Iosevka"))))
+   `(whitespace-trailing ((t (:background ,bg-highlight-2))))
 
    ;; magit
    `(magit-section-heading ((t (:weight bold :height 1.2))))
