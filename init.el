@@ -750,7 +750,7 @@
 "<div class=\"header\">
   <a href=\"https://bastibe.de\">Basti's Scratchpad on the Internet</a>
   <div class=\"sitelinks\">
-    <a href=\"https://twitter.com/paperflyer\">Twitter</a> | <a href=\"https://github.com/bastibe\">Github</a>
+    <a href=\"https://twitter.com/paperflyer\">Twitter</a> | <a href=\"https://github.com/bastibe\">Github</a> | <a href=\"https://bastibe.de/projects.html\">Projects</a>
   </div>
 </div>")
 
