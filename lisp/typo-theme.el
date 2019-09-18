@@ -56,8 +56,8 @@
 (let* ((fg "#111111")
        (bg "#fffff8")
        (bg-light "#ddddd8")
-       (fg-medium "#303030")
-       (fg-light "#aaaaa8")
+       (fg-medium "#404040")
+       (fg-light "#606060")
        (bg-lighter "#f4f4f0")
        (bg-white "#fcfcf8")
        (bg-highlight "#FFF1AA")
@@ -78,7 +78,7 @@
    `(cursor ((t (:background ,fg :foreground "white smoke"))))
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
    `(default-italic ((t (:italic t))))
-   `(font-lock-builtin-face ((t (:foreground ,fg))))
+   `(font-lock-builtin-face ((t (:foreground ,fg-medium)))) ; nicht sichtbar
    `(font-lock-comment-delimiter-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
    `(font-lock-comment-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
    `(font-lock-constant-face ((t (:foreground ,fg))))
@@ -87,9 +87,9 @@
    `(font-lock-keyword-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-preprocessor-face ((t (:foreground ,fg))))
    `(font-lock-reference-face ((t (:foreground ,fg))))
-   `(font-lock-string-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
+   `(font-lock-string-face ((t (:foreground ,fg-light :family "Iosevka Slab" :weight light)))) ; nicht sichtbar
    `(font-lock-type-face ((t (:foreground ,fg :underline t))))
-   `(font-lock-variable-name-face ((t (:foreground ,fg :underline nil))))
+   `(font-lock-variable-name-face ((t (:foreground ,fg-medium :underline nil)))) ; nicht sichtbar
    `(font-lock-warning-face ((t (:foreground ,fg :weight bold))))
    `(fringe ((t (:background ,bg :foreground ,fg))))
    `(gnus-header-content ((t (:foreground ,fg))))
