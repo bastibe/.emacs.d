@@ -2,81 +2,14 @@
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
 
-(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
+(when (and (eq system-type 'windows-nt) (string= (user-login-name) "basti"))
   (setq org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
-        org-journal-dir "~/Documents/Journal/"
+        org-journal-dir "C:/Users/basti/Documents/Journal"
         org-journal-file-format "%Y-%m-%d.org"
         org-journal-enable-agenda-integration t
-        dired-listing-switches "-ahl")
-  (fringe-mode 16)
-  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-  (add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "TAB") 'dired-subtree-toggle)))
-  (defun prettyfy-dired ()
-    (let ((search-string
-           (concat "\\([dl-][r-][w-][x-][r-][w-][x-][r-][w-][x-] +\\)" ; 1: file mode
-                   "\\([0-9]+ +\\)"                                    ; 2: number of links
-                   "\\([a-z]+ +\\)"                                    ; 3: owner name
-                   "\\([a-z]+ +\\)"                                    ; 4: group name
-                   "\\([0-9.KMG ]\\{3\\}[0-9KMG] +\\)" ; always 4 chars  5: size
-                   "\\([a-zA-Z]+ +[0-9]+ +[0-9:]+\\)")))               ; 6: date and time
-      (condition-case error
-          (with-silent-modifications
-            (re-search-forward search-string)
-            (while t
-              (add-text-properties
-               (match-beginning 1) (match-end 2)
-               '(display "| "))
-              (add-text-properties
-               (match-beginning 4) (match-end 4)
-               '(display " | "))
-              (add-text-properties
-               (- (match-end 5) 1) (match-end 5)
-               '(display " | "))
-              (add-text-properties
-               (match-end 6) (1+ (match-end 6))
-               '(display " | "))
-              (re-search-forward search-string)))
-        (search-failed nil))))
-  (add-hook 'dired-after-readin-hook 'prettyfy-dired)
-  (setenv "EDITOR" "/usr/bin/emacsclient"))
-
-(when (and (eq system-type 'darwin) (string= (user-login-name) "bb"))
-  (add-to-list 'exec-path "/usr/local/bin/") ; homebrew bin path
-  (add-to-list 'exec-path "/Library/TeX/texbin/")    ; tex bin path
-  (add-to-list 'exec-path "/Users/bb/miniconda3/bin/") ; python path
-  (setenv "PATH" (concat "/usr/local/bin:/Library/TeX/texbin/:" (getenv "PATH")))
-  (setq eshell-path-env
-        (concat "/opt/local/Library/Frameworks/Python.framework/Versions/3.2/bin:"
-                "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin"))
-  (setenv "LANG" "en_US.UTF-8")
-  (setenv "LC_ALL" "en_US.UTF-8")
-  (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
-        org-journal-file-format "%Y-%m-%d.org"
-        org-journal-dir "~/Documents/journal")
-  (setq org-babel-python-command "/Users/bb/miniconda3/envs/emacs/bin/python")
-  (setq python-shell-interpreter "/Users/bb/miniconda3/envs/emacs/bin/ipython"
-        conda-env-path "/Users/bb/miniconda3/envs/"
-        jedi:server-args
-        (quote ("--sys-path" "/Users/bb/miniconda3/envs/emacs/lib/python3.4/site-packages/"))
-        jedi:server-command
-        `("/Users/bb/miniconda3/envs/emacs/bin/python"
-          ;; grab whichever version of jediepcserver is installed
-          ,(concat "/Users/bb/.emacs.d/elpa/"
-                   (car (directory-files "~/.emacs.d/elpa" nil "jedi"))
-                   "/jediepcserver.py")))
-  (setq mac-option-modifier 'meta)
-  (setq mac-command-modifier 'super)
-  (setq default-directory "~")
-  (global-set-key (kbd "H-f") isearch-forward))
-
-(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
-  (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
-  (setq default-directory "~"))
-
-(when (and (eq system-type 'windows-nt) (string= (user-login-name) "Bastian"))
-  (setq conda-env-path "C:/Users/Bastian/Miniconda3/envs"))
+        dired-listing-switches "-ahl"
+        LaTeX-command "wsl xelatex -shell-escape")
+  (cd "C:/Users/basti/"))
 
 (require 'server)
 (unless (server-running-p)
@@ -111,7 +44,7 @@
 (defvar my-packages
   '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
     dash dumb-jump elpy ess expand-region flyspell-popup htmlize
-    idomenu ido-ubiquitous ido-vertical-mode iy-go-to-char magit
+    idomenu ido-vertical-mode magit pyvenv
     markdown-mode multiple-cursors org-journal org-ref popup s
     smartparens undo-tree wrap-region yaml-mode yasnippet)
   "A list of packages to ensure are installed at launch.")
@@ -151,12 +84,10 @@
 (load-theme 'typo t)
 (require 'sleep-table)
 
-;;(setq-default left-margin-width 0)
-
 ;; don't show hat pesky toolbar
-(if window-system
-    (tool-bar-mode -1)
-    (menu-bar-mode -1))
+(when (display-graphic-p)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1))
 
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
@@ -169,26 +100,73 @@
 ;; enable column number in info area
 (column-number-mode t)
 
-;; set up a pretty mode line
-(setq-default mode-line-format
-              '(((:eval (let* ((buffer-name (concat
-                                             (propertize (buffer-name) 'face '(:weight bold))
-                                             ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
-                               (left (concat (format-mode-line mode-line-front-space)
-                                             "(" (if (buffer-modified-p) "⋯" "✓") ")"
-                                             " "
-                                             (format "%-30s" buffer-name)
-                                             "    "
-                                             (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
-                                             "  "
-                                             (format-mode-line mode-line-misc-info)))
-                               (right (concat "("
-                                              (propertize (format-mode-line mode-name) 'face '(:weight bold))
-                                              (format-mode-line minor-mode-alist)
-                                              ")"
-                                              (format-mode-line mode-line-end-spaces)))
-                               (padding (make-string (max 0 (- (window-width) 4 (length left) (length right))) ? )))
-                          (format "%s %s %s" left padding right))))))
+(global-display-line-numbers-mode t)
+
+(setq-default frame-title-format '("Emacs (%b%&)"))
+
+;; set up a pretty mode line (old version)
+;; (setq-default mode-line-format
+;;               '(((:eval (let* ((buffer-name (concat
+;;                                              (propertize (buffer-name) 'face '(:weight bold))
+;;                                              ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
+;;                                (left (concat (format-mode-line mode-line-front-space)
+;;                                              "(" (if (buffer-modified-p) "⋯" "✓") ")"
+;;                                              " "
+;;                                              (format "%-30s" buffer-name)
+;;                                              "    "
+;;                                              (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
+;;                                              "  "
+;;                                              (format-mode-line mode-line-misc-info)))
+;;                                (right (concat "("
+;;                                               (propertize (format-mode-line mode-name) 'face '(:weight bold))
+;;                                               (format-mode-line minor-mode-alist)
+;;                                               ")"
+;;                                               (format-mode-line mode-line-end-spaces)))
+;;                                (padding (make-string (max 0 (- (window-width) 4 (length left) (length right))) ? )))
+;;                           (format "%s %s %s" left padding right))))))
+
+;; set up a very simple mode-line at the top
+(setq-default x-underline-at-descent-line t)  ; give the file name a bit of room to breathe
+(setq-default header-line-format
+              '("" (:eval
+                    (let* ((left (concat (format-mode-line mode-line-front-space)
+                                         "  " (propertize (if (buffer-file-name)
+                                                              (buffer-name)
+                                                            (format-mode-line "%b"))
+                                                          'face '(:weight bold))
+                                         " " (if (buffer-modified-p) "(⋯)" "(✓)")))
+                           (right (concat (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
+                                          "  " (propertize (format-mode-line "%l:%c") 'face '(:weight light))
+                                          (format-mode-line mode-line-end-spaces)))
+                           (padding (make-string (max 0 (- (window-width) (length left) (length right))) ? )))
+                      (concat left padding right)))))
+
+;; repurpose the mode line as a simple divider between buffer content and minibuffer:
+(setq-default mode-line-format " ")
+(set-face-attribute 'mode-line nil
+                    :background "#fffff8"
+                    :foreground "#111111"
+                    :height 10
+                    :box '(:line-width 8 :color "#fffff8")
+                    :strike-through "#111111")
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#fffff8"
+                    :foreground "#111111"
+                    :height 10
+                    :box '(:line-width 8 :color "#fffff8")
+                    :strike-through "#111111")
+
+(set-face-attribute 'header-line nil
+                    :background "#fffff8"
+                    :foreground "#111111"
+                    :height 100
+                    :box '(:line-width 8 :color "#fffff8")
+                    :underline "#111111"
+                    :strike-through nil)
+(set-face-attribute 'minibuffer-prompt nil
+                    :background "#fffff8"
+                    :foreground "#111111"
+                    :height 100)
 
 ;; in magit and diary mode, use word wrap
 (add-hook 'magit-mode-hook (lambda () (visual-line-mode t)) t)
@@ -240,10 +218,10 @@
 
 (setq org-journal-file-pattern "%Y%m%d.org")
 
-(add-hook 'python-mode-hook '(lambda ()
-                               (elpy-enable)
-                               (define-key elpy-mode-map (kbd "M-.") 'dumb-jump-go)
-                               (define-key elpy-mode-map (kbd "M-,") 'dumb-jump-back)))
+(add-hook 'prog-mode-hook '(lambda ()
+                             (add-to-list 'xref-backend-functions 'dumb-jump-xref-activate)
+                             (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
+
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -279,6 +257,8 @@
 (global-set-key (kbd "C-c \"") (defun insert-AE () (interactive) (insert-char 196))) ; Ä
 (setq default-input-method 'german-postfix)
 
+(global-set-key (kbd "M-g") 'goto-line)
+
 ;; Make command history persistent
 (savehist-mode t)
 
@@ -306,6 +286,8 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups/")))
 ;; don't create #autosave-files#
 (setq auto-save-default nil)
+;; don't create .#files
+(setq create-lockfiles nil)
 
 ;; disable yank on mouse-2 (middle-click)
 (global-set-key [mouse-2] nil)
@@ -397,8 +379,8 @@
 
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
-(global-set-key (kbd "M-.") 'dumb-jump-go)
-(global-set-key (kbd "M-,") 'dumb-jump-back)
+;(global-set-key (kbd "M-.") 'dumb-jump-go)
+;(global-set-key (kbd "M-,") 'dumb-jump-back)
 
 ;; quick access to org-agenda and org-todo
 (global-set-key (kbd "C-c a") 'org-agenda)
@@ -450,47 +432,6 @@
                                  "Juni" "Juli" "August" "September"
                                  "Oktober" "November" "Dezember"])
 
-(defun bb/beginning-of-indentation ()
-  "Return the position of the first non-whitespace character in the line"
-  (save-excursion
-    (back-to-indentation)
-    (point)))
-
-(defun bb/beginning-of-line ()
-  "Return the position of the first character in the line"
-  (save-excursion
-    (move-beginning-of-line nil)
-    (point)))
-
-(defun bb/end-of-line ()
-  "Return the position of the last character in the line"
-  (save-excursion
-    (move-end-of-line nil)
-    (point)))
-
-(defun bb/move-backward ()
-  "Move point backwards to the first non-whitespace character in the line
-   or the first character in the line or the beginning of the buffer,
-   whichever comes first"
-  (interactive)
-  (cond
-   ((> (point) (bb/beginning-of-indentation))
-    (back-to-indentation))
-   ((> (point) (bb/beginning-of-line))
-    (move-beginning-of-line nil))
-   (t (beginning-of-buffer))))
-
-(defun bb/move-forward ()
-  "Move point forward to the end of the line or the end of the buffer,
-   whichever comes first"
-  (interactive)
-  (if (< (point) (bb/end-of-line))
-      (move-end-of-line nil)
-    (end-of-buffer)))
-
-(global-set-key (kbd "C-a") 'bb/move-backward)
-(global-set-key (kbd "C-e") 'bb/move-forward)
-
 ;; set up ansi-term to work with unicode correctly
 (add-hook 'term-exec-hook
           (lambda ()
@@ -505,6 +446,90 @@
         (make-directory dir)))))
 
 (autoload 's-trim "s")
+
+;; ----------------------------------------------------------------------------
+;; Work around issues
+;; ----------------------------------------------------------------------------
+
+;; Add high-resolution bitmaps for flyspell-mode et al on a high-DPI screen
+
+(fringe-mode '(16 . 0))
+
+(when (fboundp 'define-fringe-bitmap)
+  (define-fringe-bitmap 'exclamation-mark
+    (vector #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000)))
+
+
+(when (fboundp 'define-fringe-bitmap)
+  (define-fringe-bitmap 'flymake-double-exclamation-mark
+    (vector #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0000000000000000
+            #b0000000000000000
+            #b0011110000111100
+            #b0011110000111100
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000)))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
@@ -731,9 +756,9 @@
 
 (setq org-static-blog-publish-title "Bastibe.de")
 (setq org-static-blog-publish-url "https://bastibe.de/")
-(setq org-static-blog-publish-directory "~/projects/blog/")
-(setq org-static-blog-posts-directory "~/projects/blog/posts/")
-(setq org-static-blog-drafts-directory "~/projects/blog/drafts/")
+(setq org-static-blog-publish-directory "C:/Users/basti/projects/blog/")
+(setq org-static-blog-posts-directory "C:/Users/basti/projects/blog/posts/")
+(setq org-static-blog-drafts-directory "C:/Users/basti/projects/blog/drafts/")
 (setq org-static-blog-enable-tags t)
 (setq org-export-with-toc nil)
 (setq org-export-with-section-numbers nil)
@@ -748,6 +773,7 @@
 <link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
 <script src=\"static/katex.min.js\"></script>
 <script src=\"static/auto-render.min.js\"></script>
+<script src=\"static/lightbox.js\"></script>
 <link rel=\"stylesheet\" href=\"static/katex.min.css\">
 <script>document.addEventListener(\"DOMContentLoaded\", function() { renderMathInElement(document.body); });</script>
 <meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\">
@@ -757,7 +783,7 @@
 "<div class=\"header\">
   <a href=\"https://bastibe.de\">Basti's Scratchpad on the Internet</a>
   <div class=\"sitelinks\">
-    <a href=\"https://twitter.com/paperflyer\">Twitter</a> | <a href=\"https://github.com/bastibe\">Github</a> | <a href=\"https://bastibe.de/projects.html\">Projects</a>
+    <a href=\"https://github.com/bastibe\">Github</a> | <a href=\"https://bastibe.de/projects.html\">Projects</a>
   </div>
 </div>")
 
@@ -765,19 +791,18 @@
 "<div id=\"archive\">
   <a href=\"https://bastibe.de/archive.html\">Other posts</a>
 </div>
-<center><button id=\"disqus_button\" onclick=\"load_disqus()\">Load Disqus Comments</button></center>
-<div id=\"disqus_thread\"></div>
+<center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
+
+(setq org-static-blog-post-comments
+"<div id=\"hyvor-talk-view\"></div>
 <script type=\"text/javascript\">
-    function load_disqus() {
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = 'https://bastibe.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        document.getElementById('disqus_button').style.visibility = 'hidden';
+    var HYVOR_TALK_WEBSITE = 3390;
+    var HYVOR_TALK_CONFIG = {
+        url: false,
+        id: location.pathname
     };
 </script>
-<center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
+<script async type=\"text/javascript\" src=\"//talk.hyvor.com/web-api/embed\"></script>")
 
 (defadvice org-preview-latex-fragment (around non-xelatex-org-preview-latex-fragment)
   "Strip down the LaTeX process to the bare minimum when compiling fragments"
@@ -802,24 +827,20 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(LaTeX-command "xelatex -shell-escape")
  '(TeX-PDF-mode t t)
- '(TeX-engine (quote xetex))
+ '(TeX-engine 'xetex)
  '(custom-safe-themes
-   (quote
-    ("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+   '("1da1b169142666783bcb535e2275f5ebe70ece84b725a75e474ddfd4691709c1" "21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
  '(elpy-modules
-   (quote
-    (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults)))
+   '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults))
  '(magit-diff-refine-hunk t)
  '(magit-push-always-verify nil)
- '(ns-alternate-modifier (quote meta))
- '(ns-command-modifier (quote hyper))
- '(org-export-babel-evaluate nil)
+ '(ns-alternate-modifier 'meta)
+ '(ns-command-modifier 'hyper)
+ '(org-agenda-files '("c:/Users/basti/Documents/Journal/2021-09-22.org"))
  '(org-export-latex-classes
-   (quote
-    (("article" "\\documentclass[11pt,a4paper]{article}"
+   '(("article" "\\documentclass[11pt,a4paper]{article}"
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -837,16 +858,13 @@
       ("\\section{%s}" . "\\section*{%s}")
       ("\\subsection{%s}" . "\\subsection*{%s}")
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))
-     ("beamer" "\\documentclass{beamer}" org-beamer-sectioning))))
+     ("beamer" "\\documentclass{beamer}" org-beamer-sectioning)))
  '(org-export-use-babel nil)
  '(org-format-latex-options
-   (quote
-    (:foreground default :background default :scale 0.9 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-                 ("begin" "$1" "$" "$$" "\\(" "\\["))))
- '(org-latex-create-formula-image-program (quote imagemagick))
+   '(:foreground default :background default :scale 0.9 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+                 ("begin" "$1" "$" "$$" "\\(" "\\[")))
  '(org-latex-default-packages-alist
-   (quote
-    (("" "microtype" nil)
+   '(("" "microtype" nil)
      ("" "polyglossia" nil)
      "\\setdefaultlanguage{english}" "\\setotherlanguage{german}"
      ("" "fontspec" nil)
@@ -865,23 +883,20 @@
      ("" "amssymb" t)
      ("" "unicode-math" t)
      ("hidelinks" "hyperref" nil)
-     "\\tolerance=1000")))
+     "\\tolerance=1000"))
  '(org-latex-default-table-environment "longtable")
  '(org-latex-listings nil)
  '(org-latex-tables-centered nil)
- '(org-preview-latex-default-process (quote imagemagick))
+ '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   (quote
-    (org-static-blog virtualenvwrapper traad evil yaml-mode wrap-region undo-tree smartparens org-ref org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous htmlize flyspell-popup fish-mode expand-region ess elpy dumb-jump concurrent color-theme-sanityinc-tomorrow auto-complete auctex all-the-icons-dired)))
+   '(org-static-blog pyvenv flycheck annotate wc-mode lua-mode virtualenvwrapper traad evil yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous htmlize flyspell-popup fish-mode expand-region ess dumb-jump concurrent color-theme-sanityinc-tomorrow auto-complete all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
-   (quote
-    ((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
+   '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
      (org-startup-folded "content")
-     (org-set-startup-cisibility
-      (quote content))
-     (backup-inhibited . t))))
- '(send-mail-function (quote mailclient-send-it))
+     (org-set-startup-cisibility 'content)
+     (backup-inhibited . t)))
+ '(send-mail-function 'mailclient-send-it)
  '(sentence-end-double-space nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
