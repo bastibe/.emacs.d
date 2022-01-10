@@ -74,6 +74,7 @@
 
    ;; generic stuff
    `(default ((t (:background ,bg :foreground ,fg :family "PragmataPro"))))
+   `(fixed-pitch ((t (:family "PragmataPro"))))
    `(button ((t (:foreground ,fg :underline t))))
    `(cursor ((t (:background ,fg :foreground "white smoke"))))
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
@@ -96,7 +97,7 @@
    `(gnus-header-from ((t (:foreground ,fg))))
    `(gnus-header-name ((t (:foreground ,fg))))
    `(gnus-header-subject ((t (:foreground ,fg))))
-   `(highlight ((t nil)))
+   `(highlight ((t (:background ,bg-highlight))))
    `(ido-first-match ((t (:foreground ,fg :weight bold))))
    `(ido-vertical-first-match ((t (:foreground ,fg :weight bold))))
    `(ido-only-match ((t (:foreground ,fg))))
@@ -105,11 +106,12 @@
    `(isearch-lazy-highlight-face ((t (:foreground ,fg :box (:line-width -1)))))
    `(link ((t (:foreground ,fg))))
    `(minibuffer-prompt ((t (:foreground ,fg-medium :weight bold))))
-   `(mode-line ((t (:background ,bg-light :foreground ,fg :height 1.0))))
+   `(mode-line ((t (:background ,bg :foreground ,fg :height 1.0))))
    `(mode-line-buffer ((t (:foreground ,fg :weight bold))))
-   `(mode-line-inactive ((t (:background ,bg-lighter :foreground ,fg-light :height 1.0))))
+   `(mode-line-inactive ((t (:background ,bg :foreground ,fg :height 1.0))))
    `(mode-line-minor-mode ((t (:weight ultra-light))))
    `(modeline ((t (:background ,bg :foreground ,fg :height 1.0))))
+   ;; `(hl-line ((t :inherit highlight :extend t))
 
    ;; latex
    `(font-latex-bold-face ((t (:foreground ,fg))))
@@ -158,6 +160,7 @@
    `(org-done ((t (:foreground ,fg-light :family "Iosevka Slab"))))
    `(org-verse ((t (:inherit org-block :slant italic))))
    `(org-table ((t (:foreground ,fg))))
+   `(org-formula ((t (:foreground ,fg-light))))
 
    `(region ((t (:background "#eeeee8" :foreground ,fg))))
    `(slime-repl-inputed-output-face ((t (:foreground ,fg))))
