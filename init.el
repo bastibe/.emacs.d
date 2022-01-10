@@ -1,19 +1,48 @@
+; -*- coding: utf-8 -*-
+
 ;; -----------------------------------------------------------------------------
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
 
-(when (and (eq system-type 'windows-nt) (string= (user-login-name) "basti"))
-  (setq org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
-        org-journal-dir "C:/Users/basti/Documents/Journal"
-        org-journal-file-format "%Y-%m-%d.org"
-        org-journal-enable-agenda-integration t
-        dired-listing-switches "-ahl"
-        LaTeX-command "wsl xelatex -shell-escape")
-  (cd "C:/Users/basti/"))
+(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
+  (setq org-agenda-files (quote ("~/Documents/journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
+  (setq default-directory "~"))
 
+(when (and (eq system-type 'windows-nt) (string= (user-login-name) "btd"))
+  (setq org-journal-file-format "%Y-%m-%d.org"
+        org-journal-dir "C:/Users/btd/Documents/Journal"
+        org-autowiki-directory "C:/Users/btd/Documents/Autowiki")
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (require 'org-autowiki)
+  (prefer-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
+  (setq default-directory "//wsl$/Ubuntu-20.04/home/btd/")
+  (setq ispell-program-name "hunspell"
+        ispell-local-dictionary "de_DE_frami"
+        ispell-local-dictionary-alist '(("de_DE_frami" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+
+  (defun file-extended-attributes (filename)
+    "Return an alist of extended attributes of file FILENAME.
+   Extended attributes are platform-specific metadata about
+   the file, such as SELinux context, list of ACL entries, etc."
+    (cond
+     ((fboundp 'ignore-errors)
+      (ignore-errors
+        `((acl . ,(file-acl filename))
+          (selinux-context .
+                           ,(file-selinux-context filename) ) ) ) )
+     (t
+      `((acl . ,(file-acl filename))
+        (selinux-context .
+                         ,(file-selinux-context filename) ) ) ) ) ))
+
+(setq server-name "C:/Users/btd/AppData/Roaming/.emacs.d/currentserver")
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
 
 ;; -----------------------------------------------------------------------------
 ;; auto-install packages
@@ -21,37 +50,31 @@
 
 (require 'package)
 (setq package-archive-exclude-alist '(("melpa")))
-(dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
-                  ("elpa" . "http://tromey.com/elpa/")
+(dolist (source '(("elpa" . "http://tromey.com/elpa/")
                   ("gnu" . "http://elpa.gnu.org/packages/")
-                  ("org" . "http://orgmode.org/elpa/")
-                  ("melpa" . "https://melpa.org/packages/")
                   ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
 (setq package-archive-priorities
       '(("melpa-stable" . 10)
-        ("marmalade" . 9)
         ("org" . 9)
         ("elpa" . 8)
-        ("gnu" . 8)
-        ("melpa" . 0)))
+        ("gnu" . 8)))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages
-  '(auto-complete auctex color-theme-sanityinc-tomorrow concurrent
-    dash dumb-jump elpy ess expand-region flyspell-popup htmlize
-    idomenu ido-vertical-mode magit pyvenv
-    markdown-mode multiple-cursors org-journal org-ref popup s
-    smartparens undo-tree wrap-region yaml-mode yasnippet)
+(defvar my-packages '(company company-posframe concurrent dash
+  dumb-jump expand-region flyspell-popup ido-vertical-mode
+  idomenu magit markdown-mode multiple-cursors org org-journal
+  popup s smartparens undo-tree wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Make Emacs look good
@@ -70,19 +93,19 @@
 (global-whitespace-mode t)
 (setq whitespace-style '(face tabs spaces trailing empty newline))
 
-;; Use Pragmata for Unicode, too
+;; Use Pragmata for Unicode and Segoe for Emoji
 (when (functionp 'set-fontset-font)
   (set-fontset-font "fontset-default"
                     'unicode
                     (font-spec :family "PragmataPro"
-                               :height my-font-height)))
-;; For testing purposes: →„Σ“←
+                               :height my-font-height))
+  (set-fontset-font t 'symbol "Segoe UI Emoji"))
+;; For testing purposes: →„Σ💩“←
 
 ;; load my favourite theme of the day
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 (require 'typo-theme)
 (load-theme 'typo t)
-(require 'sleep-table)
 
 ;; don't show hat pesky toolbar
 (when (display-graphic-p)
@@ -104,27 +127,6 @@
 
 (setq-default frame-title-format '("Emacs (%b%&)"))
 
-;; set up a pretty mode line (old version)
-;; (setq-default mode-line-format
-;;               '(((:eval (let* ((buffer-name (concat
-;;                                              (propertize (buffer-name) 'face '(:weight bold))
-;;                                              ":" (propertize (format-mode-line "%l,%c") 'face '(:weight light))))
-;;                                (left (concat (format-mode-line mode-line-front-space)
-;;                                              "(" (if (buffer-modified-p) "⋯" "✓") ")"
-;;                                              " "
-;;                                              (format "%-30s" buffer-name)
-;;                                              "    "
-;;                                              (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
-;;                                              "  "
-;;                                              (format-mode-line mode-line-misc-info)))
-;;                                (right (concat "("
-;;                                               (propertize (format-mode-line mode-name) 'face '(:weight bold))
-;;                                               (format-mode-line minor-mode-alist)
-;;                                               ")"
-;;                                               (format-mode-line mode-line-end-spaces)))
-;;                                (padding (make-string (max 0 (- (window-width) 4 (length left) (length right))) ? )))
-;;                           (format "%s %s %s" left padding right))))))
-
 ;; set up a very simple mode-line at the top
 (setq-default x-underline-at-descent-line t)  ; give the file name a bit of room to breathe
 (setq-default header-line-format
@@ -135,7 +137,8 @@
                                                             (format-mode-line "%b"))
                                                           'face '(:weight bold))
                                          " " (if (buffer-modified-p) "(⋯)" "(✓)")))
-                           (right (concat (if vc-mode (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
+                           (right (concat (if (and vc-mode (buffer-file-name))
+                                              (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
                                           "  " (propertize (format-mode-line "%l:%c") 'face '(:weight light))
                                           (format-mode-line mode-line-end-spaces)))
                            (padding (make-string (max 0 (- (window-width) (length left) (length right))) ? )))
@@ -173,44 +176,9 @@
 (add-hook 'magit-log-edit-mode-hook (lambda () (visual-line-mode t)) t)
 (add-hook 'diary-mode-hook (lambda () (visual-line-mode t)) t)
 
-;; make emacs visual-line wrap at some column
-(defvar visual-wrap-column 0)
-
-(defun set-visual-wrap-column (new-wrap-column &optional buffer)
-  "Force visual line wrap at NEW-WRAP-COLUMN in BUFFER (defaults
-    to current buffer) by setting the right-hand margin on every
-    window that displays BUFFER.  A value of NIL or 0 for
-    NEW-WRAP-COLUMN disables this behavior."
-  (interactive (list (read-number "New visual wrap column, 0 to disable: " (or visual-wrap-column fill-column 0))))
-  (if (and (numberp new-wrap-column)
-           (zerop new-wrap-column))
-      (setq new-wrap-column nil))
-  (with-current-buffer (or buffer (current-buffer))
-    (visual-line-mode t)
-    (set (make-local-variable 'visual-wrap-column) new-wrap-column)
-    (add-hook 'window-configuration-change-hook 'update-visual-wrap-column nil t)
-    (let ((windows (get-buffer-window-list)))
-      (while windows
-        (when (window-live-p (car windows))
-          (with-selected-window (car windows)
-            (update-visual-wrap-column)))
-        (setq windows (cdr windows))))))
-
-(defun update-visual-wrap-column ()
-  (if (not visual-wrap-column)
-      (set-window-margins nil 1)
-    (let* ((current-margins (window-margins))
-           (left-margin (or (car current-margins) 1))
-           (right-margin (or (cdr current-margins) 0))
-           (current-width (window-width))
-           (current-available (+ current-width right-margin)))
-      (if (<= current-available visual-wrap-column)
-          (set-window-margins nil left-margin)
-        (set-window-margins nil left-margin
-                            (- current-available visual-wrap-column))))))
-
 (set-display-table-slot standard-display-table 'wrap ?→) ; eol wrap character
 (set-display-table-slot standard-display-table 'truncation ?→) ; bol wrap char
+
 
 ;; ----------------------------------------------------------------------------
 ;; Make Emacs behave nicely
@@ -222,6 +190,9 @@
                              (add-to-list 'xref-backend-functions 'dumb-jump-xref-activate)
                              (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
 
+;; enable global completion
+(global-company-mode t)
+(company-posframe-mode 1)
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -237,25 +208,6 @@
 
 ;; recursive minibuffers are essential for ucs-insert in the minibuffer
 (setq enable-recursive-minibuffers t)
-
-;; enter German special characters using the default OSX key combination
-(global-set-key (kbd "M-\"") "“")
-(global-set-key (kbd "M-/") "\\")
-(global-set-key (kbd "M-8") "{")
-(global-set-key (kbd "M-9") "}")
-(global-set-key (kbd "M-2") "„")
-(global-set-key (kbd "C-M-\"") "”")
-(global-set-key (kbd "M-|") "”")
-;; Make backward-paragraph and forward-paragraph work the same on EN and DE key maps
-(global-set-key (kbd "M-Ü") 'backward-paragraph)
-(global-set-key (kbd "M-*") 'forward-paragraph)
-(global-set-key (kbd "C-c [") (defun insert-ue () (interactive) (insert-char 252))) ; ü
-(global-set-key (kbd "C-c ;") (defun insert-oe () (interactive) (insert-char 246))) ; ö
-(global-set-key (kbd "C-c '") (defun insert-ae () (interactive) (insert-char 228))) ; ä
-(global-set-key (kbd "C-c {") (defun insert-UE () (interactive) (insert-char 220))) ; Ü
-(global-set-key (kbd "C-c :") (defun insert-OE () (interactive) (insert-char 214))) ; Ö
-(global-set-key (kbd "C-c \"") (defun insert-AE () (interactive) (insert-char 196))) ; Ä
-(setq default-input-method 'german-postfix)
 
 (global-set-key (kbd "M-g") 'goto-line)
 
@@ -307,10 +259,6 @@
 
 ;; enable backwards delete
 (global-set-key [kp-delete] 'delete-char)
-
-;; enable fast character search
-(global-set-key (kbd "M-s") 'iy-go-to-char)
-(global-set-key (kbd "M-r") 'iy-go-to-char-backward)
 
 ;; enable mark-multiple
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -379,25 +327,8 @@
 
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
-;(global-set-key (kbd "M-.") 'dumb-jump-go)
-;(global-set-key (kbd "M-,") 'dumb-jump-back)
-
 ;; quick access to org-agenda and org-todo
-(global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c j") 'org-journal-new-entry)
-(global-set-key (kbd "C-c s") 'org-journal-new-scheduled-entry)
-(global-set-key (kbd "C-c S") 'org-journal-schedule-view)
-
-(defun term-other-window ()
-  "Create or switch to a terminal in another window"
-  (interactive)
-  (switch-to-buffer-other-window "*terminal*")
-  (term "fish"))
-(eval-after-load 'term
-  '(term-set-escape-char ?\C-x))
-
-;; quick access to a terminal
-(global-set-key (kbd "C-c t") 'term-other-window)
 
 ;; quick access to magit-status
 (global-set-key (kbd "C-c m") 'magit-status)
@@ -447,6 +378,7 @@
 
 (autoload 's-trim "s")
 
+
 ;; ----------------------------------------------------------------------------
 ;; Work around issues
 ;; ----------------------------------------------------------------------------
@@ -491,7 +423,6 @@
             #b0000000000000000
             #b0000000000000000
             #b0000000000000000)))
-
 
 (when (fboundp 'define-fringe-bitmap)
   (define-fringe-bitmap 'flymake-double-exclamation-mark
@@ -551,6 +482,7 @@
 ;; Lua
 (setq lua-indent-level 4)
 
+
 ;; -----------------------------------------------------------------------------
 ;; Set up some language specific stuff
 ;; -----------------------------------------------------------------------------
@@ -591,18 +523,6 @@
                                                 (pdf-tools-install)
                                                 (pdf-view-mode))))
 
-
-;; open *.yaml files as yaml
-(autoload 'yaml-mode "yaml-mode")
-(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
-
-;; open *.jl files as julia
-(autoload 'julia-mode "ess-site")
-(add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode))
-
-;; open *.py files as python
-(add-to-list 'auto-mode-alist '("\\.py\\'" . (lambda () (elpy-enable) (python-mode))))
-
 (defun select-python ()
   "Select appropriate venv"
   (interactive)
@@ -632,58 +552,15 @@
 
 (setq org-startup-indented t)
 (setq org-export-allow-bind-keywords t)
-(setq org-ref-ref-html "[<a class='org-ref-reference' href=\"#%s\">%s</a>]")
 
 ;; start up latex mode with visual-line-mode
 (add-hook 'latex-mode-hook
           (lambda ()
             (visual-line-mode t)
-            (turn-on-reftex)
             (yas-minor-mode t))
           t)
 
-;; open/show pdf file within Emacs using doc-view-mode
-(defun open-show-pdf ()
-  (interactive)
-  (let ((tex-buffer-name (buffer-name))
-        (pdf-buffer-name (concat (TeX-master-file) ".pdf")))
-    (if (get-buffer pdf-buffer-name)
-        (switch-to-buffer-other-window pdf-buffer-name)
-  (find-file-other-window pdf-buffer-name))
-    (if (not (eq major-mode 'doc-view-mode))
-        (doc-view-mode))
-    (doc-view-revert-buffer t t)
-    (switch-to-buffer-other-window tex-buffer-name)))
-
-(add-hook 'LaTeX-mode-hook
-          (lambda ()
-            (define-key LaTeX-mode-map (kbd "C-c C-v") 'open-show-pdf)
-            (visual-line-mode t)
-            (turn-on-reftex)
-            (local-unset-key (kbd "\""))
-            (local-set-key (kbd "M-\"") "“"))
-          t)
-
 (setq TeX-PDF-mode t)
-(setq TeX-view-program-list '(("Preview" "open -a Skim.app %o")))
-(setq TeX-view-program-selection '((output-pdf "Preview")))
-
-;; Make doc-view-mode scroll sanely with the mouse wheel
-(add-hook 'doc-view-mode-hook
-          (lambda ()
-            (define-key doc-view-mode-map [wheel-down]
-              'doc-view-next-line-or-next-page)
-            (define-key doc-view-mode-map [double-wheel-down]
-              (lambda () (interactive) (doc-view-next-line-or-next-page 2)))
-            (define-key doc-view-mode-map [triple-wheel-down]
-              (lambda () (interactive) (doc-view-next-line-or-next-page 3)))
-            (define-key doc-view-mode-map [wheel-up]
-              'doc-view-previous-line-or-previous-page)
-            (define-key doc-view-mode-map [double-wheel-up]
-              (lambda () (interactive) (doc-view-previous-line-or-previous-page 2)))
-            (define-key doc-view-mode-map [triple-wheel-up]
-              (lambda () (interactive) (doc-view-previous-line-or-previous-page 3))))
-          t)
 
 (autoload 'ox-latex "org-mode" "Org Mode." t)
 (autoload 'ox-html "org-mode" "Org Mode." t)
@@ -694,7 +571,6 @@
 (add-hook 'org-mode-hook
           (lambda ()            ;; yasnippet
             (yas-minor-mode t)
-            (require 'org-ref)
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages
                                          '((python . t)))
@@ -739,84 +615,6 @@
     (left-char)))
 (global-set-key (kbd "<right-margin> <mouse-1>") 'bastibe-margin-click)
 
-;; -----------------------------------------------------------------------------
-;; Extend browse-url to be able to search for stuff on the web
-;; -----------------------------------------------------------------------------
-
-(defun search (url)
-  "Opens a browser and searches DuckDuckGo for the given string"
-  (interactive "sSearch for: ")
-  (browse-url (concat "http://www.duckduckgo.com/?q="
-                      (url-hexify-string url))))
-(global-set-key (kbd "C-c C-s") 'search)
-
-;; -----------------------------------------------------------------------------
-;; Set up blogging in Emacs
-;; -----------------------------------------------------------------------------
-
-(setq org-static-blog-publish-title "Bastibe.de")
-(setq org-static-blog-publish-url "https://bastibe.de/")
-(setq org-static-blog-publish-directory "C:/Users/basti/projects/blog/")
-(setq org-static-blog-posts-directory "C:/Users/basti/projects/blog/posts/")
-(setq org-static-blog-drafts-directory "C:/Users/basti/projects/blog/drafts/")
-(setq org-static-blog-enable-tags t)
-(setq org-export-with-toc nil)
-(setq org-export-with-section-numbers nil)
-
-(setq org-static-blog-page-header
-"<meta name=\"author\" content=\"Bastian Bechtold\">
-<meta name=\"referrer\" content=\"no-referrer\">
-<link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
-<link rel=\"icon\" href=\"static/favicon.ico\">
-<link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
-<link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
-<link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
-<script src=\"static/katex.min.js\"></script>
-<script src=\"static/auto-render.min.js\"></script>
-<script src=\"static/lightbox.js\"></script>
-<link rel=\"stylesheet\" href=\"static/katex.min.css\">
-<script>document.addEventListener(\"DOMContentLoaded\", function() { renderMathInElement(document.body); });</script>
-<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\">
-<meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">")
-
-(setq org-static-blog-page-preamble
-"<div class=\"header\">
-  <a href=\"https://bastibe.de\">Basti's Scratchpad on the Internet</a>
-  <div class=\"sitelinks\">
-    <a href=\"https://github.com/bastibe\">Github</a> | <a href=\"https://bastibe.de/projects.html\">Projects</a>
-  </div>
-</div>")
-
-(setq org-static-blog-page-postamble
-"<div id=\"archive\">
-  <a href=\"https://bastibe.de/archive.html\">Other posts</a>
-</div>
-<center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
-
-(setq org-static-blog-post-comments
-"<div id=\"hyvor-talk-view\"></div>
-<script type=\"text/javascript\">
-    var HYVOR_TALK_WEBSITE = 3390;
-    var HYVOR_TALK_CONFIG = {
-        url: false,
-        id: location.pathname
-    };
-</script>
-<script async type=\"text/javascript\" src=\"//talk.hyvor.com/web-api/embed\"></script>")
-
-(defadvice org-preview-latex-fragment (around non-xelatex-org-preview-latex-fragment)
-  "Strip down the LaTeX process to the bare minimum when compiling fragments"
-  (let ((org-latex-default-packages-alist
-        '((""     "amsmath"   t)
-          (""     "amssymb"   t)))
-        (org-latex-pdf-process
-         '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
-       ad-do-it))
-(ad-activate 'org-preview-latex-fragment)
-
-;; This slows down org-publish to a crawl, and it is not needed since
-;; I use magit anyway.
-(remove-hook 'find-file-hooks 'vc-find-file-hook)
 
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
@@ -827,18 +625,19 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(LaTeX-command "xelatex -shell-escape")
  '(TeX-PDF-mode t t)
  '(TeX-engine 'xetex)
  '(custom-safe-themes
-   '("1da1b169142666783bcb535e2275f5ebe70ece84b725a75e474ddfd4691709c1" "21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
+   '("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
  '(elpy-modules
    '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults))
  '(magit-diff-refine-hunk t)
  '(magit-push-always-verify nil)
+ '(mc/always-run-for-all t)
  '(ns-alternate-modifier 'meta)
  '(ns-command-modifier 'hyper)
- '(org-agenda-files '("c:/Users/basti/Documents/Journal/2021-09-22.org"))
  '(org-export-latex-classes
    '(("article" "\\documentclass[11pt,a4paper]{article}"
       ("\\section{%s}" . "\\section*{%s}")
@@ -885,11 +684,11 @@
      ("hidelinks" "hyperref" nil)
      "\\tolerance=1000"))
  '(org-latex-default-table-environment "longtable")
- '(org-latex-listings nil)
+ '(org-latex-listings nil t)
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(org-static-blog pyvenv flycheck annotate wc-mode lua-mode virtualenvwrapper traad evil yaml-mode wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous htmlize flyspell-popup fish-mode expand-region ess dumb-jump concurrent color-theme-sanityinc-tomorrow auto-complete all-the-icons-dired))
+   '(cmake-mode yasnippet s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
@@ -897,7 +696,9 @@
      (org-set-startup-cisibility 'content)
      (backup-inhibited . t)))
  '(send-mail-function 'mailclient-send-it)
- '(sentence-end-double-space nil))
+ '(sentence-end-double-space nil)
+ '(tramp-password-prompt-regexp
+   "^.*\\(\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|btd@olserv04's password:\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\).*: ? *"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
