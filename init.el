@@ -556,8 +556,7 @@
 ;; start up latex mode with visual-line-mode
 (add-hook 'latex-mode-hook
           (lambda ()
-            (visual-line-mode t)
-            (yas-minor-mode t))
+            (visual-line-mode t))
           t)
 
 (setq TeX-PDF-mode t)
@@ -566,20 +565,11 @@
 (autoload 'ox-html "org-mode" "Org Mode." t)
 (autoload 'ox-rss "org-mode" "Org Mode." t)
 (autoload 'ox-publish "org-mode" "Org Mode." t)
-(autoload 'yas-reload-all "yasnippet")
-(add-hook 'org-load-hook (lambda () (yas-reload-all)))
 (add-hook 'org-mode-hook
-          (lambda ()            ;; yasnippet
-            (yas-minor-mode t)
+          (lambda ()
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages
                                          '((python . t)))
-            (make-variable-buffer-local 'yas/trigger-key)
-            (setq yas/trigger-key [tab])
-            (add-to-list 'org-tab-first-hook
-                         (lambda ()
-                           (let ((yas/fallback-behavior 'return-nil)) (yas/expand))))
-            (define-key yas/keymap [tab] 'yas/next-field)
             ;; turn on visual-line-mode
             (visual-line-mode t)
             ;; make DONE use strike through
@@ -632,7 +622,7 @@
    '("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
  '(elpy-modules
-   '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults))
+   '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-sane-defaults))
  '(magit-diff-refine-hunk t)
  '(magit-push-always-verify nil)
  '(mc/always-run-for-all t)
@@ -688,7 +678,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(cmake-mode yasnippet s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
