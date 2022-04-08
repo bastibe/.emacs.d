@@ -12,7 +12,7 @@
 (when (and (eq system-type 'windows-nt) (string= (user-login-name) "btd"))
   (setq org-journal-file-format "%Y-%m-%d.org"
         org-journal-dir "C:/Users/btd/Documents/Journal"
-        org-autowiki-directory "C:/Users/btd/Documents/Autowiki")
+        org-autowiki-dir "C:/Users/btd/Documents/Autowiki")
   (add-to-list 'load-path "~/.emacs.d/lisp/")
   (require 'org-autowiki)
   (prefer-coding-system 'utf-8)
@@ -93,13 +93,19 @@
 (global-whitespace-mode t)
 (setq whitespace-style '(face tabs spaces trailing empty newline))
 
+(global-display-fill-column-indicator-mode t)
+(setq display-fill-column-indicator-column 100)
+(setq display-fill-column-indicator-character ?|)
+
 ;; Use Pragmata for Unicode and Segoe for Emoji
 (when (functionp 'set-fontset-font)
   (set-fontset-font "fontset-default"
                     'unicode
                     (font-spec :family "PragmataPro"
                                :height my-font-height))
-  (set-fontset-font t 'symbol "Segoe UI Emoji"))
+  (set-fontset-font t 'emoji
+                    '("Segoe UI Emoji" . "iso10646-1") nil 'prepend))
+(global-emojify-mode t)
 ;; For testing purposes: →„Σ💩“←
 
 ;; load my favourite theme of the day
@@ -147,27 +153,27 @@
 ;; repurpose the mode line as a simple divider between buffer content and minibuffer:
 (setq-default mode-line-format " ")
 (set-face-attribute 'mode-line nil
-                    :background "#fffff8"
+                    :background "#fafaf9"
                     :foreground "#111111"
                     :height 10
-                    :box '(:line-width 8 :color "#fffff8")
+                    :box '(:line-width 8 :color "#fafaf9")
                     :strike-through "#111111")
 (set-face-attribute 'mode-line-inactive nil
-                    :background "#fffff8"
+                    :background "#fafaf9"
                     :foreground "#111111"
                     :height 10
-                    :box '(:line-width 8 :color "#fffff8")
+                    :box '(:line-width 8 :color "#fafaf9")
                     :strike-through "#111111")
 
 (set-face-attribute 'header-line nil
-                    :background "#fffff8"
+                    :background "#fcfcfc"
                     :foreground "#111111"
                     :height 100
-                    :box '(:line-width 8 :color "#fffff8")
+                    :box '(:line-width 8 :color "#fcfcfc")
                     :underline "#111111"
                     :strike-through nil)
 (set-face-attribute 'minibuffer-prompt nil
-                    :background "#fffff8"
+                    :background "#fcfcfc"
                     :foreground "#111111"
                     :height 100)
 
@@ -186,9 +192,12 @@
 
 (setq org-journal-file-pattern "%Y%m%d.org")
 
-(add-hook 'prog-mode-hook '(lambda ()
-                             (add-to-list 'xref-backend-functions 'dumb-jump-xref-activate)
-                             (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
+(context-menu-mode t)
+(setq save-interprogram-paste-before-kill t)
+
+(add-hook 'prog-mode-hook #'(lambda ()
+                              (add-to-list 'xref-backend-functions 'dumb-jump-xref-activate)))
+;;                              (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
 
 ;; enable global completion
 (global-company-mode t)
@@ -267,11 +276,15 @@
 (global-set-key (kbd "C-c e") 'mc/edit-lines)
 
 ;; enable sensible undo
-(require 'undo-tree)
-(global-undo-tree-mode)
+;; (require 'undo-tree)
+;; (global-undo-tree-mode)
 ;; make undo work the same way on the EN and DE keymap
-(define-key undo-tree-map (kbd "C--") 'undo-tree-undo)
-(define-key undo-tree-map (kbd "C-_") 'undo-tree-redo)
+;; (define-key undo-tree-map (kbd "C--") 'undo-tree-undo)
+;; (define-key undo-tree-map (kbd "C-_") 'undo-tree-redo)
+
+;; make undo work the same way on the EN and DE keymap
+(global-set-key (kbd "C--") 'undo)
+(global-set-key (kbd "C-_") 'undo-redo)
 
 ;; don't sound that bloody chime
 (setq ring-bell-function #'ignore)
@@ -621,11 +634,11 @@
  '(custom-safe-themes
    '("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
- '(elpy-modules
-   '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-sane-defaults))
+ '(display-fill-column-indicator-column 100)
  '(magit-diff-refine-hunk t)
  '(magit-push-always-verify nil)
  '(mc/always-run-for-all t)
+ '(mouse-wheel-scroll-amount '(3 ((shift) . hscroll) ((meta)) ((control) . text-scale)))
  '(ns-alternate-modifier 'meta)
  '(ns-command-modifier 'hyper)
  '(org-export-latex-classes
@@ -678,7 +691,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")

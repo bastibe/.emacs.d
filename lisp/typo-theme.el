@@ -54,7 +54,7 @@
   "Theme emulating reading on an E Ink device.")
 
 (let* ((fg "#111111")
-       (bg "#fffff8")
+       (bg "#fafaf9")
        (bg-light "#ddddd8")
        (fg-medium "#404040")
        (fg-light "#606060")
@@ -111,6 +111,7 @@
    `(mode-line-inactive ((t (:background ,bg :foreground ,fg :height 1.0))))
    `(mode-line-minor-mode ((t (:weight ultra-light))))
    `(modeline ((t (:background ,bg :foreground ,fg :height 1.0))))
+   `(fill-column-indicator ((t (:foreground "gainsboro"))))
    ;; `(hl-line ((t :inherit highlight :extend t))
 
    ;; latex

@@ -56,7 +56,7 @@
            (setq datestring (substring path 0 separator-idx))
            (setq path-rest (substring path separator-idx (length path))))
           (t
-           (setq datestring (concat org-autowiki-dir "/" path ".org"))
+           (setq datestring path)
            (setq path-rest "")))
 
     ;; split datestring into year, month, day:
