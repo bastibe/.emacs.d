@@ -63,6 +63,10 @@
        (bg-highlight "#FFF1AA")
        (bg-highlight-2 "LightCyan")
        (bg-highlight-3 "LightGreen")
+       (my-default-family "PragmataPro")
+       (my-string-family "Iosevka Slab")
+       (my-comment-family "Monoid HalfTight")
+       ;; other compatible fonts: InputMonoCompressed, Iosevka
        (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
        (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
        (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :family "Iosevka Slab"))
@@ -73,22 +77,22 @@
    'typo
 
    ;; generic stuff
-   `(default ((t (:background ,bg :foreground ,fg :family "PragmataPro"))))
-   `(fixed-pitch ((t (:family "PragmataPro"))))
+   `(default ((t (:background ,bg :foreground ,fg :family ,my-default-family))))
+   `(fixed-pitch ((t (:family ,my-default-family))))
    `(button ((t (:foreground ,fg :underline t))))
    `(cursor ((t (:background ,fg :foreground "white smoke"))))
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
    `(default-italic ((t (:italic t))))
    `(font-lock-builtin-face ((t (:foreground ,fg-medium)))) ; nicht sichtbar
-   `(font-lock-comment-delimiter-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
-   `(font-lock-comment-face ((t (:foreground ,fg :slant oblique :weight light :family "Iosevka"))))
+   `(font-lock-comment-delimiter-face ((t (:foreground ,fg-medium :slant oblique :weight light :family "Iosevka"))))
+   `(font-lock-comment-face ((t (:foreground ,fg :slant oblique :weight light :family ,my-comment-family :height 0.85))))
    `(font-lock-constant-face ((t (:foreground ,fg))))
-   `(font-lock-doc-face ((t (:foreground ,fg :weight light :family "Iosevka"))))
+   `(font-lock-doc-face ((t (:foreground ,fg :weight light :family "Monoid HalfTight" :height 0.85))))
    `(font-lock-function-name-face ((t (:foreground ,fg :underline t))))
    `(font-lock-keyword-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-preprocessor-face ((t (:foreground ,fg))))
    `(font-lock-reference-face ((t (:foreground ,fg))))
-   `(font-lock-string-face ((t (:foreground ,fg-light :family "Iosevka Slab" :weight light)))) ; nicht sichtbar
+   `(font-lock-string-face ((t (:foreground ,fg-light :family ,my-string-family :weight light)))) ; nicht sichtbar
    `(font-lock-type-face ((t (:foreground ,fg :underline t))))
    `(font-lock-variable-name-face ((t (:foreground ,fg-medium :underline nil)))) ; nicht sichtbar
    `(font-lock-warning-face ((t (:foreground ,fg :weight bold))))
@@ -137,15 +141,15 @@
    `(org-agenda-structure ((t (:foreground ,fg :weight bold))))
    `(org-block ((t (:background ,bg-white :foreground ,fg))))
    `(org-block-background ((t (:background ,bg-white))))
-   `(org-block-begin-line ((t (:foreground ,fg, :background ,bg-lighter :family "Iosevka Slab"))))
-   `(org-block-end-line ((t (:foreground ,fg :background ,bg-lighter :family "Iosevka Slab"))))
-   `(org-meta-line ((t (:foreground ,fg :background ,bg-lighter :family "Iosevka Slab"))))
-   `(org-code ((t (:foreground ,fg-medium :background ,bg-white :family "Iosevka Slab"))))
+   `(org-block-begin-line ((t (:foreground ,fg, :background ,bg-lighter :family ,my-string-family))))
+   `(org-block-end-line ((t (:foreground ,fg :background ,bg-lighter :family ,my-string-family))))
+   `(org-meta-line ((t (:foreground ,fg :background ,bg-lighter :family ,my-string-family))))
+   `(org-code ((t (:foreground ,fg-medium :background ,bg-white :family ,my-string-family))))
    `(org-date ((t (:foreground ,fg) :underline)))
    `(org-hide ((t (:foreground ,bg))))
    `(org-document-title ((t ,headline-1)))
    `(org-document-info ((t (:foreground ,fg))))
-   `(org-document-info-keyword ((t (:foreground ,fg-light :family "Iosevka Slab"))))
+   `(org-document-info-keyword ((t (:foreground ,fg-light :family ,my-string-family))))
    `(org-level-1 ((t ,headline-2)))
    `(org-level-2 ((t ,headline-3)))
    `(org-level-3 ((t ,headline-4)))
@@ -157,8 +161,8 @@
    `(org-scheduled ((t (:foreground ,fg))))
    `(org-sexp-date ((t (:foreground ,fg))))
    `(org-special-keyword ((t (:foreground ,fg))))
-   `(org-todo ((t (:foreground ,fg :family "Iosevka Slab"))))
-   `(org-done ((t (:foreground ,fg-light :family "Iosevka Slab"))))
+   `(org-todo ((t (:foreground ,fg :family ,my-string-family))))
+   `(org-done ((t (:foreground ,fg-light :family ,my-string-family))))
    `(org-verse ((t (:inherit org-block :slant italic))))
    `(org-table ((t (:foreground ,fg))))
    `(org-formula ((t (:foreground ,fg-light))))
@@ -166,9 +170,9 @@
    `(region ((t (:background "#eeeee8" :foreground ,fg))))
    `(slime-repl-inputed-output-face ((t (:foreground ,fg))))
    `(whitespace-line ((t (:background ,bg-highlight-2))))
-   `(whitespace-space ((t (:background ,bg :family "Iosevka"))))
-   `(whitespace-newline ((t (:background ,bg :family "Iosevka"))))
-   `(whitespace-empty ((t (:background ,bg :family "Iosevka"))))
+   `(whitespace-space ((t (:background ,bg :family ,my-comment-family :height 0.85))))
+   `(whitespace-newline ((t (:background ,bg :family ,my-comment-family :height 0.85))))
+   `(whitespace-empty ((t (:background ,bg :family ,my-comment-family :height 0.85))))
    `(whitespace-trailing ((t (:background ,bg-highlight-2))))
 
    ;; magit
@@ -184,8 +188,8 @@
    `(markdown-header-face-4 ((t ,headline-4)))
    `(markdown-header-face-5 ((t ,headline-4)))
    `(markdown-header-face-6 ((t ,headline-4)))
-   `(markdown-pre-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
-   `(markdown-inline-code-face ((t (:foreground ,fg-medium :family "Iosevka Slab"))))
+   `(markdown-pre-face ((t (:foreground ,fg-medium :family ,my-string-family))))
+   `(markdown-inline-code-face ((t (:foreground ,fg-medium :family ,my-string-family))))
 
    ;; compile
    `(compilation-error ((t (:inherit error))))
@@ -248,6 +252,7 @@
    `(rpm-spec-section-face ((t (:inherit default :weight bold))))
 
    ;; misc
+   `(sh-quoted-exec ((t (:foreground ,fg-medium))))
    `(idle-highlight ((t (:background ,bg-highlight))))
    `(yas-field-highlight-face ((t (:background "#eeeee8" :foreground ,fg))))
    `(eshell-prompt ((t (:foreground ,fg :weight bold))))

@@ -19,6 +19,17 @@
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
   (setq default-directory "//wsl$/Ubuntu-20.04/home/btd/")
+  (defun my-find-file (&optional prefix)
+    (interactive "P")
+    (if prefix
+        (let ((default-directory "C:/Users/btd/"))
+          (ido-find-file))
+      (ido-find-file)))
+  (global-set-key (kbd "C-x C-f") 'my-find-file)
+
+  ;; (add-to-list 'eglot-server-programs
+  ;;              `(python-mode . ("wsl" "/home/btd/projects/asrlib-cpython-wrapper/.venv3/bin/pylsp"
+  ;;                               "--tcp" "--host" "localhost" "--port" :autoport)))
   (setq ispell-program-name "hunspell"
         ispell-local-dictionary "de_DE_frami"
         ispell-local-dictionary-alist '(("de_DE_frami" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
@@ -52,15 +63,16 @@
 (setq package-archive-exclude-alist '(("melpa")))
 (dolist (source '(("elpa" . "http://tromey.com/elpa/")
                   ("gnu" . "http://elpa.gnu.org/packages/")
-                  ("melpa-stable" . "https://stable.melpa.org/packages/")))
+                  ("melpa-stable" . "https://stable.melpa.org/packages/")
+                  ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 
 (setq package-archive-priorities
-      '(("melpa-stable" . 10)
-        ("org" . 9)
-        ("elpa" . 8)
-        ("gnu" . 8)))
+      '(("melpa-stable" . 9)
+        ("nongnu" . 10)
+        ("elpa" . 6)
+        ("gnu" . 7)))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -68,7 +80,7 @@
 (defvar my-packages '(company company-posframe concurrent dash
   dumb-jump expand-region flyspell-popup ido-vertical-mode
   idomenu magit markdown-mode multiple-cursors org org-journal
-  popup s smartparens undo-tree wrap-region)
+  popup s smartparens vundo wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -105,7 +117,8 @@
                                :height my-font-height))
   (set-fontset-font t 'emoji
                     '("Segoe UI Emoji" . "iso10646-1") nil 'prepend))
-(global-emojify-mode t)
+(setq emojify-emoji-styles '(ascii unicode))
+(global-emojify-mode t)  ; TODO: super slow!
 ;; For testing purposes: →„Σ💩“←
 
 ;; load my favourite theme of the day
@@ -195,9 +208,9 @@
 (context-menu-mode t)
 (setq save-interprogram-paste-before-kill t)
 
-(add-hook 'prog-mode-hook #'(lambda ()
-                              (add-to-list 'xref-backend-functions 'dumb-jump-xref-activate)))
-;;                              (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
+(setq dumb-jump-prefer-searcher 'ag)
+(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+(setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 
 ;; enable global completion
 (global-company-mode t)
@@ -274,13 +287,6 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c a") 'mc/mark-all-like-this-dwim)
 (global-set-key (kbd "C-c e") 'mc/edit-lines)
-
-;; enable sensible undo
-;; (require 'undo-tree)
-;; (global-undo-tree-mode)
-;; make undo work the same way on the EN and DE keymap
-;; (define-key undo-tree-map (kbd "C--") 'undo-tree-undo)
-;; (define-key undo-tree-map (kbd "C-_") 'undo-tree-redo)
 
 ;; make undo work the same way on the EN and DE keymap
 (global-set-key (kbd "C--") 'undo)
@@ -382,98 +388,7 @@
             (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
           t)
 
-(defadvice find-file (before make-directory-maybe (filename &optional wildcards) activate)
-  "Create parent directory if not exists while visiting file."
-  (unless (file-exists-p filename)
-    (let ((dir (file-name-directory filename)))
-      (unless (file-exists-p dir)
-        (make-directory dir)))))
-
 (autoload 's-trim "s")
-
-
-;; ----------------------------------------------------------------------------
-;; Work around issues
-;; ----------------------------------------------------------------------------
-
-;; Add high-resolution bitmaps for flyspell-mode et al on a high-DPI screen
-
-(fringe-mode '(16 . 0))
-
-(when (fboundp 'define-fringe-bitmap)
-  (define-fringe-bitmap 'exclamation-mark
-    (vector #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000001111000000
-            #b0000001111000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000)))
-
-(when (fboundp 'define-fringe-bitmap)
-  (define-fringe-bitmap 'flymake-double-exclamation-mark
-    (vector #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0011110000111100
-            #b0000000000000000
-            #b0000000000000000
-            #b0011110000111100
-            #b0011110000111100
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000
-            #b0000000000000000)))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
@@ -507,55 +422,6 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-
-;; open *.m files as octave
-(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
-(setq octave-block-offset 4)
-;; use single-percent comments
-(setq octave-comment-char ?%)
-(add-hook 'octave-mode-hook
-          (lambda ()
-            (setq-local comment-add 0)
-            ;; overwrite octave indentation logic
-            (defun octave-indent-comment ()
-              "A function for `smie-indent-functions' (which see)."
-              (save-excursion
-                (back-to-indentation)
-                (cond
-                 ((octave-in-string-or-comment-p) nil)
-                 ((looking-at-p "\\(\\s<\\)\\1\\{2,\\}")
-                  0)
-                 ;; keep documentation comments at bol
-                 ((= (current-column) 0) 0)
-                 ;; no more special-casing for double-comments
-                 )))))
-
-;; open *.pdf files as images
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . (lambda ()
-                                                (require 'pdf-tools)
-                                                (pdf-tools-install)
-                                                (pdf-view-mode))))
-
-(defun select-python ()
-  "Select appropriate venv"
-  (interactive)
-  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel"))))
-    ;; (make-local-variable 'elpy-rpc-python-command)
-    ;; (make-local-variable 'python-shell-interpreter)
-    ;; (make-local-variable 'python-shell-interpreter-args)
-    (cond ((file-directory-p ".venv/bin/")
-           (setq elpy-rpc-python-command (expand-file-name ".venv/bin/python")
-                 python-shell-interpreter (expand-file-name ".venv/bin/python")
-                 python-shell-interpreter-args "-i")
-           (pyvenv-activate (expand-file-name ".venv")))
-          ((and (> (length git-path) 0)
-                (file-directory-p git-path)
-                (file-directory-p (concat git-path "/.venv/bin/" )))
-           (setq elpy-rpc-python-command (concat git-path "/.venv/bin/python")
-                 python-shell-interpreter (concat git-path "/.venv/bin/python")
-                 python-shell-interpreter-args "-i")
-           (pyvenv-activate (concat git-path "/.venv"))))))
-(add-hook 'python-mode-hook 'select-python)
 
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
@@ -608,17 +474,6 @@
 (setq mouse-wheel-progressive-speed nil)
 (setq redisplay-dont-pause t)
 
-;; Make clicking and scrolling work in the margin
-(global-set-key (kbd "<right-margin> <wheel-down>") 'mwheel-scroll)
-(global-set-key (kbd "<right-margin> <wheel-up>") 'mwheel-scroll)
-(defun bastibe-margin-click (event)
-  (interactive "e")
-  (mouse-set-point event)
-  (unless (eolp)
-    (left-char)))
-(global-set-key (kbd "<right-margin> <mouse-1>") 'bastibe-margin-click)
-
-
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
 ;; -----------------------------------------------------------------------------
@@ -632,7 +487,7 @@
  '(TeX-PDF-mode t t)
  '(TeX-engine 'xetex)
  '(custom-safe-themes
-   '("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
+   '("36e771968f268c2d5afc6182de810be15cce2bece1028291c35406c4d56ee065" "b6e7d810377a4b81db6622e4cf42898f625006f727487dec82599e0b9a66bd73" "21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
  '(display-fill-column-indicator-column 100)
  '(magit-diff-refine-hunk t)
@@ -691,7 +546,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
