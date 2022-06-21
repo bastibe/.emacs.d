@@ -63,6 +63,7 @@
        (bg-highlight "#FFF1AA")
        (bg-highlight-2 "LightCyan")
        (bg-highlight-3 "LightGreen")
+       (bg-overlay "grey90")
        (my-default-family "PragmataPro")
        (my-string-family "Iosevka Slab")
        (my-comment-family "Monoid HalfTight")
@@ -217,7 +218,15 @@
 
    ;; company
    `(company-echo-common ((t (:foreground ,fg))))
-   `(company-tooltip-selection ((t (:background ,bg-highlight))))
+   `(company-preview ((t (:background ,bg-overlay))))
+   `(company-tooltip ((t (:background ,bg-overlay))))
+   `(company-tooltip-selection ((t (:background ,bg-highlight :foreground ,fg))))
+   `(company-tooltip-common ((t (:underline t))))
+   `(company-tooltip-search ((t (:weight bold))))
+   `(company-scrollbar-bg ((t (:background ,bg-overlay))))
+   `(company-scrollbar-fg ((t (:background "grey60"))))
+   `(company-posframe-metadata ((t (:background ,bg-overlay))))
+   `(company-posframe-quickhelp ((t (:background "white"))))
 
    ;; parens - parenface
    '(parenface-paren-face ((t (:foreground "gray70"))))

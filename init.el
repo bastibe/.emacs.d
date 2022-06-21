@@ -207,7 +207,6 @@
 
 (context-menu-mode t)
 (setq save-interprogram-paste-before-kill t)
-
 (setq dumb-jump-prefer-searcher 'ag)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
@@ -215,6 +214,14 @@
 ;; enable global completion
 (global-company-mode t)
 (company-posframe-mode 1)
+(setq company-posframe-show-indicator nil
+      company-posframe-quickhelp-delay nil
+      company-posframe-show-metadata nil  ; disable. Show with F1, scroll with F2/F3
+      company-posframe-quickhelp-show-header nil)
+
+;; enable nice M-x completion
+(vertico-mode 1)
+(marginalia-mode 1)
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -546,7 +553,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(corfu consult marginalia vertico vertico-posframe lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
