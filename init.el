@@ -14,7 +14,6 @@
         org-journal-dir "C:/Users/btd/Documents/Journal"
         org-autowiki-dir "C:/Users/btd/Documents/Autowiki")
   (add-to-list 'load-path "~/.emacs.d/lisp/")
-  (require 'org-autowiki)
   (prefer-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
@@ -27,9 +26,6 @@
       (ido-find-file)))
   (global-set-key (kbd "C-x C-f") 'my-find-file)
 
-  ;; (add-to-list 'eglot-server-programs
-  ;;              `(python-mode . ("wsl" "/home/btd/projects/asrlib-cpython-wrapper/.venv3/bin/pylsp"
-  ;;                               "--tcp" "--host" "localhost" "--port" :autoport)))
   (setq ispell-program-name "hunspell"
         ispell-local-dictionary "de_DE_frami"
         ispell-local-dictionary-alist '(("de_DE_frami" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
@@ -60,19 +56,17 @@
 ;; -----------------------------------------------------------------------------
 
 (require 'package)
-(setq package-archive-exclude-alist '(("melpa")))
 (dolist (source '(("elpa" . "http://tromey.com/elpa/")
-                  ("gnu" . "http://elpa.gnu.org/packages/")
-                  ("melpa-stable" . "https://stable.melpa.org/packages/")
-                  ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+                  ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (add-to-list 'package-archives source t))
-(package-initialize)
-
 (setq package-archive-priorities
       '(("melpa-stable" . 9)
         ("nongnu" . 10)
         ("elpa" . 6)
         ("gnu" . 7)))
+
+(package-initialize)
+
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -101,10 +95,6 @@
 (set-face-attribute 'default nil
                     :height my-font-height)
 
-;; force consistent font height by using the biggest font for spaces:
-(global-whitespace-mode t)
-(setq whitespace-style '(face tabs spaces trailing empty newline))
-
 (global-display-fill-column-indicator-mode t)
 (setq display-fill-column-indicator-column 100)
 (setq display-fill-column-indicator-character ?|)
@@ -118,7 +108,7 @@
   (set-fontset-font t 'emoji
                     '("Segoe UI Emoji" . "iso10646-1") nil 'prepend))
 (setq emojify-emoji-styles '(ascii unicode))
-(global-emojify-mode t)  ; TODO: super slow!
+;;(global-emojify-mode t)  ; TODO: super slow!
 ;; For testing purposes: →„Σ💩“←
 
 ;; load my favourite theme of the day
@@ -135,9 +125,8 @@
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
 (setq org-src-preserve-indentation t)
-
-;; highlight matching parenthesis
-(show-smartparens-mode)
+(setq org-fontify-done-headline nil)
+(setq org-fontify-todo-headline nil)
 
 ;; enable column number in info area
 (column-number-mode t)
@@ -212,16 +201,17 @@
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 
 ;; enable global completion
-(global-company-mode t)
-(company-posframe-mode 1)
+(add-hook 'prog-mode-hook (lambda ()
+                            (show-smartparens-mode)
+                            (company-mode t)
+                            (company-posframe-mode 1)))
 (setq company-posframe-show-indicator nil
       company-posframe-quickhelp-delay nil
       company-posframe-show-metadata nil  ; disable. Show with F1, scroll with F2/F3
       company-posframe-quickhelp-show-header nil)
 
 ;; enable nice M-x completion
-(vertico-mode 1)
-(marginalia-mode 1)
+(fido-vertical-mode 1)
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -252,7 +242,7 @@
 (setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
 
 ;; detect external file changes automatically
-(global-auto-revert-mode t)
+;; (global-auto-revert-mode t) ;; takes too long
 
 ;; NO TABS. EVER.
 (setq-default indent-tabs-mode nil)
@@ -325,6 +315,13 @@
     (end-of-line))
   (newline-and-indent))
 
+(defun bb/auto-create-missing-dir ()
+  "Auto-creates the parent directory for buffer-file-name if not existing."
+  (let ((target-dir (file-name-directory buffer-file-name)))
+    (unless (file-exists-p target-dir)
+      (make-directory target-dir t))))
+(add-to-list 'find-file-not-found-functions #'bb/auto-create-missing-dir)
+
 (global-set-key (kbd "C-o") 'vi-open-line-below)
 (global-set-key (kbd "M-o") 'vi-open-line-above)
 
@@ -336,20 +333,13 @@
   (beginning-of-line))
 
 ;; mark stuff semantically
-(require 'expand-region)
-(define-prefix-command 'mark-semantically)
-(global-set-key (kbd "C-j") 'mark-semantically)
-(define-key mark-semantically (kbd "w") 'er/mark-word)
-(define-key mark-semantically (kbd "s") 'er/mark-symbol)
-(define-key mark-semantically (kbd "f") 'er/mark-method-call)
-(define-key mark-semantically (kbd "d") 'er/mark-defun)
-(define-key mark-semantically (kbd "c") 'er/mark-comment)
-(define-key mark-semantically (kbd "p") 'mark-paragraph)
-(define-key mark-semantically (kbd "'") 'er/mark-inside-quotes)
-(define-key mark-semantically (kbd "\"") 'er/mark-outside-quotes)
-(define-key mark-semantically (kbd "[") 'er/mark-inside-pairs)
-(define-key mark-semantically (kbd "]") 'er/mark-outside-pairs)
-(define-key mark-semantically (kbd "l") 'bb/mark-line)
+(autoload 'er/expand-region "expand-region")
+(global-set-key (kbd "C-c r") 'er/expand-region)
+(autoload 'er/mark-defun "expand-region")
+(global-set-key (kbd "C-c d") 'er/mark-defun)
+(autoload 'er/mark-defun "expand-region")
+(global-set-key (kbd "C-c d") 'er/mark-defun)
+(global-set-key (kbd "C-c l") 'bb/mark-line)
 
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
@@ -453,6 +443,8 @@
 (autoload 'ox-publish "org-mode" "Org Mode." t)
 (add-hook 'org-mode-hook
           (lambda ()
+            (require 'org-autowiki)
+
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages
                                          '((python . t)))
@@ -494,7 +486,7 @@
  '(TeX-PDF-mode t t)
  '(TeX-engine 'xetex)
  '(custom-safe-themes
-   '("36e771968f268c2d5afc6182de810be15cce2bece1028291c35406c4d56ee065" "b6e7d810377a4b81db6622e4cf42898f625006f727487dec82599e0b9a66bd73" "21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
+   '("37876ed71caaf25682400f2a26ddffbd92c56a0e7118b28977e1642e13bd98e7" "f498611a55865fc39d0c021d70c35c3eb1fdf562d498f4b31c75267b9338bc6b" "85c832b0ee0d27afe2e9d1ba9d93f5053576a9158c8e6787c69b9759f422b51b" "de489e681215eb48108f3e5e3faebb91a94a52435efc7241f8e2ce50c61be9e0" "8fc2c193643ffd5f86bd58bfde990032d82824fb06100eab4e11d04b7df2e5d7" "29c9f2c0db7d71bd663aefaaf69be100956a70261845063ec1a268292860bf72" "968203889d8076ef832ffcc303626d1cfb504411ee595ee6843d880d23722e27" "6024e338ed28c8fe04ffaa5ab0009ccc12b9a8cb0fd8cce54a5e43cb19358134" "033cd04db8c0dc207f2e1c54886bdae54288fd878a4c70d8904b07c5ee519bfe" "26390969031065b8ba685ae69a695015e587f2cc8bc59130d4a9557abfa8a5cd" "ed8aa414b653b598320cf3166e57c0802fd332bf6cea76db03dc138e9a47380d" "9e44d081f63837d7b45bc2b27804508752dcc1f7a509b54f3620a5795d8d69ef" "d8c8a5d73e9f559ca5f2c3947f2e749196f25628ecdb3a9bd15a536bb3c633d9" "20bb7d61fe820812768fca38d6162c57850c4d94eed694bf567a51fd5689703a" "1e2efa3b3409033ad3554b8d05018c7aa2654d83764539244ccc58595f01453b" "5d4c5382baf25938bfbe6b211ea6b43a6676458b6e1b8d3d4d2472f6b6f5ea3b" "3fedcbfb0fc73968bf78e02109c45b1e73ce9f218391b3a20a602987abb9dd1d" "c14aa89c6adc8590d8264e97ff434030d707d883e83ef84dcfaa51bd0fef2fbc" "9d22d19405625e8709e611676fd12136bb3914a0e498a1fd87227e66edc33a1e" "1e8a4129a0eaa9b40d7325ece0b21fc6d01ae259898a7adeceb7cce624a9e82e" "95ebb3514e22c0da15cbf224e213f9bc7f47cc0334f138ce364cd7a7bf360f5f" "93fa87460a65ac136a25f9d3bbfbdd4158dcdef4faf6fecefde5c907a5b376a2" "dae43e6384690a475b52828c9c6127294f0efaa87c030f083b085ad64a145e53" "d20e64338bb1277befa2b8b25c7eb1376954c648d6658a4f5df9db5e2b33df75" "c70f8278bf7c328e90058192b0b9edcc35751bbf089faed6a1e23573f5ad0c85" "b4aa27d8de6b98c539ae15d6c396fb480df333f9a5a2f120f0df859a2fba4752" "4b97bd134a558b1486d937a277cab76a5f2dcdb399acfc999f298667e182a45f" "ea48ba62fa400fcb8ce497d7a182015d6fc6eebfe352bd18bd8a9fa9270d5d22" "0888c530b7fadeb1017787eed625b0b85df4910db5d4a2c597444a7f49d558bb" "424ff2a80ea13a9fbf06f8c3caa9865fe958d7dad80a64f46f9c3e6fdabcb3ae" "535294a13971d18b57877f89bceb5e8fbc943de72f26ed6efcbd7401ee1595c9" "afb64d797dcd55118f8cff1df1d0259040e2718333c9a93026a9535b8259513e" "7c06e7a8fe0e898c246a32f759adfc0b74af196233c8e25087063f91991f622c" "b37a24c0d8efc3e224173e1210c38e55f1ffa38e32e37b87efc3d20fc10feea8" "40a03442e342d807dc139b1fbf5395b2d232a05a9a0ab20d2adf8920cea46d13" "36e771968f268c2d5afc6182de810be15cce2bece1028291c35406c4d56ee065" "b6e7d810377a4b81db6622e4cf42898f625006f727487dec82599e0b9a66bd73" "21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
  '(display-fill-column-indicator-column 100)
  '(magit-diff-refine-hunk t)
@@ -553,7 +545,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(corfu consult marginalia vertico vertico-posframe lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(esup corfu consult marginalia vertico vertico-posframe lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
