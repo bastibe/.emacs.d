@@ -65,8 +65,13 @@
        (bg-highlight-3 "LightGreen")
        (bg-overlay "grey90")
        (my-default-family "PragmataPro")
-       (my-string-family "Iosevka Slab")
-       (my-comment-family "Monoid HalfTight")
+       (my-string-family "Agave")
+       (my-comment-family "Iosevka Slab")
+       ;; Compatible fonts: Monoid HalfTight 0.85, Victor Mono 0.95,
+       ;; Lekton 1.1, Ubuntu Mono 1.05, Agave, Iosevka, PragmataPro,
+       ;; Monofur
+       (my-docs-family "Victor Mono")
+       (my-docs-height 0.95)
        ;; other compatible fonts: InputMonoCompressed, Iosevka
        (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
        (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
@@ -85,10 +90,10 @@
    `(custom-variable-tag ((t (:foreground ,fg :weight bold))))
    `(default-italic ((t (:italic t))))
    `(font-lock-builtin-face ((t (:foreground ,fg-medium)))) ; nicht sichtbar
-   `(font-lock-comment-delimiter-face ((t (:foreground ,fg-medium :slant oblique :weight light :family "Iosevka"))))
-   `(font-lock-comment-face ((t (:foreground ,fg :slant oblique :weight light :family ,my-comment-family :height 0.85))))
+   `(font-lock-comment-delimiter-face ((t (:foreground ,fg-medium :slant oblique :weight light :family ,my-comment-family))))
+   `(font-lock-comment-face ((t (:foreground ,fg-medium :slant oblique :weight light :family ,my-comment-family))))
    `(font-lock-constant-face ((t (:foreground ,fg))))
-   `(font-lock-doc-face ((t (:foreground ,fg :weight light :family "Monoid HalfTight" :height 0.85))))
+   `(font-lock-doc-face ((t (:foreground ,fg :family ,my-docs-family :height ,my-docs-height))))
    `(font-lock-function-name-face ((t (:foreground ,fg :underline t))))
    `(font-lock-keyword-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-preprocessor-face ((t (:foreground ,fg))))
@@ -162,8 +167,8 @@
    `(org-scheduled ((t (:foreground ,fg))))
    `(org-sexp-date ((t (:foreground ,fg))))
    `(org-special-keyword ((t (:foreground ,fg))))
-   `(org-todo ((t (:foreground ,fg :family ,my-string-family))))
-   `(org-done ((t (:foreground ,fg-light :family ,my-string-family))))
+   `(org-todo ((t (:foreground ,fg-light :family ,my-string-family))))
+   `(org-done ((t (:foreground ,fg-light :family ,my-string-family :strike-through t))))
    `(org-verse ((t (:inherit org-block :slant italic))))
    `(org-table ((t (:foreground ,fg))))
    `(org-formula ((t (:foreground ,fg-light))))
@@ -171,9 +176,9 @@
    `(region ((t (:background "#eeeee8" :foreground ,fg))))
    `(slime-repl-inputed-output-face ((t (:foreground ,fg))))
    `(whitespace-line ((t (:background ,bg-highlight-2))))
-   `(whitespace-space ((t (:background ,bg :family ,my-comment-family :height 0.85))))
-   `(whitespace-newline ((t (:background ,bg :family ,my-comment-family :height 0.85))))
-   `(whitespace-empty ((t (:background ,bg :family ,my-comment-family :height 0.85))))
+   `(whitespace-space ((t (:background ,bg :family ,my-comment-family))))
+   `(whitespace-newline ((t (:background ,bg :family ,my-comment-family))))
+   `(whitespace-empty ((t (:background ,bg :family ,my-comment-family))))
    `(whitespace-trailing ((t (:background ,bg-highlight-2))))
 
    ;; magit
