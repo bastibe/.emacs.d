@@ -17,7 +17,7 @@
   (prefer-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
-  (setq default-directory "//wsl$/Ubuntu-20.04/home/btd/")
+  (setq default-directory "//wsl$/Ubuntu-22.04/home/btd/")
   (defun my-find-file (&optional prefix)
     (interactive "P")
     (if prefix

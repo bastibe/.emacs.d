@@ -65,19 +65,32 @@
        (bg-highlight-3 "LightGreen")
        (bg-overlay "grey90")
        (my-default-family "PragmataPro")
+       ;; strings are the most difficult face to get right, as they
+       ;; are deeply integrated into the code and often contain
+       ;; code-like structures. I give them a face with a distincly
+       ;; different x-height that makes them easy to spot:
        (my-string-family "Agave")
+       ;; types are annotations to the code itself, so I use a
+       ;; slightly lighter, slightly less conspicuous variant of the
+       ;; main faces:
+       (my-type-family "Iosevka Comfy")
+       ;; Comments should be easily discernible from code. I use an
+       ;; italic slant and slabs to make them stand out:
        (my-comment-family "Iosevka Slab")
-       ;; Compatible fonts: Monoid HalfTight 0.85, Victor Mono 0.95,
-       ;; Lekton 1.1, Ubuntu Mono 1.05, Agave, Iosevka, PragmataPro,
-       ;; Monofur
+       ;; Docs usually come in longer paragraphs, and don't need to
+       ;; stand out as much. I use an upright slant with a
+       ;; lighter-weight family:
        (my-docs-family "Victor Mono")
        (my-docs-height 0.95)
-       ;; other compatible fonts: InputMonoCompressed, Iosevka
        (headline-1 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
        (headline-2 `(:foreground ,fg :weight semi-bold :height 1.4 :family "InputSerifCompressed"))
        (headline-3 `(:foreground ,fg :weight semi-bold :height 1.2 :family "Iosevka Slab"))
        (headline-4 `(:foreground ,fg :weight semi-bold :height 1.1)))
 
+  ;; other compatible fonts: InputMonoCompressed, Iosevka
+  ;; Compatible fonts: Monoid HalfTight 0.85, Victor Mono 0.95,
+  ;; Lekton 1.1, Ubuntu Mono 1.05, Agave, Iosevka, PragmataPro,
+  ;; Monofur
 
   (custom-theme-set-faces
    'typo
@@ -92,15 +105,17 @@
    `(font-lock-builtin-face ((t (:foreground ,fg-medium)))) ; nicht sichtbar
    `(font-lock-comment-delimiter-face ((t (:foreground ,fg-medium :slant oblique :weight light :family ,my-comment-family))))
    `(font-lock-comment-face ((t (:foreground ,fg-medium :slant oblique :weight light :family ,my-comment-family))))
-   `(font-lock-constant-face ((t (:foreground ,fg))))
    `(font-lock-doc-face ((t (:foreground ,fg :family ,my-docs-family :height ,my-docs-height))))
-   `(font-lock-function-name-face ((t (:foreground ,fg :underline t))))
+   `(font-lock-constant-face ((t (:foreground ,fg))))
+   ;; function names and keywords provide the code's /structure/, so I
+   ;; make them stand out in bold:
+   `(font-lock-function-name-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-keyword-face ((t (:foreground ,fg :weight bold))))
-   `(font-lock-preprocessor-face ((t (:foreground ,fg))))
+   `(font-lock-preprocessor-face ((t (:foreground ,fg :family ,my-comment-family))))
    `(font-lock-reference-face ((t (:foreground ,fg))))
-   `(font-lock-string-face ((t (:foreground ,fg-light :family ,my-string-family :weight light)))) ; nicht sichtbar
-   `(font-lock-type-face ((t (:foreground ,fg :underline t))))
-   `(font-lock-variable-name-face ((t (:foreground ,fg-medium :underline nil)))) ; nicht sichtbar
+   `(font-lock-string-face ((t (:foreground ,fg-light :family ,my-string-family :weight light))))
+   `(font-lock-type-face ((t (:foreground ,fg :underline t :family ,my-type-family))))
+   `(font-lock-variable-name-face ((t (:foreground ,fg-medium :underline nil))))
    `(font-lock-warning-face ((t (:foreground ,fg :weight bold))))
    `(fringe ((t (:background ,bg :foreground ,fg))))
    `(gnus-header-content ((t (:foreground ,fg))))
