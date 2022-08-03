@@ -109,7 +109,7 @@
    `(font-lock-constant-face ((t (:foreground ,fg))))
    ;; function names and keywords provide the code's /structure/, so I
    ;; make them stand out in bold:
-   `(font-lock-function-name-face ((t (:foreground ,fg :weight bold))))
+   `(font-lock-function-name-face ((t (:foreground ,fg :underline t :weight bold))))
    `(font-lock-keyword-face ((t (:foreground ,fg :weight bold))))
    `(font-lock-preprocessor-face ((t (:foreground ,fg :family ,my-comment-family))))
    `(font-lock-reference-face ((t (:foreground ,fg))))
