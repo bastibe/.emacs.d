@@ -12,18 +12,20 @@
 (when (and (eq system-type 'windows-nt) (string= (user-login-name) "btd"))
   (setq org-journal-file-format "%Y-%m-%d.org"
         org-journal-dir "C:/Users/btd/Documents/Journal"
+        org-journal-date-format "%A, %Y-%m-%d"
         org-autowiki-dir "C:/Users/btd/Documents/Autowiki")
   (add-to-list 'load-path "~/.emacs.d/lisp/")
   (prefer-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
   (setq default-directory "//wsl$/Ubuntu-22.04/home/btd/")
+
   (defun my-find-file (&optional prefix)
     (interactive "P")
     (if prefix
         (let ((default-directory "C:/Users/btd/"))
-          (ido-find-file))
-      (ido-find-file)))
+          (call-interactively #'find-file))
+      (call-interactively #'find-file)))
   (global-set-key (kbd "C-x C-f") 'my-find-file)
 
   (setq ispell-program-name "hunspell"
@@ -71,15 +73,28 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages '(company company-posframe concurrent dash
-  dumb-jump expand-region flyspell-popup ido-vertical-mode
-  idomenu magit markdown-mode multiple-cursors org org-journal
-  popup s smartparens vundo wrap-region)
+(defvar my-packages '(company dash expand-region marginalia dumb-jump
+  magit markdown-mode multiple-cursors org org-journal popup
+  smartparens vertico vundo)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
+
+
+(when (and (eq system-type 'windows-nt) (string= (user-login-name) "btd"))
+  ;; fix dumb-jump in the WSL, which broke a few versions ago for unknown reasons:
+  (require 'dumb-jump)
+  (defun filter-UNC-error (orig-fun resp &rest args)
+    (let* (;; CMD.exe likes to inject a useless error message, so filter it out:
+           (filtered (replace-regexp-in-string "'[^']+'\nCMD.EXE was started with the above path as the current directory.\nUNC paths are not supported.  Defaulting to Windows directory.\n" "" resp))
+           ;; for some reason, ag returns paths as /wsl$/... instead of //wsl$/..., which
+           ;; dumb-jump interprets as a relative path instead of an absolute one,
+           ;; so fix that:
+           (fixed (replace-regexp-in-string "^\\\\wsl\\$" "\\\\\\\\wsl$" filtered)))
+      (apply orig-fun fixed args)))
+  (advice-add 'dumb-jump-parse-ag-response :around #'filter-UNC-error))
 
 
 ;; -----------------------------------------------------------------------------
@@ -88,7 +103,7 @@
 
 ;; set a nice looking font
 (setq my-font-height (cond ((eq system-type 'darwin) 130)
-                           ((eq system-type 'windows-nt) 100)
+                           ((eq system-type 'windows-nt) 110)
                            ((eq system-type 'gnu/linux) 100)))
 
 
@@ -196,22 +211,22 @@
 
 (context-menu-mode t)
 (setq save-interprogram-paste-before-kill t)
-(setq dumb-jump-prefer-searcher 'ag)
+;; (setq dumb-jump-prefer-searcher 'ag)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 
 ;; enable global completion
-(add-hook 'prog-mode-hook (lambda ()
-                            (show-smartparens-mode)
-                            (company-mode t)
-                            (company-posframe-mode 1)))
-(setq company-posframe-show-indicator nil
-      company-posframe-quickhelp-delay nil
-      company-posframe-show-metadata nil  ; disable. Show with F1, scroll with F2/F3
-      company-posframe-quickhelp-show-header nil)
+;; (add-hook 'prog-mode-hook (lambda ()
+;;                             (show-smartparens-mode)
+;;                             (company-mode t)
+;;                             (company-posframe-mode 1)))
+;; (setq company-posframe-show-indicator nil
+;;       company-posframe-quickhelp-delay nil
+;;       company-posframe-show-metadata nil  ; disable. Show with F1, scroll with F2/F3
+;;       company-posframe-quickhelp-show-header nil)
 
 ;; enable nice M-x completion
-(fido-vertical-mode 1)
+;;(fido-vertical-mode 1)
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
@@ -264,10 +279,18 @@
 (global-set-key [mouse-2] nil)
 
 ;; enable ido mode and fuzzy matching
-(ido-mode t)
-(setq ido-enable-flex-matching t)
-(ido-vertical-mode)
-(setq ido-auto-merge-delay-time 1)
+;; (ido-mode t)
+;; (setq ido-enable-flex-matching t)
+;; (ido-vertical-mode)
+;; (setq ido-auto-merge-delay-time 1)
+(setq completion-styles '(partial-completion substring flex)
+      vertico-cycle t)
+(vertico-mode t)
+(marginalia-mode t)
+(keymap-set vertico-map "RET" #'vertico-directory-enter)
+(keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
+(keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
+(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
 ;; join lines using keyboard shortcut
 (global-set-key (kbd "M-j") 'join-line)
@@ -293,7 +316,7 @@
 (setq ring-bell-function #'ignore)
 
 ;; Easily wrap statements in delimiters
-(wrap-region-global-mode t)
+;;(wrap-region-global-mode t)
 
 ;; always ask for `y` or `n` instead of `yes` or `no`
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -357,7 +380,7 @@
 (global-set-key (kbd "C-c c") 'calendar)
 
 ;; quickly jump to imenu locations
-(global-set-key (kbd "C-c i") 'idomenu)
+(global-set-key (kbd "C-c i") 'imenu)
 
 (defun halve-other-window-height ()
   "Expand current window to use half of the other window's lines."
@@ -395,7 +418,7 @@
 
 ;; always indent automatically
 (global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key (kbd "C-x w") 'ido-switch-buffer-other-window)
+;;(global-set-key (kbd "C-x w") 'ido-switch-buffer-other-window)
 
 ;; C/C++
 (setq c-default-style "linux"
@@ -470,8 +493,9 @@
 ;; sadly, Emacs does not handle all scroll events on OSX. Hence, inertia
 ;;   scrolling does not work properly. This is the closest approximation I could
 ;;   come up with.
-(setq mouse-wheel-progressive-speed nil)
-(setq redisplay-dont-pause t)
+;; (setq mouse-wheel-progressive-speed t)
+;; (setq redisplay-dont-pause t)
+(pixel-scroll-precision-mode t)
 
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
@@ -492,7 +516,6 @@
  '(magit-diff-refine-hunk t)
  '(magit-push-always-verify nil)
  '(mc/always-run-for-all t)
- '(mouse-wheel-scroll-amount '(3 ((shift) . hscroll) ((meta)) ((control) . text-scale)))
  '(ns-alternate-modifier 'meta)
  '(ns-command-modifier 'hyper)
  '(org-export-latex-classes
@@ -545,7 +568,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(esup corfu consult marginalia vertico vertico-posframe lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(esup corfu consult marginalia vertico lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
@@ -555,7 +578,7 @@
  '(send-mail-function 'mailclient-send-it)
  '(sentence-end-double-space nil)
  '(tramp-password-prompt-regexp
-   "^.*\\(\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|btd@olserv04's password:\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\).*: ? *"))
+   "^.*\\(\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|btd@olserv04's password:\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\).*:\0? *"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
