@@ -4,30 +4,41 @@
 ;; set up OS dependent stuff
 ;; -----------------------------------------------------------------------------
 
-(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bb"))
-  (setq org-agenda-files (quote ("~/Documents/journal/"))
-        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+")
-  (setq default-directory "~"))
+(when (and (eq system-type 'gnu/linux) (string= (user-login-name) "bastibe"))
+  (setq org-agenda-files (quote ("~/Documents/Journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
+        org-journal-file-format "%Y-%m-%d.org"
+        org-journal-dir "~/Documents/Journal"
+        org-agenda-diary-file 'diary-file
+        org-autowiki-directory "~/Documents/Autowiki"
+        default-directory "~"
+	server-name "/home/bastibe/.emacs.d/currentserver")
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (require 'org-autowiki))
+
+(when (and (eq system-type 'darwin) (string= (user-login-name) "bastibe"))
+  (setq org-agenda-files (quote ("~/Documents/Journal/"))
+        org-agenda-file-regexp "'\\`[^.].*\\.org'\\|[0-9]+"
+        org-journal-file-format "%Y-%m-%d.org"
+        org-journal-dir "~/Documents/Journal"
+        org-agenda-diary-file 'diary-file
+        org-autowiki-directory "~/Documents/Autowiki"
+        default-directory "~"
+        ispell-program-name "enchant-2"
+        server-name "~/.emacs.d/currentserver")
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (require 'org-autowiki))
 
 (when (and (eq system-type 'windows-nt) (string= (user-login-name) "btd"))
   (setq org-journal-file-format "%Y-%m-%d.org"
         org-journal-dir "C:/Users/btd/Documents/Journal"
-        org-journal-date-format "%A, %Y-%m-%d"
-        org-autowiki-dir "C:/Users/btd/Documents/Autowiki")
+        org-autowiki-directory "C:/Users/btd/Documents/Autowiki")
   (add-to-list 'load-path "~/.emacs.d/lisp/")
+  (require 'org-autowiki)
   (prefer-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
   (set-language-environment "UTF-8")
-  (setq default-directory "//wsl$/Ubuntu-22.04/home/btd/")
-
-  (defun my-find-file (&optional prefix)
-    (interactive "P")
-    (if prefix
-        (let ((default-directory "C:/Users/btd/"))
-          (call-interactively #'find-file))
-      (call-interactively #'find-file)))
-  (global-set-key (kbd "C-x C-f") 'my-find-file)
-
+  (setq default-directory "//wsl$/Ubuntu-20.04/home/btd/")
   (setq ispell-program-name "hunspell"
         ispell-local-dictionary "de_DE_frami"
         ispell-local-dictionary-alist '(("de_DE_frami" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
@@ -47,7 +58,6 @@
         (selinux-context .
                          ,(file-selinux-context filename) ) ) ) ) ))
 
-(setq server-name "C:/Users/btd/AppData/Roaming/.emacs.d/currentserver")
 (require 'server)
 (unless (server-running-p)
   (server-start))
@@ -58,43 +68,32 @@
 ;; -----------------------------------------------------------------------------
 
 (require 'package)
+(setq package-archive-exclude-alist '(("melpa")))
 (dolist (source '(("elpa" . "http://tromey.com/elpa/")
+                  ("gnu" . "http://elpa.gnu.org/packages/")
+                  ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                   ("melpa-stable" . "https://stable.melpa.org/packages/")))
   (add-to-list 'package-archives source t))
-(setq package-archive-priorities
-      '(("melpa-stable" . 9)
-        ("nongnu" . 10)
-        ("elpa" . 6)
-        ("gnu" . 7)))
-
 (package-initialize)
 
+(setq package-archive-priorities
+      '(("nongnu" . 10)
+        ("melpa-stable" . 9)
+        ("gnu" . 8)
+        ("elpa" . 7)))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar my-packages '(company dash expand-region marginalia dumb-jump
-  magit markdown-mode multiple-cursors org org-journal popup
-  smartparens vertico vundo)
+(defvar my-packages '(company company-posframe concurrent dash
+  dumb-jump expand-region flyspell-popup ido-vertical-mode
+  idomenu magit markdown-mode multiple-cursors org org-journal
+  popup s smartparens wrap-region)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
-
-
-(when (and (eq system-type 'windows-nt) (string= (user-login-name) "btd"))
-  ;; fix dumb-jump in the WSL, which broke a few versions ago for unknown reasons:
-  (require 'dumb-jump)
-  (defun filter-UNC-error (orig-fun resp &rest args)
-    (let* (;; CMD.exe likes to inject a useless error message, so filter it out:
-           (filtered (replace-regexp-in-string "'[^']+'\nCMD.EXE was started with the above path as the current directory.\nUNC paths are not supported.  Defaulting to Windows directory.\n" "" resp))
-           ;; for some reason, ag returns paths as /wsl$/... instead of //wsl$/..., which
-           ;; dumb-jump interprets as a relative path instead of an absolute one,
-           ;; so fix that:
-           (fixed (replace-regexp-in-string "^\\\\wsl\\$" "\\\\\\\\wsl$" filtered)))
-      (apply orig-fun fixed args)))
-  (advice-add 'dumb-jump-parse-ag-response :around #'filter-UNC-error))
 
 
 ;; -----------------------------------------------------------------------------
@@ -103,12 +102,16 @@
 
 ;; set a nice looking font
 (setq my-font-height (cond ((eq system-type 'darwin) 130)
-                           ((eq system-type 'windows-nt) 110)
+                           ((eq system-type 'windows-nt) 100)
                            ((eq system-type 'gnu/linux) 100)))
 
 
 (set-face-attribute 'default nil
                     :height my-font-height)
+
+;; force consistent font height by using the biggest font for spaces:
+(global-whitespace-mode t)
+(setq whitespace-style '(face tabs spaces trailing empty newline))
 
 (global-display-fill-column-indicator-mode t)
 (setq display-fill-column-indicator-column 100)
@@ -119,29 +122,27 @@
   (set-fontset-font "fontset-default"
                     'unicode
                     (font-spec :family "PragmataPro"
-                               :height my-font-height))
-  (set-fontset-font t 'emoji
-                    '("Segoe UI Emoji" . "iso10646-1") nil 'prepend))
-(setq emojify-emoji-styles '(ascii unicode))
-;;(global-emojify-mode t)  ; TODO: super slow!
+                               :height my-font-height)))
+  ;;(set-fontset-font t 'emoji "Segoe UI Emoji"))
 ;; For testing purposes: →„Σ💩“←
 
 ;; load my favourite theme of the day
-(add-to-list 'load-path "~/.emacs.d/lisp/")
 (require 'typo-theme)
 (load-theme 'typo t)
 
 ;; don't show hat pesky toolbar
 (when (display-graphic-p)
   (tool-bar-mode -1)
-  (menu-bar-mode -1))
+  (when (not (eq system-type 'darwin))  ; it's not attached to the window anyway
+    (menu-bar-mode -1)))
 
 ;; make org-mode fontify source code
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
 (setq org-src-preserve-indentation t)
-(setq org-fontify-done-headline nil)
-(setq org-fontify-todo-headline nil)
+
+;; highlight matching parenthesis
+(show-smartparens-mode)
 
 ;; enable column number in info area
 (column-number-mode t)
@@ -160,9 +161,9 @@
                                                             (format-mode-line "%b"))
                                                           'face '(:weight bold))
                                          " " (if (buffer-modified-p) "(⋯)" "(✓)")))
-                           (right (concat (if (and vc-mode (buffer-file-name))
+                           (right (concat (propertize (format-mode-line "Line %l Col %c") 'face '(:weight light)) "  "
+                                          (if (and vc-mode (buffer-file-name))
                                               (concat "" vc-mode " (" (symbol-name (vc-state (buffer-file-name))) ")") "")
-                                          "  " (propertize (format-mode-line "%l:%c") 'face '(:weight light))
                                           (format-mode-line mode-line-end-spaces)))
                            (padding (make-string (max 0 (- (window-width) (length left) (length right))) ? )))
                       (concat left padding right)))))
@@ -170,37 +171,47 @@
 ;; repurpose the mode line as a simple divider between buffer content and minibuffer:
 (setq-default mode-line-format " ")
 (set-face-attribute 'mode-line nil
-                    :background "#fafaf9"
+                    :background "#fffff8"
                     :foreground "#111111"
                     :height 10
-                    :box '(:line-width 8 :color "#fafaf9")
+                    :box '(:line-width 8 :color "#fffff8")
                     :strike-through "#111111")
 (set-face-attribute 'mode-line-inactive nil
-                    :background "#fafaf9"
+                    :background "#fffff8"
                     :foreground "#111111"
                     :height 10
-                    :box '(:line-width 8 :color "#fafaf9")
+                    :box '(:line-width 8 :color "#fffff8")
                     :strike-through "#111111")
 
 (set-face-attribute 'header-line nil
-                    :background "#fcfcfc"
+                    :background "#fffff8"
                     :foreground "#111111"
                     :height 100
-                    :box '(:line-width 8 :color "#fcfcfc")
+                    :box '(:line-width 8 :color "#fffff8")
                     :underline "#111111"
                     :strike-through nil)
 (set-face-attribute 'minibuffer-prompt nil
-                    :background "#fcfcfc"
+                    :background "#fffff8"
                     :foreground "#111111"
-                    :height 100)
+                    :height 100
+                    :box '(:line-width 8 :color "#fffff8"))
 
 ;; in magit and diary mode, use word wrap
 (add-hook 'magit-mode-hook (lambda () (visual-line-mode t)) t)
 (add-hook 'magit-log-edit-mode-hook (lambda () (visual-line-mode t)) t)
-(add-hook 'diary-mode-hook (lambda () (visual-line-mode t)) t)
 
 (set-display-table-slot standard-display-table 'wrap ?→) ; eol wrap character
 (set-display-table-slot standard-display-table 'truncation ?→) ; bol wrap char
+
+;; (require 'echo-bar)
+
+;; (defun my-echobar-function ()
+;;   (concat (replace-regexp-in-string
+;;            "utf 8" "utf-8"
+;;            (replace-regexp-in-string "-" " " (symbol-name buffer-file-coding-system))) " "
+;;           (replace-regexp-in-string "-mode" "" (symbol-name major-mode))))
+;; (setq echo-bar-function #'my-echobar-function)
+;; (echo-bar-enable)
 
 
 ;; ----------------------------------------------------------------------------
@@ -209,28 +220,19 @@
 
 (setq org-journal-file-pattern "%Y%m%d.org")
 
-(context-menu-mode t)
-(setq save-interprogram-paste-before-kill t)
-;; (setq dumb-jump-prefer-searcher 'ag)
-(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-(setq xref-show-definitions-function #'xref-show-definitions-completing-read)
+(add-hook 'prog-mode-hook '(lambda ()
+                             (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+                             (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
 
 ;; enable global completion
-;; (add-hook 'prog-mode-hook (lambda ()
-;;                             (show-smartparens-mode)
-;;                             (company-mode t)
-;;                             (company-posframe-mode 1)))
-;; (setq company-posframe-show-indicator nil
-;;       company-posframe-quickhelp-delay nil
-;;       company-posframe-show-metadata nil  ; disable. Show with F1, scroll with F2/F3
-;;       company-posframe-quickhelp-show-header nil)
-
-;; enable nice M-x completion
-;;(fido-vertical-mode 1)
+(global-company-mode t)
+(company-posframe-mode 1)
 
 (setq ns-pop-up-frames nil)
 (global-set-key (kbd "H-h") 'ns-do-hide-emacs)
 (global-set-key (kbd "H-w") 'delete-window)
+
+(setq mc/always-run-for-all t)
 
 ;; enable "dangerous" features
 (put 'narrow-to-region 'disabled nil)
@@ -257,7 +259,7 @@
 (setq org-emphasis-regexp-components '(" \t('\"{" "- \t.,:!?;'\")}\\" " \t\r\n," "." 1))
 
 ;; detect external file changes automatically
-;; (global-auto-revert-mode t) ;; takes too long
+(global-auto-revert-mode t)
 
 ;; NO TABS. EVER.
 (setq-default indent-tabs-mode nil)
@@ -279,18 +281,10 @@
 (global-set-key [mouse-2] nil)
 
 ;; enable ido mode and fuzzy matching
-;; (ido-mode t)
-;; (setq ido-enable-flex-matching t)
-;; (ido-vertical-mode)
-;; (setq ido-auto-merge-delay-time 1)
-(setq completion-styles '(partial-completion substring flex)
-      vertico-cycle t)
-(vertico-mode t)
-(marginalia-mode t)
-(keymap-set vertico-map "RET" #'vertico-directory-enter)
-(keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
-(keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
-(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+(ido-vertical-mode)
+(setq ido-auto-merge-delay-time 1)
 
 ;; join lines using keyboard shortcut
 (global-set-key (kbd "M-j") 'join-line)
@@ -316,7 +310,7 @@
 (setq ring-bell-function #'ignore)
 
 ;; Easily wrap statements in delimiters
-;;(wrap-region-global-mode t)
+(wrap-region-global-mode t)
 
 ;; always ask for `y` or `n` instead of `yes` or `no`
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -338,13 +332,6 @@
     (end-of-line))
   (newline-and-indent))
 
-(defun bb/auto-create-missing-dir ()
-  "Auto-creates the parent directory for buffer-file-name if not existing."
-  (let ((target-dir (file-name-directory buffer-file-name)))
-    (unless (file-exists-p target-dir)
-      (make-directory target-dir t))))
-(add-to-list 'find-file-not-found-functions #'bb/auto-create-missing-dir)
-
 (global-set-key (kbd "C-o") 'vi-open-line-below)
 (global-set-key (kbd "M-o") 'vi-open-line-above)
 
@@ -356,13 +343,20 @@
   (beginning-of-line))
 
 ;; mark stuff semantically
-(autoload 'er/expand-region "expand-region")
-(global-set-key (kbd "C-c r") 'er/expand-region)
-(autoload 'er/mark-defun "expand-region")
-(global-set-key (kbd "C-c d") 'er/mark-defun)
-(autoload 'er/mark-defun "expand-region")
-(global-set-key (kbd "C-c d") 'er/mark-defun)
-(global-set-key (kbd "C-c l") 'bb/mark-line)
+(require 'expand-region)
+(define-prefix-command 'mark-semantically)
+(global-set-key (kbd "C-j") 'mark-semantically)
+(define-key mark-semantically (kbd "w") 'er/mark-word)
+(define-key mark-semantically (kbd "s") 'er/mark-symbol)
+(define-key mark-semantically (kbd "f") 'er/mark-method-call)
+(define-key mark-semantically (kbd "d") 'er/mark-defun)
+(define-key mark-semantically (kbd "c") 'er/mark-comment)
+(define-key mark-semantically (kbd "p") 'mark-paragraph)
+(define-key mark-semantically (kbd "'") 'er/mark-inside-quotes)
+(define-key mark-semantically (kbd "\"") 'er/mark-outside-quotes)
+(define-key mark-semantically (kbd "[") 'er/mark-inside-pairs)
+(define-key mark-semantically (kbd "]") 'er/mark-outside-pairs)
+(define-key mark-semantically (kbd "l") 'bb/mark-line)
 
 (global-set-key (kbd "M-<return>") 'indent-new-comment-line)
 
@@ -380,7 +374,7 @@
 (global-set-key (kbd "C-c c") 'calendar)
 
 ;; quickly jump to imenu locations
-(global-set-key (kbd "C-c i") 'imenu)
+(global-set-key (kbd "C-c i") 'idomenu)
 
 (defun halve-other-window-height ()
   "Expand current window to use half of the other window's lines."
@@ -388,10 +382,6 @@
   (enlarge-window (/ (window-height (next-window)) 2)))
 (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
-(setq view-diary-entries-initially t
-      mark-diary-entries-in-calendar t
-      number-of-diary-entries 7)
-(add-hook 'diary-display-hook 'fancy-diary-display)
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
 ;; set up the calendar to look German
@@ -408,7 +398,98 @@
             (set-buffer-process-coding-system 'utf-8-unix 'utf-8-unix))
           t)
 
+(defadvice find-file (before make-directory-maybe (filename &optional wildcards) activate)
+  "Create parent directory if not exists while visiting file."
+  (unless (file-exists-p filename)
+    (let ((dir (file-name-directory filename)))
+      (unless (file-exists-p dir)
+        (make-directory dir)))))
+
 (autoload 's-trim "s")
+
+
+;; ----------------------------------------------------------------------------
+;; Work around issues
+;; ----------------------------------------------------------------------------
+
+;; Add high-resolution bitmaps for flyspell-mode et al on a high-DPI screen
+
+(fringe-mode '(16 . 0))
+
+(when (fboundp 'define-fringe-bitmap)
+  (define-fringe-bitmap 'exclamation-mark
+    (vector #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000001111000000
+            #b0000001111000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000)))
+
+(when (fboundp 'define-fringe-bitmap)
+  (define-fringe-bitmap 'flymake-double-exclamation-mark
+    (vector #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0011110000111100
+            #b0000000000000000
+            #b0000000000000000
+            #b0011110000111100
+            #b0011110000111100
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000
+            #b0000000000000000)))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Set a sane indentation style
@@ -418,7 +499,7 @@
 
 ;; always indent automatically
 (global-set-key (kbd "RET") 'newline-and-indent)
-;;(global-set-key (kbd "C-x w") 'ido-switch-buffer-other-window)
+(global-set-key (kbd "C-x w") 'ido-switch-buffer-other-window)
 
 ;; C/C++
 (setq c-default-style "linux"
@@ -443,6 +524,55 @@
 (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 
+;; open *.m files as octave
+(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
+(setq octave-block-offset 4)
+;; use single-percent comments
+(setq octave-comment-char ?%)
+(add-hook 'octave-mode-hook
+          (lambda ()
+            (setq-local comment-add 0)
+            ;; overwrite octave indentation logic
+            (defun octave-indent-comment ()
+              "A function for `smie-indent-functions' (which see)."
+              (save-excursion
+                (back-to-indentation)
+                (cond
+                 ((octave-in-string-or-comment-p) nil)
+                 ((looking-at-p "\\(\\s<\\)\\1\\{2,\\}")
+                  0)
+                 ;; keep documentation comments at bol
+                 ((= (current-column) 0) 0)
+                 ;; no more special-casing for double-comments
+                 )))))
+
+;; open *.pdf files as images
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . (lambda ()
+                                                (require 'pdf-tools)
+                                                (pdf-tools-install)
+                                                (pdf-view-mode))))
+
+(defun select-python ()
+  "Select appropriate venv"
+  (interactive)
+  (let ((git-path (s-trim (shell-command-to-string "git rev-parse --show-toplevel"))))
+    ;; (make-local-variable 'elpy-rpc-python-command)
+    ;; (make-local-variable 'python-shell-interpreter)
+    ;; (make-local-variable 'python-shell-interpreter-args)
+    (cond ((file-directory-p ".venv/bin/")
+           (setq elpy-rpc-python-command (expand-file-name ".venv/bin/python")
+                 python-shell-interpreter (expand-file-name ".venv/bin/python")
+                 python-shell-interpreter-args "-i")
+           (pyvenv-activate (expand-file-name ".venv")))
+          ((and (> (length git-path) 0)
+                (file-directory-p git-path)
+                (file-directory-p (concat git-path "/.venv/bin/" )))
+           (setq elpy-rpc-python-command (concat git-path "/.venv/bin/python")
+                 python-shell-interpreter (concat git-path "/.venv/bin/python")
+                 python-shell-interpreter-args "-i")
+           (pyvenv-activate (concat git-path "/.venv"))))))
+(add-hook 'python-mode-hook 'select-python)
+
 ;; start up markdown-mode with visual-line-mode
 (add-hook 'markdown-mode-hook
           (lambda ()
@@ -466,8 +596,6 @@
 (autoload 'ox-publish "org-mode" "Org Mode." t)
 (add-hook 'org-mode-hook
           (lambda ()
-            (require 'org-autowiki)
-
             ;; set up org-babel so it uses the correct python version
             (org-babel-do-load-languages 'org-babel-load-languages
                                          '((python . t)))
@@ -493,9 +621,78 @@
 ;; sadly, Emacs does not handle all scroll events on OSX. Hence, inertia
 ;;   scrolling does not work properly. This is the closest approximation I could
 ;;   come up with.
-;; (setq mouse-wheel-progressive-speed t)
-;; (setq redisplay-dont-pause t)
-(pixel-scroll-precision-mode t)
+(setq mouse-wheel-progressive-speed nil)
+(setq redisplay-dont-pause t)
+(setq mouse-wheel-scroll-amount '(3 ((shift) . hscroll) ((meta)) ((control) . text-scale)))
+
+;; -----------------------------------------------------------------------------
+;; Set up blogging in Emacs
+;; -----------------------------------------------------------------------------
+
+(setq org-static-blog-publish-title "bastibe.de")
+(setq org-static-blog-publish-url "https://bastibe.de/")
+(setq org-static-blog-publish-directory "/Users/bastibe/Projects/blog/")
+(setq org-static-blog-posts-directory "/Users/bastibe/Projects/blog/posts/")
+(setq org-static-blog-drafts-directory "/Users/bastibe/Projects/blog/drafts/")
+(setq org-static-blog-enable-tags t)
+(setq org-static-blog-no-comments-tag "nocomments")
+(setq org-export-with-toc nil)
+(setq org-export-with-section-numbers nil)
+
+(defun with-c-locale (orig-fun &rest args)
+  (let ((system-time-locale "C")) (apply orig-fun args)))
+(advice-add 'org-static-blog-publish :around #'with-c-locale)
+
+(setq org-static-blog-page-header
+"<meta name=\"author\" content=\"Bastian Bechtold\">
+<meta name=\"referrer\" content=\"no-referrer\">
+<link href= \"static/style.css\" rel=\"stylesheet\" type=\"text/css\" />
+<link rel=\"icon\" href=\"static/favicon.ico\">
+<link rel=\"apple-touch-icon-precomposed\" href=\"static/favicon-152.png\">
+<link rel=\"msapplication-TitleImage\" href=\"static/favicon-144.png\">
+<link rel=\"msapplication-TitleColor\" href=\"#0141ff\">
+<script src=\"static/katex.min.js\"></script>
+<script src=\"static/auto-render.min.js\"></script>
+<script src=\"static/lightbox.js\"></script>
+<link rel=\"stylesheet\" href=\"static/katex.min.css\">
+<script>document.addEventListener(\"DOMContentLoaded\", function() { renderMathInElement(document.body); });</script>
+<meta http-equiv=\"content-type\" content=\"application/xhtml+xml; charset=UTF-8\">
+<meta name=\"viewport\" content=\"initial-scale=1,width=device-width,minimum-scale=1\">")
+
+(setq org-static-blog-page-preamble
+"<div class=\"header\">
+  <a href=\"https://bastibe.de\">Basti's Scratchpad on the Internet</a>
+  <div class=\"sitelinks\">
+    <a href=\"https://github.com/bastibe\">Github</a> | <a href=\"https://bastibe.de/projects.html\">Projects</a> | <a href=\"https://bastibe.de/uses.html\">Uses</a> | <a href=\"https://bastibe.de/reviews.html\">Reviews</a> | <a href=\"https://bastibe.de/about.html\">About</a>
+  </div>
+</div>")
+
+(setq org-static-blog-page-postamble
+"<div id=\"archive\">
+  <a href=\"https://bastibe.de/archive.html\">Other posts</a>
+</div>
+<center><a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/3.0/88x31.png\" /></a><br /><span xmlns:dct=\"https://purl.org/dc/terms/\" href=\"https://purl.org/dc/dcmitype/Text\" property=\"dct:title\" rel=\"dct:type\">bastibe.de</span> by <a xmlns:cc=\"https://creativecommons.org/ns#\" href=\"https://bastibe.de\" property=\"cc:attributionName\" rel=\"cc:attributionURL\">Bastian Bechtold</a> is licensed under a <a rel=\"license\" href=\"https://creativecommons.org/licenses/by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</center>")
+
+(setq org-static-blog-post-comments
+"<script async src=\"https://talk.hyvor.com/embed/embed.js\" type=\"module\"></script>
+<hyvor-talk-comments id=\"hyvorcomments\" website-id=\"3390\" page-id=\"\"></hyvor-talk-comments>
+<script type=\"text/javascript\">
+    document.getElementById(\"hyvorcomments\").setAttribute(\"page-id\", location.pathname);
+</script>")
+
+(defadvice org-preview-latex-fragment (around non-xelatex-org-preview-latex-fragment)
+  "Strip down the LaTeX process to the bare minimum when compiling fragments"
+  (let ((org-latex-default-packages-alist
+        '((""     "amsmath"   t)
+          (""     "amssymb"   t)))
+        (org-latex-pdf-process
+         '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
+       ad-do-it))
+(ad-activate 'org-preview-latex-fragment)
+
+;; This slows down org-publish to a crawl, and it is not needed since
+;; I use magit anyway.
+(remove-hook 'find-file-hooks 'vc-find-file-hook)
 
 ;; -----------------------------------------------------------------------------
 ;; emacs's own customizations
@@ -510,12 +707,14 @@
  '(TeX-PDF-mode t t)
  '(TeX-engine 'xetex)
  '(custom-safe-themes
-   '("ff248e843450eec985be08d955418f316f76c3f682782d930c233749773c48b0" "e10b643408c1b860bda0cbca9bf6b6b26ed6de6cfdf7e102ee65078ba4f938e6" "7aca10185c847b751b087cd7aea89fe74acd22a64ca58e93019dbd00a4617435" "1911931b313d6a8ab28bbb13379e8aa6540cb0e03d717c6121fdb61dbca4763c" "3814aed58d7ff6786817817b22c789b6ab745cf785827c90b859ef45650c5acb" "dfadc1b24b12659f0376c57d4c6d194452402135783012478d2c0a7ce9961e31" "13ad564ef0fae7107d2cc8e9876019d590d8e147acc2b35f6db7c61d36baa7dd" "fb5b69a2141a09e1259480c37fda684219a7f282daf3a0e532142520e0a6f7a7" "40083ee0d6f19d59beb806e54bab473bead0643167996629f7eba4b6a866874e" "c53a2dc096399cd9189c06c4d8aa81c1c86ee42d345774813be1a1f42f1a2966" "37876ed71caaf25682400f2a26ddffbd92c56a0e7118b28977e1642e13bd98e7" "f498611a55865fc39d0c021d70c35c3eb1fdf562d498f4b31c75267b9338bc6b" "85c832b0ee0d27afe2e9d1ba9d93f5053576a9158c8e6787c69b9759f422b51b" "de489e681215eb48108f3e5e3faebb91a94a52435efc7241f8e2ce50c61be9e0" "8fc2c193643ffd5f86bd58bfde990032d82824fb06100eab4e11d04b7df2e5d7" "29c9f2c0db7d71bd663aefaaf69be100956a70261845063ec1a268292860bf72" "968203889d8076ef832ffcc303626d1cfb504411ee595ee6843d880d23722e27" "6024e338ed28c8fe04ffaa5ab0009ccc12b9a8cb0fd8cce54a5e43cb19358134" "033cd04db8c0dc207f2e1c54886bdae54288fd878a4c70d8904b07c5ee519bfe" "26390969031065b8ba685ae69a695015e587f2cc8bc59130d4a9557abfa8a5cd" "ed8aa414b653b598320cf3166e57c0802fd332bf6cea76db03dc138e9a47380d" "9e44d081f63837d7b45bc2b27804508752dcc1f7a509b54f3620a5795d8d69ef" "d8c8a5d73e9f559ca5f2c3947f2e749196f25628ecdb3a9bd15a536bb3c633d9" "20bb7d61fe820812768fca38d6162c57850c4d94eed694bf567a51fd5689703a" "1e2efa3b3409033ad3554b8d05018c7aa2654d83764539244ccc58595f01453b" "5d4c5382baf25938bfbe6b211ea6b43a6676458b6e1b8d3d4d2472f6b6f5ea3b" "3fedcbfb0fc73968bf78e02109c45b1e73ce9f218391b3a20a602987abb9dd1d" "c14aa89c6adc8590d8264e97ff434030d707d883e83ef84dcfaa51bd0fef2fbc" "9d22d19405625e8709e611676fd12136bb3914a0e498a1fd87227e66edc33a1e" "1e8a4129a0eaa9b40d7325ece0b21fc6d01ae259898a7adeceb7cce624a9e82e" "95ebb3514e22c0da15cbf224e213f9bc7f47cc0334f138ce364cd7a7bf360f5f" "93fa87460a65ac136a25f9d3bbfbdd4158dcdef4faf6fecefde5c907a5b376a2" "dae43e6384690a475b52828c9c6127294f0efaa87c030f083b085ad64a145e53" "d20e64338bb1277befa2b8b25c7eb1376954c648d6658a4f5df9db5e2b33df75" "c70f8278bf7c328e90058192b0b9edcc35751bbf089faed6a1e23573f5ad0c85" "b4aa27d8de6b98c539ae15d6c396fb480df333f9a5a2f120f0df859a2fba4752" "4b97bd134a558b1486d937a277cab76a5f2dcdb399acfc999f298667e182a45f" "ea48ba62fa400fcb8ce497d7a182015d6fc6eebfe352bd18bd8a9fa9270d5d22" "0888c530b7fadeb1017787eed625b0b85df4910db5d4a2c597444a7f49d558bb" "424ff2a80ea13a9fbf06f8c3caa9865fe958d7dad80a64f46f9c3e6fdabcb3ae" "535294a13971d18b57877f89bceb5e8fbc943de72f26ed6efcbd7401ee1595c9" "afb64d797dcd55118f8cff1df1d0259040e2718333c9a93026a9535b8259513e" "7c06e7a8fe0e898c246a32f759adfc0b74af196233c8e25087063f91991f622c" "b37a24c0d8efc3e224173e1210c38e55f1ffa38e32e37b87efc3d20fc10feea8" "40a03442e342d807dc139b1fbf5395b2d232a05a9a0ab20d2adf8920cea46d13" "36e771968f268c2d5afc6182de810be15cce2bece1028291c35406c4d56ee065" "b6e7d810377a4b81db6622e4cf42898f625006f727487dec82599e0b9a66bd73" "21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
+   '("21fb497b14820147b2b214e640b3c5ee19fcadc15bc288e3c16c9c9575d95d66" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default))
  '(delete-selection-mode nil)
  '(display-fill-column-indicator-column 100)
+ '(elpy-modules
+   '(elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-yasnippet elpy-module-sane-defaults))
  '(magit-diff-refine-hunk t)
  '(magit-push-always-verify nil)
- '(mc/always-run-for-all t)
+ '(mc/always-run-for-all t t)
  '(ns-alternate-modifier 'meta)
  '(ns-command-modifier 'hyper)
  '(org-export-latex-classes
@@ -568,7 +767,7 @@
  '(org-latex-tables-centered nil)
  '(org-preview-latex-default-process 'imagemagick)
  '(package-selected-packages
-   '(esup corfu consult marginalia vertico lsp-mode vundo unicode-fonts dumb-jump emojify cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region undo-tree smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
+   '(zig-mode dumb-jump lua-mode cmake-mode s popup company-posframe ido-completing-read+ xref flycheck-pycheckers annotate flycheck org-static-blog virtualenvwrapper traad evil wrap-region smartparens org-journal multiple-cursors markdown-mode magit iy-go-to-char idomenu ido-vertical-mode ido-ubiquitous flyspell-popup fish-mode expand-region concurrent all-the-icons-dired))
  '(python-check-command "pyflakes3")
  '(safe-local-variable-values
    '((python-shell-interpreter . "/Users/bb/miniconda3/envs/stretch-correlation/bin/ipython")
@@ -578,7 +777,8 @@
  '(send-mail-function 'mailclient-send-it)
  '(sentence-end-double-space nil)
  '(tramp-password-prompt-regexp
-   "^.*\\(\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|btd@olserv04's password:\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\).*:\0? *"))
+   "^.*\\(\\(?:adgangskode\\|contrase\\(?:\\(?:ny\\|ñ\\)a\\)\\|geslo\\|h\\(?:\\(?:asł\\|esl\\)o\\)\\|iphasiwedi\\|jelszó\\|l\\(?:ozinka\\|ösenord\\)\\|m\\(?:ot de passe\\|ật khẩu\\)\\|p\\(?:a\\(?:rola\\|s\\(?:ahitza\\|s\\(?: phrase\\|code\\|ord\\|phrase\\|wor[dt]\\)\\|vorto\\)\\)\\|in\\)\\|s\\(?:alasana\\|enha\\|laptažodis\\)\\|wachtwoord\\|btd@olserv04's password:\\|лозинка\\|пароль\\|ססמה\\|كلمة السر\\|गुप्तशब्द\\|शब्दकूट\\|গুপ্তশব্দ\\|পাসওয়ার্ড\\|ਪਾਸਵਰਡ\\|પાસવર્ડ\\|ପ୍ରବେଶ ସଙ୍କେତ\\|கடவுச்சொல்\\|సంకేతపదము\\|ಗುಪ್ತಪದ\\|അടയാളവാക്ക്\\|රහස්පදය\\|ពាក្យសម្ងាត់\\|パスワード\\|密[码碼]\\|암호\\)\\).*: ? *")
+ '(warning-suppress-log-types '((comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
